@@ -3,8 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import db from '../db.js';
 import { AuthRequest } from '../middlewares/auth.middleware.js';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'redhill-infra-secret-key';
+import config from '../config/env.js';
 
 export const login = (req: AuthRequest, res: Response) => {
   const { email, password } = req.body;
@@ -14,9 +13,19 @@ export const login = (req: AuthRequest, res: Response) => {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
-  const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, JWT_SECRET, { expiresIn: '24h' });
-  const isProd = process.env.NODE_ENV === 'production';
-  res.cookie('token', token, { httpOnly: true, secure: isProd, sameSite: isProd ? 'none' : 'lax' });
+  const token = jwt.sign(
+    { id: user.id, email: user.email, role: user.role, name: user.name },
+    config.JWT_SECRET,
+    { expiresIn: config.JWT_EXPIRES_IN as any }
+  );
+
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: config.IS_PROD,
+    sameSite: config.IS_PROD ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  });
+
   res.json({ id: user.id, email: user.email, role: user.role, name: user.name });
 };
 
@@ -42,9 +51,19 @@ export const signup = (req: AuthRequest, res: Response) => {
     );
 
     const user = { id: result.lastInsertRowid, email, name, role: 'investor' };
-    const token = jwt.sign({ id: user.id, email: user.email, role: user.role, name: user.name }, JWT_SECRET, { expiresIn: '24h' });
-    const isProd = process.env.NODE_ENV === 'production';
-    res.cookie('token', token, { httpOnly: true, secure: isProd, sameSite: isProd ? 'none' : 'lax' });
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, name: user.name },
+      config.JWT_SECRET,
+      { expiresIn: config.JWT_EXPIRES_IN as any }
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: config.IS_PROD,
+      sameSite: config.IS_PROD ? 'none' : 'lax',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     res.json(user);
   } catch (e: any) {
     res.status(400).json({ error: e.message });
@@ -52,8 +71,11 @@ export const signup = (req: AuthRequest, res: Response) => {
 };
 
 export const logout = (_req: AuthRequest, res: Response) => {
-  const isProd = process.env.NODE_ENV === 'production';
-  res.clearCookie('token', { httpOnly: true, secure: isProd, sameSite: isProd ? 'none' : 'lax' });
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: config.IS_PROD,
+    sameSite: config.IS_PROD ? 'none' : 'lax',
+  });
   res.json({ message: 'Logged out' });
 };
 

@@ -1,37 +1,32 @@
 import nodemailer from 'nodemailer';
 import sgMail from '@sendgrid/mail';
-import dotenv from 'dotenv';
+import config from '../config/env.js';
 
-dotenv.config();
+const { sendgridApiKey, gmailUser, gmailAppPassword, fromEmail, smtpHost, smtpPort, smtpSecure } = config.email;
+const PORTAL_URL = config.FRONTEND_URL;
 
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
-const GMAIL_USER = process.env.GMAIL_USER || process.env.SMTP_USER;
-const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASS;
-const FROM_EMAIL = process.env.FROM_EMAIL || GMAIL_USER || 'noreply@redhillinfra.com';
-const PORTAL_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
-
-if (SENDGRID_API_KEY) {
-  sgMail.setApiKey(SENDGRID_API_KEY);
+if (sendgridApiKey) {
+  sgMail.setApiKey(sendgridApiKey);
 }
 
 // Setup Nodemailer Transporter for Gmail / Custom SMTP
 let smtpTransporter: nodemailer.Transporter | null = null;
-if (GMAIL_USER && GMAIL_APP_PASSWORD) {
+if (gmailUser && gmailAppPassword) {
   smtpTransporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: GMAIL_USER,
-      pass: GMAIL_APP_PASSWORD,
+      user: gmailUser,
+      pass: gmailAppPassword,
     },
   });
-} else if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+} else if (smtpHost && gmailUser && gmailAppPassword) {
   smtpTransporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT || '465', 10),
-    secure: process.env.SMTP_SECURE !== 'false',
+    host: smtpHost,
+    port: smtpPort,
+    secure: smtpSecure,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user: gmailUser,
+      pass: gmailAppPassword,
     },
   });
 }
@@ -58,7 +53,7 @@ export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
 
       if (realRecipients.length > 0) {
         await smtpTransporter.sendMail({
-          from: `"Redhill Infra" <${GMAIL_USER || FROM_EMAIL}>`,
+          from: `"Redhill Infra" <${fromEmail || gmailUser}>`,
           to: realRecipients,
           subject: options.subject,
           text: options.text || options.html.replace(/<[^>]*>?/gm, ''),
@@ -73,11 +68,11 @@ export const sendEmail = async (options: EmailOptions): Promise<boolean> => {
   }
 
   // 2. If SendGrid is configured
-  if (SENDGRID_API_KEY) {
+  if (sendgridApiKey) {
     try {
       const msg = {
         to: options.to,
-        from: FROM_EMAIL,
+        from: fromEmail,
         subject: options.subject,
         text: options.text || options.html.replace(/<[^>]*>?/gm, ''),
         html: options.html,

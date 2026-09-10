@@ -1,9 +1,14 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
+import config from './config/env.js';
 
-const dbPath = path.resolve('database.sqlite');
-const db = new Database(dbPath);
+const dbDir = path.dirname(config.DATABASE_PATH);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+}
+
+const db = new Database(config.DATABASE_PATH);
 db.pragma('journal_mode = WAL');
 db.pragma('busy_timeout = 5000');
 

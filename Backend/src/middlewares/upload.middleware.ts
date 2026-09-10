@@ -1,25 +1,23 @@
 import multer from 'multer';
-import path from 'path';
 import fs from 'fs';
+import config from '../config/env.js';
 
-const uploadsDir = path.resolve('uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+if (!fs.existsSync(config.UPLOADS_DIR)) {
+  fs.mkdirSync(config.UPLOADS_DIR, { recursive: true });
 }
 
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadsDir),
+  destination: (_req, _file, cb) => cb(null, config.UPLOADS_DIR),
   filename: (_req, file, cb) => {
     const uniqueName = `${Date.now()}-${file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
     cb(null, uniqueName);
-  }
+  },
 });
 
 export const upload = multer({
   storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
-  fileFilter: (_req, file, cb) => {
-    // Allow all file types
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max
+  fileFilter: (_req, _file, cb) => {
     cb(null, true);
-  }
+  },
 });

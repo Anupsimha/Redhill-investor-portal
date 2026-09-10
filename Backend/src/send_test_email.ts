@@ -1,10 +1,8 @@
 import { sendEmail, generateMilestoneCompletedHtml } from './services/email.service.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import config from './config/env.js';
 
 async function main() {
-  const targetEmail = process.argv[2] || process.env.GMAIL_USER;
+  const targetEmail = process.argv[2] || config.email.gmailUser;
 
   if (!targetEmail) {
     console.log('Usage: npx tsx src/send_test_email.ts <your_email@gmail.com>');
