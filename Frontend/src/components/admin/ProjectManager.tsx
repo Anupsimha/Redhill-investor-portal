@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import StatusChip from '../StatusChip';
 import { useToast } from '../Toast';
 import ConfirmDialog from '../ConfirmDialog';
+import { apiFetch } from '../../api/client';
+import { getAssetUrl } from '../../config/env';
 
 export default function ProjectManager() {
   const queryClient = useQueryClient();
@@ -18,7 +20,7 @@ export default function ProjectManager() {
 
   const deleteProjectMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/admin/projects/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
     },
     onSuccess: () => {
@@ -51,7 +53,7 @@ export default function ProjectManager() {
           <div key={p.id} className="bg-redhill-gray rounded-2xl border border-white/[0.06] shadow-lg overflow-hidden flex flex-col hover:border-white/10 transition-all">
             <div className="h-40 relative">
               <img
-                src={p.image_url || 'https://picsum.photos/seed/project/800/600'}
+                src={getAssetUrl(p.image_url) || 'https://picsum.photos/seed/project/800/600'}
                 alt=""
                 referrerPolicy="no-referrer"
                 onError={(e) => {
@@ -97,7 +99,7 @@ export default function ProjectManager() {
               </div>
               <div className="flex items-center justify-between mb-4">
                 <p className="text-sm text-gray-400 flex items-center gap-1 truncate">
-                  <MapPin className="w-3 h-3 text-redhill-red shrink-0" /> <span className="truncate">{p.location}</span>
+                  <MapPin className="w-3.5 h-3.5 text-redhill-red shrink-0" /> <span className="truncate">{p.location}</span>
                 </p>
                 <span className="text-[10px] font-bold bg-white/5 px-2 py-1 rounded text-gray-400 shrink-0 flex items-center gap-1">
                   <Users className="w-3 h-3" /> {assignments.filter((a: any) => a.project_id === p.id).length}

@@ -3,6 +3,7 @@ import { User } from '../types';
 import { Lock, Mail, ArrowRight, User as UserIcon, Phone, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from '../components/Logo';
+import { apiFetch } from '../api/client';
 
 interface LoginProps {
   onLogin: (user: User) => void;
@@ -39,7 +40,7 @@ export default function Login({ onLogin }: LoginProps) {
         ? { email, password }
         : { name, email, phone, password };
 
-      const res = await fetch(endpoint, {
+      const res = await apiFetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),

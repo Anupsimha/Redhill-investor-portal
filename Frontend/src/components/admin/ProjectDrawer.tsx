@@ -10,6 +10,8 @@ import StatusChip from '../StatusChip';
 import { formatDate } from '../../utils/formatters';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { apiFetch } from '../../api/client';
+import { getAssetUrl } from '../../config/env';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -89,7 +91,7 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
   const fetchDetails = async (projectId: number) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/investor/projects/${projectId}`);
+      const res = await apiFetch(`/api/investor/projects/${projectId}`);
       if (res.ok) {
         const data = await res.json();
         setMilestones(data.milestones || []);
@@ -104,8 +106,8 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
 
   // Reset milestone form
   const resetMilestoneForm = () => {
-    setMCategory('documentation');
     setMName('');
+    setMCategory('documentation');
     setMStatus('pending');
     setMStartDate('');
     setMExpectedCompletion('');
@@ -117,10 +119,8 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
 
   // Reset update form
   const resetUpdateForm = () => {
-    setUpdateType('photo');
     setUpdateCaption('');
     setUpdateUrl('');
-    setUploadMode('url');
     setSelectedFile(null);
     setFilePreviewUrl(null);
     setShowUpdateForm(false);
@@ -139,14 +139,14 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
       if (mDocFile) {
         const formData = new FormData();
         formData.append('file', mDocFile);
-        const uploadRes = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+        const uploadRes = await apiFetch('/api/admin/upload', { method: 'POST', body: formData });
         if (uploadRes.ok) {
           const uploadData = await uploadRes.json();
           docUrl = uploadData.url;
         }
       }
 
-      const res = await fetch('/api/admin/milestones', {
+      const res = await apiFetch('/api/admin/milestones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -180,7 +180,7 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
 
   const handleUpdateMilestone = async (milestoneId: number) => {
     try {
-      const res = await fetch(`/api/admin/milestones/${milestoneId}`, {
+      const res = await apiFetch(`/api/admin/milestones/${milestoneId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -215,7 +215,7 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
       if (uploadMode === 'file' && selectedFile) {
         const formData = new FormData();
         formData.append('file', selectedFile);
-        const uploadRes = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+        const uploadRes = await apiFetch('/api/admin/upload', { method: 'POST', body: formData });
         if (uploadRes.ok) {
           const uploadData = await uploadRes.json();
           finalUrl = uploadData.url;
@@ -232,7 +232,7 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
         return;
       }
 
-      const res = await fetch('/api/admin/updates', {
+      const res = await apiFetch('/api/admin/updates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -264,7 +264,7 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
     if (!project) return;
     setSavingCctv(true);
     try {
-      const res = await fetch(`/api/admin/projects/${project.id}/cctv`, {
+      const res = await apiFetch(`/api/admin/projects/${project.id}/cctv`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ cctv_url: cctvUrl }),

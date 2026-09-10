@@ -11,6 +11,7 @@ import { twMerge } from 'tailwind-merge';
 import { formatRelativeTime, formatDate } from '../../utils/formatters';
 import { useToast } from '../Toast';
 import Modal from '../Modal';
+import { apiFetch } from '../../api/client';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -42,7 +43,7 @@ export default function AdminQueries() {
   const { data: threads = [], isLoading: loadingThreads, refetch: refetchThreads, isFetching } = useQuery<any[]>({
     queryKey: ['admin-queries'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/queries');
+      const res = await apiFetch('/api/admin/queries');
       if (!res.ok) throw new Error('Failed to fetch query threads');
       return res.json();
     },
@@ -52,7 +53,7 @@ export default function AdminQueries() {
   const { data: investors = [] } = useQuery<User[]>({
     queryKey: ['admin-investors'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/investors');
+      const res = await apiFetch('/api/admin/investors');
       if (!res.ok) return [];
       return res.json();
     }
@@ -61,7 +62,7 @@ export default function AdminQueries() {
   const { data: projects = [] } = useQuery<Project[]>({
     queryKey: ['admin-projects'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/projects');
+      const res = await apiFetch('/api/admin/projects');
       if (!res.ok) return [];
       return res.json();
     }
@@ -104,7 +105,7 @@ export default function AdminQueries() {
     queryKey: ['admin-thread', selectedThread?.user_id, selectedThread?.project_id],
     queryFn: async () => {
       if (!selectedThread) return [];
-      const res = await fetch(`/api/admin/queries/${selectedThread.user_id}/${selectedThread.project_id}`);
+      const res = await apiFetch(`/api/admin/queries/${selectedThread.user_id}/${selectedThread.project_id}`);
       return res.json();
     },
     enabled: !!selectedThread,
@@ -122,7 +123,7 @@ export default function AdminQueries() {
   const replyMutation = useMutation({
     mutationFn: async (message: string) => {
       if (!selectedThread) return;
-      const res = await fetch('/api/queries', {
+      const res = await apiFetch('/api/queries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -150,7 +151,7 @@ export default function AdminQueries() {
 
   const composeMutation = useMutation({
     mutationFn: async (data: { user_id: number; project_id: number; message: string }) => {
-      const res = await fetch('/api/queries', {
+      const res = await apiFetch('/api/queries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

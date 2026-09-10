@@ -6,6 +6,7 @@ import {
   Layers, ExternalLink, RefreshCw, Send, ShieldCheck, Clock
 } from 'lucide-react';
 import EmailPreviewModal from './EmailPreviewModal';
+import { apiFetch } from '../../api/client';
 
 export default function AutomatedMessagesView() {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('all');
@@ -16,7 +17,7 @@ export default function AutomatedMessagesView() {
   const { data: projects = [] } = useQuery<Project[]>({
     queryKey: ['admin-projects'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/projects');
+      const res = await apiFetch('/api/admin/projects');
       return res.json();
     },
   });
@@ -33,7 +34,7 @@ export default function AutomatedMessagesView() {
       const url = selectedProjectId === 'all'
         ? '/api/admin/notifications'
         : `/api/admin/notifications?projectId=${selectedProjectId}`;
-      const res = await fetch(url);
+      const res = await apiFetch(url);
       if (!res.ok) return [];
       return res.json();
     },

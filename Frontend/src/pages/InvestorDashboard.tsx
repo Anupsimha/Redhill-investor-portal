@@ -12,16 +12,17 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import Layout from '../components/Layout';
+import Skeleton from '../components/Skeleton';
+import EmptyState from '../components/EmptyState';
+import StatusChip from '../components/StatusChip';
+import { formatCurrency, formatDate } from '../utils/formatters';
+import { apiFetch } from '../api/client';
+import { getAssetUrl } from '../config/env';
 
 interface InvestorDashboardProps {
   user: User;
   onLogout: () => void;
 }
-
-import Skeleton from '../components/Skeleton';
-import EmptyState from '../components/EmptyState';
-import StatusChip from '../components/StatusChip';
-import { formatCurrency, formatDate } from '../utils/formatters';
 
 function formatNumber(n: number): string {
   return n.toLocaleString('en-IN');
@@ -33,7 +34,7 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
   const { data: projects = [], isLoading: loadingProjects } = useQuery<Project[]>({
     queryKey: ['investor-projects'],
     queryFn: async () => {
-      const res = await fetch('/api/investor/projects');
+      const res = await apiFetch('/api/investor/projects');
       if (!res.ok) throw new Error('Failed to fetch projects');
       const data = await res.json();
       return Array.isArray(data) ? data : [];
@@ -43,7 +44,7 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
   const { data: newProjects = [] } = useQuery<Project[]>({
     queryKey: ['investor-new-projects'],
     queryFn: async () => {
-      const res = await fetch('/api/investor/new-projects');
+      const res = await apiFetch('/api/investor/new-projects');
       if (!res.ok) throw new Error('Failed to fetch new projects');
       const data = await res.json();
       return Array.isArray(data) ? data : [];
@@ -315,7 +316,7 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
                     >
                       <div className="relative h-52 overflow-hidden">
                         <img 
-                          src={project.image_url || 'https://picsum.photos/seed/placeholder/1920/1080'} 
+                          src={getAssetUrl(project.image_url) || 'https://picsum.photos/seed/placeholder/1920/1080'} 
                           alt={project.name}
                           referrerPolicy="no-referrer"
                           onError={(e) => { (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/fallback/1920/1080'; }}
@@ -484,7 +485,7 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
                   {/* Image */}
                   <div className="relative h-40 overflow-hidden">
                     <img
-                      src={project.image_url || 'https://picsum.photos/seed/ad/800/600'}
+                      src={getAssetUrl(project.image_url) || 'https://picsum.photos/seed/ad/800/600'}
                       alt={project.name}
                       referrerPolicy="no-referrer"
                       onError={(e) => { (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/fallback/800/600'; }}

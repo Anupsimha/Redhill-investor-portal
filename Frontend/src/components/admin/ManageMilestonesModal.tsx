@@ -11,6 +11,8 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { useToast } from '../Toast';
 import EmailPreviewModal from './EmailPreviewModal';
+import { apiFetch } from '../../api/client';
+import { getAssetUrl } from '../../config/env';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -70,7 +72,7 @@ export default function ManageMilestonesModal({
   } = useQuery<ProjectWithAudience>({
     queryKey: ['project-milestones-audience', project.id],
     queryFn: async () => {
-      const res = await fetch(`/api/admin/projects/${project.id}/milestones-with-investors`);
+      const res = await apiFetch(`/api/admin/projects/${project.id}/milestones-with-investors`);
       if (!res.ok) throw new Error('Failed to fetch project audience');
       return res.json();
     },
@@ -84,7 +86,7 @@ export default function ManageMilestonesModal({
   } = useQuery<NotificationLog[]>({
     queryKey: ['project-notifications', project.id],
     queryFn: async () => {
-      const res = await fetch(`/api/admin/notifications?projectId=${project.id}`);
+      const res = await apiFetch(`/api/admin/notifications?projectId=${project.id}`);
       if (!res.ok) return [];
       return res.json();
     },
@@ -97,7 +99,7 @@ export default function ManageMilestonesModal({
   // Update Milestone Mutation
   const updateMilestoneMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: number; updates: Partial<Milestone> & { sendNotification?: boolean } }) => {
-      const res = await fetch(`/api/admin/milestones/${id}`, {
+      const res = await apiFetch(`/api/admin/milestones/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
@@ -116,22 +118,23 @@ export default function ManageMilestonesModal({
 
       if (data.notificationResult && data.notificationResult.notifiedRecipients?.length > 0) {
         showToast(
-          `🎉 Milestone marked completed! Automated emails sent to ${data.notificationResult.notifiedRecipients.length} investor(s) of ${project.name}!`,
+          `Milestone updated & emails dispatched to ${data.notificationResult.notifiedRecipients.length} investor(s)!`,
           'success'
         );
       } else {
         showToast('Milestone updated successfully', 'success');
       }
+      setEditingMilestoneId(null);
     },
     onError: (err: any) => {
-      showToast(err.message || 'Error updating milestone', 'error');
+      showToast(err.message || 'Failed to update milestone', 'error');
     },
   });
 
   // Delete Milestone Mutation
   const deleteMilestoneMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await fetch(`/api/admin/milestones/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/admin/milestones/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete milestone');
       return res.json();
     },
@@ -160,7 +163,7 @@ export default function ManageMilestonesModal({
       try {
         const formData = new FormData();
         formData.append('file', newDocFile);
-        const upRes = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+        const upRes = await apiFetch('/api/admin/upload', { method: 'POST', body: formData });
         if (upRes.ok) {
           const upData = await upRes.json();
           finalDoc = upData.url;
@@ -171,7 +174,7 @@ export default function ManageMilestonesModal({
     }
 
     try {
-      const res = await fetch('/api/admin/milestones', {
+      const res = await apiFetch('/api/admin/milestones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -232,7 +235,7 @@ export default function ManageMilestonesModal({
       try {
         const formData = new FormData();
         formData.append('file', dailyFile);
-        const upRes = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+        const upRes = await apiFetch('/api/admin/upload', { method: 'POST', body: formData });
         if (upRes.ok) {
           const upData = await upRes.json();
           finalMedia = upData.url;
@@ -243,7 +246,7 @@ export default function ManageMilestonesModal({
     }
 
     try {
-      const res = await fetch(`/api/admin/milestones/${selectedMilestoneId || 0}/daily-progress`, {
+      const res = await apiFetch(`/api/admin/milestones/${selectedMilestoneId || 0}/daily-progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

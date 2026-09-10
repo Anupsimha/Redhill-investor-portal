@@ -3,6 +3,7 @@ import { Building2, Users, Bell, BookOpen, Shield, Hammer, IndianRupee, Trending
 import { Project, User } from '../../types';
 import { ROLE_CONFIG } from '../../constants/roles';
 import { formatCurrency } from '../../utils/formatters';
+import { getAssetUrl } from '../../config/env';
 
 interface AdminOverviewProps {
   user: User;
@@ -120,7 +121,7 @@ export default function AdminOverview({
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-xl overflow-hidden bg-white/5 border border-white/10">
                       <img
-                        src={p.image_url || 'https://picsum.photos/seed/thumb/200/200'}
+                        src={getAssetUrl(p.image_url) || 'https://picsum.photos/seed/thumb/200/200'}
                         alt=""
                         referrerPolicy="no-referrer"
                         onError={(e) => {

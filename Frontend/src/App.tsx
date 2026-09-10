@@ -1,6 +1,7 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { User } from './types';
+import { apiFetch } from './api/client';
 
 // Lazy loaded pages
 const Login = lazy(() => import('./pages/Login'));
@@ -19,8 +20,8 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/me')
-      .then(res => res.ok ? res.json() : null)
+    apiFetch('/api/me')
+      .then(res => (res.ok ? res.json() : null))
       .then(data => {
         setUser(data);
         setLoading(false);
@@ -30,7 +31,7 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/logout', { method: 'POST' });
+      await apiFetch('/api/logout', { method: 'POST' });
     } catch (err) {
       console.error('Logout failed', err);
     }

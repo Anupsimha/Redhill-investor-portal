@@ -24,6 +24,8 @@ import ManageMilestonesModal from '../components/admin/ManageMilestonesModal';
 import AutomatedMessagesView from '../components/admin/AutomatedMessagesView';
 import { formatCurrency, formatDate, formatRelativeTime } from '../utils/formatters';
 import { ROLE_CONFIG, RoleMetadata } from '../constants/roles';
+import { apiFetch } from '../api/client';
+import { getAssetUrl } from '../config/env';
 
 // Modular Admin Components
 import AdminOverview from '../components/admin/AdminOverview';
@@ -67,7 +69,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   const { data: investors = [], isLoading: loadingInvestors, refetch: refetchInvestors } = useQuery<User[]>({
     queryKey: ['admin-investors'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/investors');
+      const res = await apiFetch('/api/admin/investors');
       return res.json();
     },
     enabled: isSuperAdmin || isFinancialOfficer
@@ -76,7 +78,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   const { data: projects = [], isLoading: loadingProjects, refetch: refetchProjects } = useQuery<Project[]>({
     queryKey: ['admin-projects'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/projects');
+      const res = await apiFetch('/api/admin/projects');
       return res.json();
     }
   });
@@ -84,7 +86,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   const { data: assignments = [], refetch: refetchAssignments } = useQuery<any[]>({
     queryKey: ['admin-investor-projects'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/investor-projects');
+      const res = await apiFetch('/api/admin/investor-projects');
       return res.json();
     },
     enabled: isSuperAdmin || isFinancialOfficer
@@ -93,7 +95,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   const { data: threads = [], refetch: refetchQueries } = useQuery<Query[]>({
     queryKey: ['admin-queries'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/queries');
+      const res = await apiFetch('/api/admin/queries');
       return res.json();
     },
     refetchInterval: 15000
@@ -102,7 +104,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   const { data: adminsList = [], refetch: refetchAdmins } = useQuery<User[]>({
     queryKey: ['admin-users'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/users');
+      const res = await apiFetch('/api/admin/users');
       return res.json();
     },
     enabled: isSuperAdmin
@@ -111,7 +113,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   const { data: ledgerEntries = [], refetch: refetchLedger } = useQuery<LedgerEntry[]>({
     queryKey: ['admin-ledger'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/ledger');
+      const res = await apiFetch('/api/admin/ledger');
       return res.json();
     },
     enabled: isSuperAdmin || isFinancialOfficer
@@ -120,7 +122,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   const { data: analyticsData, refetch: refetchAnalytics } = useQuery({
     queryKey: ['admin-analytics'],
     queryFn: async () => {
-      const res = await fetch('/api/admin/analytics');
+      const res = await apiFetch('/api/admin/analytics');
       return res.json();
     }
   });
@@ -220,7 +222,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
 
   const fetchProjectDetails = async (projectId: number) => {
     try {
-      const res = await fetch(`/api/investor/projects/${projectId}`);
+      const res = await apiFetch(`/api/investor/projects/${projectId}`);
       if (res.ok) {
         const data = await res.json();
         setProjectMilestones(data.milestones || []);
@@ -240,7 +242,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   // --- Handlers ---
   const handleCreateAdmin = async (data: { name: string; email: string; role: Role; password: string }) => {
     try {
-      const res = await fetch('/api/admin/users', {
+      const res = await apiFetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -260,7 +262,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
 
   const handleUpdateAdmin = async (id: number, data: { name: string; email: string; role: Role; password?: string }) => {
     try {
-      const res = await fetch(`/api/admin/users/${id}`, {
+      const res = await apiFetch(`/api/admin/users/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -290,7 +292,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
       onConfirm: async () => {
         setConfirmDialog(prev => ({ ...prev, isOpen: false }));
         try {
-          const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+          const res = await apiFetch(`/api/admin/users/${id}`, { method: 'DELETE' });
           if (res.ok) {
             refetchAdmins();
             showToast('Admin account removed successfully', 'success');
@@ -319,14 +321,14 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
     if (data.imageFile) {
       const formData = new FormData();
       formData.append('file', data.imageFile);
-      const uploadRes = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+      const uploadRes = await apiFetch('/api/admin/upload', { method: 'POST', body: formData });
       if (uploadRes.ok) {
         const uploadData = await uploadRes.json();
         finalImageUrl = uploadData.url;
       }
     }
 
-    const res = await fetch('/api/admin/projects', {
+    const res = await apiFetch('/api/admin/projects', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -350,7 +352,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   };
 
   const handleCreateInvestor = async (data: { name: string; email: string; phone: string; password: string }) => {
-    const res = await fetch('/api/admin/investors', {
+    const res = await apiFetch('/api/admin/investors', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -374,7 +376,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
       onConfirm: async () => {
         setConfirmDialog(prev => ({ ...prev, isOpen: false }));
         try {
-          const res = await fetch(`/api/admin/investors/${id}`, { method: 'DELETE' });
+          const res = await apiFetch(`/api/admin/investors/${id}`, { method: 'DELETE' });
           if (res.ok) {
             refetchInvestors();
             refetchAssignments();
@@ -398,7 +400,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
     allottedSqft: string;
     marketPricePerSqft: string;
   }) => {
-    const res = await fetch('/api/admin/assign', {
+    const res = await apiFetch('/api/admin/assign', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -434,14 +436,14 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
     if (data.file) {
       const formData = new FormData();
       formData.append('file', data.file);
-      const upRes = await fetch('/api/admin/upload', { method: 'POST', body: formData });
+      const upRes = await apiFetch('/api/admin/upload', { method: 'POST', body: formData });
       if (upRes.ok) {
         const upData = await upRes.json();
         docUrl = upData.url;
       }
     }
 
-    const res = await fetch('/api/admin/payments', {
+    const res = await apiFetch('/api/admin/payments', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -474,7 +476,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
     notes: string;
     transactionDate: string;
   }) => {
-    const res = await fetch('/api/admin/ledger/sub-investment', {
+    const res = await apiFetch('/api/admin/ledger/sub-investment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -508,7 +510,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
 
     setSendingReply(true);
     try {
-      const res = await fetch('/api/queries', {
+      const res = await apiFetch('/api/queries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -533,7 +535,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
   };
 
   const handleLogout = async () => {
-    await fetch('/api/logout', { method: 'POST' });
+    await apiFetch('/api/logout', { method: 'POST' });
     onLogout();
   };
 
@@ -634,7 +636,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                 <div key={p.id} className="bg-redhill-gray rounded-2xl border border-white/[0.06] shadow-lg overflow-hidden flex flex-col hover:border-white/10 transition-all">
                   <div className="h-44 relative">
                     <img
-                      src={p.image_url || 'https://picsum.photos/seed/project/800/600'}
+                      src={getAssetUrl(p.image_url) || 'https://picsum.photos/seed/project/800/600'}
                       alt={p.name}
                       referrerPolicy="no-referrer"
                       onError={(e) => {

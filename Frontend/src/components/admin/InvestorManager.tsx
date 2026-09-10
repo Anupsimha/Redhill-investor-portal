@@ -5,6 +5,7 @@ import { Search, Users, Plus, UserPlus, Trash2, Copy, Check } from 'lucide-react
 import EmptyState from '../EmptyState';
 import { useToast } from '../Toast';
 import ConfirmDialog from '../ConfirmDialog';
+import { apiFetch } from '../../api/client';
 
 export default function InvestorManager() {
   const queryClient = useQueryClient();
@@ -20,7 +21,7 @@ export default function InvestorManager() {
 
   const deleteInvestorMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await fetch(`/api/admin/investors/${id}`, { method: 'DELETE' });
+      const res = await apiFetch(`/api/admin/investors/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
     },
     onSuccess: () => {

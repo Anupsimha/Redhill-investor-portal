@@ -14,6 +14,8 @@ import Layout from '../components/Layout';
 import Skeleton from '../components/Skeleton';
 import StatusChip from '../components/StatusChip';
 import { formatCurrency, formatDate, formatRelativeTime } from '../utils/formatters';
+import { apiFetch } from '../api/client';
+import { getAssetUrl } from '../config/env';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -25,10 +27,13 @@ interface ProjectDetailProps {
 }
 
 export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
-  const { id } = useParams();
-  const queryClient = useQueryClient();
+  const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<'progress' | 'docs' | 'media' | 'queries' | 'ledger'>('progress');
   const [newMessage, setNewMessage] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
+  const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null);
+  const chatBottomRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +46,7 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
   }>({
     queryKey: ['project', id],
     queryFn: async () => {
-      const res = await fetch(`/api/investor/projects/${id}`);
+      const res = await apiFetch(`/api/investor/projects/${id}`);
       if (!res.ok) throw new Error('Failed to fetch project details');
       return res.json();
     },
@@ -51,7 +56,7 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
   const { data: payments = [], isLoading: loadingPayments } = useQuery<any[]>({
     queryKey: ['project-payments', id],
     queryFn: async () => {
-      const res = await fetch(`/api/investor/payments/${id}`);
+      const res = await apiFetch(`/api/investor/payments/${id}`);
       if (!res.ok) throw new Error('Failed to fetch payments');
       return res.json();
     },
@@ -61,7 +66,7 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
   const { data: ledgerEntries = [] } = useQuery<LedgerEntry[]>({
     queryKey: ['investor-ledger', id],
     queryFn: async () => {
-      const res = await fetch(`/api/investor/ledger/${id}`);
+      const res = await apiFetch(`/api/investor/ledger/${id}`);
       if (!res.ok) throw new Error('Failed to fetch ledger');
       return res.json();
     },
@@ -70,7 +75,7 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (message: string) => {
-      const res = await fetch('/api/queries', {
+      const res = await apiFetch('/api/queries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ project_id: id, message }),
