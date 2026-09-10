@@ -2,33 +2,31 @@ import db from '../db.js';
 import bcrypt from 'bcryptjs';
 
 export const seedData = () => {
-  // 1. Seed Super Admin
-  const admin = db.prepare('SELECT * FROM users WHERE role = ?').get('super_admin');
-  if (!admin) {
-    const hashedPassword = bcrypt.hashSync('admin123', 10);
-    db.prepare('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)').run(
-      'admin@redhillinfra.com', hashedPassword, 'Redhill Admin', 'super_admin'
-    );
-  }
-
-  // 2. Helper to upsert investor
-  const ensureInvestor = (name: string, email: string, phone: string, login_id: string) => {
-    let inv: any = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
-    if (!inv) {
-      const hashedPassword = bcrypt.hashSync('investor123', 10);
+  // Helper to upsert user
+  const ensureUser = (email: string, passwordPlain: string, name: string, role: string, phone: string = '', login_id: string = '') => {
+    let u: any = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    if (!u) {
+      const hashedPassword = bcrypt.hashSync(passwordPlain, 10);
       const res = db.prepare('INSERT INTO users (email, password, name, role, phone, login_id) VALUES (?, ?, ?, ?, ?, ?)').run(
-        email, hashedPassword, name, 'investor', phone, login_id
+        email, hashedPassword, name, role, phone, login_id || null
       );
-      inv = { id: res.lastInsertRowid, name, email, phone, login_id };
+      u = { id: res.lastInsertRowid, email, name, role, phone, login_id };
     }
-    return inv;
+    return u;
   };
 
-  const inv1 = ensureInvestor('John Investor', 'investor@example.com', '+91 98765 43210', 'jo210');
-  const inv2 = ensureInvestor('Sarah Jenkins', 'sarah.investor@example.com', '+91 98765 11223', 'sa223');
-  const inv3 = ensureInvestor('David Kumar', 'david.investor@example.com', '+91 98765 33445', 'da445');
-  const inv4 = ensureInvestor('Michael Chang', 'michael.investor@example.com', '+91 98765 55667', 'mi667');
-  const invVinay = ensureInvestor('Vinay (You)', 'vinaykl990280487@gmail.com', '+91 99028 04870', 'vi870');
+  // 1. Seed Staff / Admin Accounts (from demo credentials)
+  ensureUser('admin@redhillinfra.com', 'admin123', 'Super Admin', 'super_admin');
+  ensureUser('sitemanager@redhillinfra.com', 'site123', 'Site Engineer', 'site_manager');
+  ensureUser('finance@redhillinfra.com', 'finance123', 'Financial Officer', 'financial_officer');
+  ensureUser('support@redhillinfra.com', 'support123', 'Support Agent', 'support_agent');
+
+  // 2. Seed Investors
+  const inv1 = ensureUser('investor@example.com', 'investor123', 'John Investor', 'investor', '+91 98765 43210', 'jo210');
+  const inv2 = ensureUser('sarah.investor@example.com', 'investor123', 'Sarah Jenkins', 'investor', '+91 98765 11223', 'sa223');
+  const inv3 = ensureUser('david.investor@example.com', 'investor123', 'David Kumar', 'investor', '+91 98765 33445', 'da445');
+  const inv4 = ensureUser('michael.investor@example.com', 'investor123', 'Michael Chang', 'investor', '+91 98765 55667', 'mi667');
+  const invVinay = ensureUser('vinaykl990280487@gmail.com', 'investor123', 'Vinay (You)', 'investor', '+91 99028 04870', 'vi870');
 
   // 3. Ensure Projects exist
   let projectA: any = db.prepare('SELECT * FROM projects WHERE name LIKE ?').get('%Signature Towers%');
@@ -59,9 +57,7 @@ export const seedData = () => {
     projectB = { id: res.lastInsertRowid, name: 'Redhill Emerald Gardens (Project B)' };
   }
 
-  // 4. Assign Investors to Projects:
-  // Project A has Investor 1, Investor 2, Investor 3, Vinay
-  // Project B has Investor 1, Investor 4
+  // 4. Assign Investors to Projects & populate Ledger:
   const assignIfNotExists = (userId: number, projectId: number, contribution: string, amount: number, sqft: number, price: number) => {
     const existing = db.prepare('SELECT * FROM investor_projects WHERE user_id = ? AND project_id = ?').get(userId, projectId);
     if (!existing) {
@@ -70,6 +66,15 @@ export const seedData = () => {
           user_id, project_id, contribution, investment_amount, allotted_sqft, market_price_per_sqft, price_at_investment, investment_date
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `).run(userId, projectId, contribution, amount, sqft, price, price * 0.8, '2023-01-15');
+    }
+
+    const existingLedger = db.prepare('SELECT * FROM ledger WHERE user_id = ? AND project_id = ?').get(userId, projectId);
+    if (!existingLedger) {
+      db.prepare(`
+        INSERT INTO ledger (
+          user_id, project_id, transaction_type, investment_amount, contribution, allotted_sqft, price_at_investment, market_price_per_sqft, note, transaction_date
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).run(userId, projectId, 'initial_assignment', amount, contribution, sqft, price * 0.8, price, 'Initial Allocation of Unit Sqft', '2023-01-15');
     }
   };
 

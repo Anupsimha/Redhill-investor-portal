@@ -10,21 +10,72 @@ import {
   getProjectInvestors,
 } from '../services/notification.service.js';
 
+const VALID_STAFF_ROLES = ['super_admin', 'senior_admin', 'admin', 'site_manager', 'financial_officer', 'marketing_manager', 'support_agent'];
+
 // Manage Admins
 export const getAdmins = (req: AuthRequest, res: Response) => {
-  if (req.user?.role !== 'super_admin') return res.status(403).json({ error: 'Super Admin required' });
-  const admins = db.prepare("SELECT id, email, name, role FROM users WHERE role IN ('super_admin', 'site_manager', 'support_agent')").all();
+  if (req.user?.role !== 'super_admin' && req.user?.role !== 'senior_admin') return res.status(403).json({ error: 'Admin management access required' });
+  const admins = db.prepare("SELECT id, email, name, role FROM users WHERE role != 'investor' ORDER BY id ASC").all();
   res.json(admins);
 };
 
 export const createAdmin = (req: AuthRequest, res: Response) => {
-  if (req.user?.role !== 'super_admin') return res.status(403).json({ error: 'Super Admin required' });
+  if (req.user?.role !== 'super_admin' && req.user?.role !== 'senior_admin') return res.status(403).json({ error: 'Admin management access required' });
   const { email, password, name, role } = req.body;
-  if (!['super_admin', 'site_manager', 'support_agent'].includes(role)) return res.status(400).json({ error: 'Invalid role' });
+  if (!VALID_STAFF_ROLES.includes(role)) return res.status(400).json({ error: 'Invalid role' });
   const hashedPassword = bcrypt.hashSync(password, 10);
   try {
     const result = db.prepare('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)').run(email, hashedPassword, name, role);
     res.json({ id: result.lastInsertRowid, email, name, role });
+  } catch (e: any) {
+    res.status(400).json({ error: e.message });
+  }
+};
+
+export const updateAdmin = (req: AuthRequest, res: Response) => {
+  if (req.user?.role !== 'super_admin' && req.user?.role !== 'senior_admin') return res.status(403).json({ error: 'Admin management access required' });
+  const { id } = req.params;
+  const { name, email, role, password } = req.body;
+
+  if (role && !VALID_STAFF_ROLES.includes(role)) {
+    return res.status(400).json({ error: 'Invalid role' });
+  }
+
+  try {
+    if (password) {
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      db.prepare(`
+        UPDATE users
+        SET name = COALESCE(?, name),
+            email = COALESCE(?, email),
+            role = COALESCE(?, role),
+            password = ?
+        WHERE id = ? AND role != 'investor'
+      `).run(name || null, email || null, role || null, hashedPassword, id);
+    } else {
+      db.prepare(`
+        UPDATE users
+        SET name = COALESCE(?, name),
+            email = COALESCE(?, email),
+            role = COALESCE(?, role)
+        WHERE id = ? AND role != 'investor'
+      `).run(name || null, email || null, role || null, id);
+    }
+    res.json({ message: 'Admin updated successfully' });
+  } catch (e: any) {
+    res.status(400).json({ error: e.message });
+  }
+};
+
+export const deleteAdmin = (req: AuthRequest, res: Response) => {
+  if (req.user?.role !== 'super_admin') return res.status(403).json({ error: 'Super Admin required to delete staff' });
+  const { id } = req.params;
+  if (Number(id) === req.user?.id) {
+    return res.status(400).json({ error: 'Cannot delete your own account' });
+  }
+  try {
+    db.prepare("DELETE FROM users WHERE id = ? AND role != 'investor'").run(id);
+    res.json({ message: 'Admin deleted successfully' });
   } catch (e: any) {
     res.status(400).json({ error: e.message });
   }
@@ -131,6 +182,15 @@ export const assignInvestor = (req: AuthRequest, res: Response) => {
     db.prepare('INSERT INTO investor_projects (user_id, project_id, contribution, investment_amount, allotted_sqft, market_price_per_sqft, price_at_investment, investment_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
       user_id, project_id, contribution, investment_amount || 0, allotted_sqft || 0, market_price_per_sqft || 0, price_at_investment || 0, investment_date || null
     );
+
+    db.prepare(`
+      INSERT INTO ledger (
+        user_id, project_id, transaction_type, investment_amount, contribution, allotted_sqft, price_at_investment, market_price_per_sqft, note, transaction_date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      user_id, project_id, 'initial_assignment', investment_amount || 0, contribution, allotted_sqft || 0, price_at_investment || market_price_per_sqft || 0, market_price_per_sqft || 0, 'Initial Investor Assignment', investment_date || new Date().toISOString().split('T')[0]
+    );
+
     res.json({ message: 'Assigned successfully' });
   } catch (e: any) {
     res.status(400).json({ error: e.message });
@@ -159,6 +219,57 @@ export const getAssignments = (_req: AuthRequest, res: Response) => {
     ORDER BY u.name, p.name
   `).all();
   res.json(assignments);
+};
+
+// Ledger & Sub-investments
+export const getLedger = (_req: AuthRequest, res: Response) => {
+  try {
+    const entries = db.prepare(`
+      SELECT l.*, u.name as investor_name, u.login_id as investor_login_id, p.name as project_name
+      FROM ledger l
+      JOIN users u ON l.user_id = u.id
+      JOIN projects p ON l.project_id = p.id
+      ORDER BY l.created_at DESC, l.id DESC
+    `).all();
+    res.json(entries);
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
+export const addSubInvestment = (req: AuthRequest, res: Response) => {
+  const { user_id, project_id, investment_amount, allotted_sqft, price_at_investment, market_price_per_sqft, note, transaction_date } = req.body;
+
+  try {
+    const existing = db.prepare('SELECT * FROM investor_projects WHERE user_id = ? AND project_id = ?').get(user_id, project_id) as any;
+    if (!existing) {
+      return res.status(404).json({ error: 'Investor not assigned to this project' });
+    }
+
+    const newAmount = (existing.investment_amount || 0) + Number(investment_amount || 0);
+    const newSqft = (existing.allotted_sqft || 0) + Number(allotted_sqft || 0);
+    const newPrice = Number(market_price_per_sqft || price_at_investment || existing.market_price_per_sqft || 0);
+
+    db.prepare(`
+      UPDATE investor_projects
+      SET investment_amount = ?,
+          allotted_sqft = ?,
+          market_price_per_sqft = ?
+      WHERE user_id = ? AND project_id = ?
+    `).run(newAmount, newSqft, newPrice, user_id, project_id);
+
+    db.prepare(`
+      INSERT INTO ledger (
+        user_id, project_id, transaction_type, investment_amount, contribution, allotted_sqft, price_at_investment, market_price_per_sqft, note, transaction_date
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      user_id, project_id, 'sub_investment', investment_amount, existing.contribution || '', allotted_sqft, price_at_investment || newPrice, newPrice, note || 'Sub-investment capital infusion', transaction_date || new Date().toISOString().split('T')[0]
+    );
+
+    res.json({ success: true, message: 'Sub-investment recorded successfully' });
+  } catch (e: any) {
+    res.status(400).json({ error: e.message });
+  }
 };
 
 // Manage Milestones & Project Investor Audience

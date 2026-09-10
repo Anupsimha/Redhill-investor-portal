@@ -117,6 +117,23 @@ db.exec(`
     FOREIGN KEY(milestone_id) REFERENCES milestones(id),
     FOREIGN KEY(user_id) REFERENCES users(id)
   );
+
+  CREATE TABLE IF NOT EXISTS ledger (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    transaction_type TEXT NOT NULL,
+    investment_amount REAL NOT NULL,
+    contribution TEXT,
+    allotted_sqft REAL NOT NULL,
+    price_at_investment REAL NOT NULL,
+    market_price_per_sqft REAL,
+    note TEXT,
+    transaction_date TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(project_id) REFERENCES projects(id),
+    FOREIGN KEY(user_id) REFERENCES users(id)
+  );
 `);
 
 // Migration: Add login_id if it doesn't exist

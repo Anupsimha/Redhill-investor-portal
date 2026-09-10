@@ -24,7 +24,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
 };
 
 export const isAdmin = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const adminRoles = ['admin', 'super_admin', 'site_manager', 'support_agent'];
+  const adminRoles = ['admin', 'super_admin', 'senior_admin', 'site_manager', 'financial_officer', 'marketing_manager', 'support_agent'];
   if (!req.user || !adminRoles.includes(req.user.role)) {
     return res.status(403).json({ error: 'Admin access required' });
   }

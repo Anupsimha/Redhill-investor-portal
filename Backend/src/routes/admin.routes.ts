@@ -2,6 +2,8 @@ import { Router } from 'express';
 import {
   getAdmins,
   createAdmin,
+  updateAdmin,
+  deleteAdmin,
   getInvestors,
   createInvestor,
   deleteInvestor,
@@ -13,6 +15,8 @@ import {
   assignInvestor,
   updateAssignment,
   getAssignments,
+  getLedger,
+  addSubInvestment,
   getMilestones,
   getMilestonesWithInvestors,
   createMilestone,
@@ -32,9 +36,11 @@ import { upload } from '../middlewares/upload.middleware.js';
 
 const router = Router();
 
-// Admin Management (Super Admin only)
+// Admin Management (Staff)
 router.get('/admin/users', authenticateToken, isAdmin, getAdmins);
 router.post('/admin/users', authenticateToken, isAdmin, createAdmin);
+router.patch('/admin/users/:id', authenticateToken, isAdmin, updateAdmin);
+router.delete('/admin/users/:id', authenticateToken, isAdmin, deleteAdmin);
 
 // Analytics
 router.get('/admin/analytics', authenticateToken, isAdmin, getAnalytics);
@@ -55,6 +61,8 @@ router.patch('/admin/projects/:id/cctv', authenticateToken, isAdmin, updateCctv)
 router.post('/admin/assign', authenticateToken, isAdmin, assignInvestor);
 router.patch('/admin/investor-project/:userId/:projectId', authenticateToken, isAdmin, updateAssignment);
 router.get('/admin/investor-projects', authenticateToken, isAdmin, getAssignments);
+router.get('/admin/ledger', authenticateToken, isAdmin, getLedger);
+router.post('/admin/ledger/sub-investment', authenticateToken, isAdmin, addSubInvestment);
 
 // Milestones & Targeted Investor Progress
 router.get('/admin/projects/:id/milestones', authenticateToken, isAdmin, getMilestones);
