@@ -2,13 +2,26 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config/env.js';
 
-export interface AuthRequest extends Request {
-  user?: {
-    id: number;
-    email: string;
-    role: string;
-    name: string;
-  };
+export interface AuthUser {
+  id: number;
+  email: string;
+  role: string;
+  name: string;
+}
+
+export interface AuthRequest<
+  P = any,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = any
+> extends Request<P, ResBody, ReqBody, ReqQuery> {
+  user?: AuthUser;
+  cookies: any;
+  file?: any;
+  files?: any;
+  body: ReqBody;
+  params: P;
+  query: ReqQuery;
 }
 
 export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
