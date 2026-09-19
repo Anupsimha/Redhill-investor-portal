@@ -4,8 +4,11 @@ dist/
 coverage/
 .DS_Store
 *.log
-.env*
+.env
+.env.local
+.env.*.local
 !.env.example
 *.sqlite-shm
 *.sqlite-wal
-
+Backend/uploads/*
+!Backend/uploads/.gitkeep
