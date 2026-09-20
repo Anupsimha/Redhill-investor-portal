@@ -4,9 +4,26 @@
  * In Vite, environment variables exposed to the client must start with `VITE_`.
  */
 
-// Strip trailing slash if present
-const rawApiUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_BASE_URL || '';
-export const API_BASE_URL = rawApiUrl.replace(/\/+$/, '');
+// Production Render backend fallback URL
+const DEFAULT_PROD_API_URL = 'https://redhill-investor-portal.onrender.com';
+
+// Auto-detect production Render deployment if env var wasn't set at build time
+function resolveApiBaseUrl(): string {
+  const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_BASE_URL;
+  if (envUrl) {
+    return envUrl.replace(/\/+$/, '');
+  }
+
+  // If running in browser on Render production domain, default to deployed Render backend
+  if (typeof window !== 'undefined' && window.location.hostname.includes('onrender.com')) {
+    return DEFAULT_PROD_API_URL;
+  }
+
+  // In local development, default to empty string so Vite dev proxy handles /api
+  return '';
+}
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 const rawAssetsUrl = import.meta.env.VITE_ASSETS_BASE_URL || API_BASE_URL;
 export const ASSETS_BASE_URL = rawAssetsUrl.replace(/\/+$/, '');

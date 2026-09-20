@@ -48,13 +48,17 @@ export default function Login({ onLogin }: LoginProps) {
 
       if (res.ok) {
         const user = await res.json();
+        if (user.token) {
+          localStorage.setItem('redhill_auth_token', user.token);
+        }
         onLogin(user);
       } else {
-        const data = await res.json();
+        const data = await res.json().catch(() => ({ error: `Server error (${res.status})` }));
         setError(data.error || (isLogin ? 'Login failed' : 'Sign up failed'));
       }
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
+    } catch (err: any) {
+      console.error('Login request failed:', err);
+      setError(err?.message || 'Something went wrong. Please check your connection.');
     } finally {
       setLoading(false);
     }

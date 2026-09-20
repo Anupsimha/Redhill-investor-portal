@@ -27,9 +27,17 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}):
     }
   }
 
-  const defaultHeaders: HeadersInit = {};
+  const defaultHeaders: Record<string, string> = {};
   if (options.body && !(options.body instanceof FormData)) {
     defaultHeaders['Content-Type'] = 'application/json';
+  }
+
+  // Include Bearer token from localStorage for seamless cross-domain auth across Render subdomains
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('redhill_auth_token');
+    if (token) {
+      defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
   }
 
   const finalOptions: RequestInit = {

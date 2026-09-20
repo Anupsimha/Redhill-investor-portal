@@ -23,10 +23,17 @@ export default function App() {
     apiFetch('/api/me')
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
-        setUser(data);
+        if (data) {
+          setUser(data);
+        } else {
+          localStorage.removeItem('redhill_auth_token');
+          setUser(null);
+        }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setLoading(false);
+      });
   }, []);
 
   const handleLogout = async () => {
@@ -35,6 +42,7 @@ export default function App() {
     } catch (err) {
       console.error('Logout failed', err);
     }
+    localStorage.removeItem('redhill_auth_token');
     setUser(null);
   };
 
