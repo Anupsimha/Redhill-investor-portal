@@ -25,7 +25,10 @@ export interface AuthRequest<
 }
 
 export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction) => {
-  const token = req.cookies.token;
+  const authHeader = req.headers.authorization;
+  const bearerToken = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7).trim() : null;
+  const token = req.cookies?.token || bearerToken;
+
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   jwt.verify(token, config.JWT_SECRET, (err: any, user: any) => {

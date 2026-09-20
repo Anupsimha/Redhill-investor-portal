@@ -29,11 +29,11 @@ const corsOptions: cors.CorsOptions = {
     // Normalize origin (remove trailing slash)
     const normalizedOrigin = origin.replace(/\/$/, '');
 
-    // Check if origin is explicitly allowed or if wildcard is enabled in dev
+    // Check if origin is explicitly allowed or if wildcard is enabled in dev or origin matches onrender.com
     const isAllowed = config.ALLOWED_ORIGINS.some(allowed => {
       const normalizedAllowed = allowed.replace(/\/$/, '');
       return normalizedOrigin === normalizedAllowed;
-    });
+    }) || normalizedOrigin.endsWith('.onrender.com');
 
     if (isAllowed || !config.IS_PROD) {
       return callback(null, true);

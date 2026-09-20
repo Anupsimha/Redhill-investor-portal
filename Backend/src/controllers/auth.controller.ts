@@ -26,7 +26,7 @@ export const login = (req: AuthRequest, res: Response) => {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   });
 
-  res.json({ id: user.id, email: user.email, role: user.role, name: user.name });
+  res.json({ id: user.id, email: user.email, role: user.role, name: user.name, token });
 };
 
 export const signup = (req: AuthRequest, res: Response) => {
@@ -64,7 +64,7 @@ export const signup = (req: AuthRequest, res: Response) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res.json(user);
+    res.json({ ...user, token });
   } catch (e: any) {
     res.status(400).json({ error: e.message });
   }
