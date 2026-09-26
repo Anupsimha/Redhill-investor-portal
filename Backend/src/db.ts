@@ -80,7 +80,7 @@ db.exec(`
     user_id INTEGER NOT NULL,
     project_id INTEGER NOT NULL,
     message TEXT NOT NULL,
-    sender_role TEXT CHECK(sender_role IN ('admin', 'investor')) NOT NULL,
+    sender_role TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id),
     FOREIGN KEY(project_id) REFERENCES projects(id)
@@ -195,6 +195,34 @@ if (!hasDayNumber) {
     } catch (e) {
         console.error('Migration for progress_updates failed:', e);
     }
+}
+
+// Migration: Ensure queries table allows all staff roles
+try {
+    const queriesTableDef = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='queries'").get() as any;
+    if (queriesTableDef && queriesTableDef.sql && queriesTableDef.sql.includes("CHECK(sender_role IN ('admin', 'investor'))")) {
+        db.exec(`
+          PRAGMA foreign_keys=OFF;
+          CREATE TABLE IF NOT EXISTS queries_new (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            project_id INTEGER NOT NULL,
+            message TEXT NOT NULL,
+            sender_role TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(project_id) REFERENCES projects(id)
+          );
+          INSERT INTO queries_new (id, user_id, project_id, message, sender_role, created_at)
+            SELECT id, user_id, project_id, message, sender_role, created_at FROM queries;
+          DROP TABLE queries;
+          ALTER TABLE queries_new RENAME TO queries;
+          PRAGMA foreign_keys=ON;
+        `);
+        console.log('Migration: Successfully updated queries table schema to support all staff roles.');
+    }
+} catch (e) {
+    console.error('Migration for queries table failed:', e);
 }
 
 export default db;

@@ -30,6 +30,11 @@ app.use('/uploads', express.static(uploadsDir));
 // Initialize Database Seed Data
 seedData();
 
+// Root Health Check
+app.get('/', (_req, res) => {
+  res.json({ status: 'online', message: 'Redhill Investor Portal Backend API is running' });
+});
+
 // Register Routes
 app.use(routes);
 

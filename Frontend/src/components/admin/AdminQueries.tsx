@@ -470,9 +470,9 @@ export default function AdminQueries() {
               </div>
 
               {/* Chat Message Stream */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#10121A] to-[#141620]">
+              <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#10121A] to-[#141620]">
                 {threadMessages.length === 0 && !loadingMessages && (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-8 text-gray-500">
+                  <div className="h-full min-h-[200px] flex flex-col items-center justify-center text-center p-8 text-gray-500">
                     <MessageCircle className="w-12 h-12 mb-3 opacity-20" />
                     <p className="text-sm font-bold text-gray-400">No messages found in this discussion</p>
                     <p className="text-xs text-gray-600 mt-1">Send a reply below to initiate communication.</p>
@@ -528,9 +528,9 @@ export default function AdminQueries() {
               </div>
 
               {/* Quick Reply Chips */}
-              <div className="px-4 py-2 bg-[#171A24] border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto pb-2">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest shrink-0 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-400" />
+              <div className="px-4 py-2.5 bg-[#171A24] border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto shrink-0 z-10">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest shrink-0 flex items-center gap-1.5 pl-1">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   Quick:
                 </span>
                 {QUICK_REPLIES.map((text, idx) => (
@@ -538,7 +538,7 @@ export default function AdminQueries() {
                     key={idx}
                     type="button"
                     onClick={() => setReplyMessage(text)}
-                    className="px-3 py-1 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg text-xs text-gray-300 hover:text-white whitespace-nowrap transition-all cursor-pointer text-left"
+                    className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] hover:border-redhill-red/30 rounded-xl text-xs text-gray-300 hover:text-white whitespace-nowrap transition-all cursor-pointer text-left shrink-0"
                   >
                     {text}
                   </button>
@@ -546,7 +546,7 @@ export default function AdminQueries() {
               </div>
 
               {/* Reply Input Box */}
-              <form onSubmit={handleReply} className="p-4 bg-[#151722] border-t border-white/[0.08] flex items-center gap-3">
+              <form onSubmit={handleReply} className="p-4 bg-[#151722] border-t border-white/[0.08] flex items-center gap-3 shrink-0">
                 <div className="relative flex-1">
                   <input
                     type="text"

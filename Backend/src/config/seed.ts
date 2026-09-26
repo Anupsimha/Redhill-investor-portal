@@ -2,14 +2,21 @@ import db from '../db.js';
 import bcrypt from 'bcryptjs';
 
 export const seedData = () => {
-  // 1. Seed Super Admin
-  const admin = db.prepare('SELECT * FROM users WHERE role = ?').get('super_admin');
-  if (!admin) {
-    const hashedPassword = bcrypt.hashSync('admin123', 10);
-    db.prepare('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)').run(
-      'admin@redhillinfra.com', hashedPassword, 'Redhill Admin', 'super_admin'
-    );
-  }
+  // 1. Seed Staff Accounts
+  const ensureStaff = (email: string, password: string, name: string, role: string) => {
+    let staff: any = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    if (!staff) {
+      const hashedPassword = bcrypt.hashSync(password, 10);
+      db.prepare('INSERT INTO users (email, password, name, role) VALUES (?, ?, ?, ?)').run(
+        email, hashedPassword, name, role
+      );
+    }
+  };
+
+  ensureStaff('admin@redhillinfra.com', 'admin123', 'Redhill Admin', 'super_admin');
+  ensureStaff('sitemanager@redhillinfra.com', 'site123', 'Site Manager', 'site_manager');
+  ensureStaff('finance@redhillinfra.com', 'finance123', 'Financial Officer', 'financial_officer');
+  ensureStaff('support@redhillinfra.com', 'support123', 'Support Agent', 'support_agent');
 
   // 2. Helper to upsert investor
   const ensureInvestor = (name: string, email: string, phone: string, login_id: string) => {

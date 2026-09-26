@@ -8,37 +8,47 @@ export const sendQuery = (req: AuthRequest, res: Response) => {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
   const { project_id, message, user_id } = req.body;
-  const targetUserId = req.user.role === 'admin' ? user_id : req.user.id;
+  const isStaff = req.user.role !== 'investor';
+  const targetUserId = isStaff ? (user_id || req.user.id) : req.user.id;
 
-  const result = db.prepare('INSERT INTO queries (user_id, project_id, message, sender_role) VALUES (?, ?, ?, ?)').run(
-    targetUserId, project_id, message, req.user.role
-  );
-
-  // Send email notifications
-  const project = db.prepare('SELECT name FROM projects WHERE id = ?').get(project_id) as any;
-  if (project) {
-    if (req.user.role === 'admin') {
-      const investor = db.prepare('SELECT email, name FROM users WHERE id = ?').get(targetUserId) as any;
-      if (investor) {
-        sendEmail({
-          to: investor.email,
-          subject: `New Reply to Your Query: ${project.name}`,
-          html: `<h2>Redhill Infra</h2><p>Hello ${investor.name},</p><p>An administrator has replied to your query regarding <strong>${project.name}</strong>.</p><p><strong>Reply:</strong> ${message}</p><p>Please log in to your portal to respond.</p>`
-        }).catch(console.error);
-      }
-    } else {
-      const admins = db.prepare('SELECT email FROM users WHERE role = ?').all('admin') as any[];
-      if (admins.length > 0) {
-        sendEmail({
-          to: admins.map(a => a.email),
-          subject: `New Investor Query: ${project.name}`,
-          html: `<h2>Redhill Infra Admin Alert</h2><p>A new query has been posted by an investor for <strong>${project.name}</strong>.</p><p><strong>Message:</strong> ${message}</p><p>Please log in to the admin dashboard to reply.</p>`
-        }).catch(console.error);
-      }
-    }
+  if (!project_id || !message || !targetUserId) {
+    return res.status(400).json({ error: 'Missing required fields: project_id, message, user_id' });
   }
 
-  res.json({ id: result.lastInsertRowid, created_at: new Date().toISOString() });
+  try {
+    const result = db.prepare('INSERT INTO queries (user_id, project_id, message, sender_role) VALUES (?, ?, ?, ?)').run(
+      targetUserId, project_id, message.trim(), req.user.role
+    );
+
+    // Send email notifications asynchronously without blocking the reply
+    const project = db.prepare('SELECT name FROM projects WHERE id = ?').get(project_id) as any;
+    if (project) {
+      if (isStaff) {
+        const investor = db.prepare('SELECT email, name FROM users WHERE id = ?').get(targetUserId) as any;
+        if (investor && investor.email) {
+          sendEmail({
+            to: investor.email,
+            subject: `New Reply to Your Query: ${project.name}`,
+            html: `<h2>Redhill Infra</h2><p>Hello ${investor.name},</p><p>A representative has replied to your query regarding <strong>${project.name}</strong>.</p><p><strong>Reply:</strong> ${message}</p><p>Please log in to your portal to respond.</p>`
+          }).catch((err: any) => console.error('Email notification error:', err));
+        }
+      } else {
+        const admins = db.prepare("SELECT email FROM users WHERE role IN ('admin', 'super_admin', 'senior_admin', 'support_agent')").all() as any[];
+        if (admins.length > 0) {
+          sendEmail({
+            to: admins.map(a => a.email),
+            subject: `New Investor Query: ${project.name}`,
+            html: `<h2>Redhill Infra Admin Alert</h2><p>A new query has been posted by an investor for <strong>${project.name}</strong>.</p><p><strong>Message:</strong> ${message}</p><p>Please log in to the admin dashboard to reply.</p>`
+          }).catch((err: any) => console.error('Email notification error:', err));
+        }
+      }
+    }
+
+    res.json({ id: result.lastInsertRowid, created_at: new Date().toISOString() });
+  } catch (err: any) {
+    console.error('Error inserting query:', err);
+    res.status(500).json({ error: err.message || 'Failed to send query' });
+  }
 };
 
 export const getInvestorQueries = (req: AuthRequest, res: Response) => {
