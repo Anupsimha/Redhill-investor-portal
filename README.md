@@ -107,10 +107,17 @@ npm run dev
 
 ## 🔑 Default Login Credentials
 
-| Role | Email / Login ID | Password | Access |
+| Role | Email / Login ID | Password | Access Level |
 | :--- | :--- | :--- | :--- |
-| **Super Admin** | `admin@redhillinfra.com` | `admin123` | Full admin dashboard, milestone manager, investor assignments, notifications |
-| **Investor** | `investor@example.com` or `jo210` | `investor123` | Investor portfolio, live project tracking, documents, media & ledger |
+| **Super Admin** | `admin@redhillinfra.com` | `admin123` | Full admin dashboard, milestone manager, investor assignments, staff management, notifications |
+| **Site Engineer / Manager** | `sitemanager@redhillinfra.com` | `site123` | Site progress, milestones update, CCTV stream, field notes |
+| **Financial Officer** | `finance@redhillinfra.com` | `finance123` | Investment ledger, transactions, escrow management, payouts |
+| **Support Agent** | `support@redhillinfra.com` | `support123` | Investor inquiries, support tickets, communication hub |
+| **Investor (John)** | `investor@example.com` or `jo210` | `investor123` | Investor portfolio, live project tracking, documents, media & ledger |
+| **Investor (Sarah)** | `sarah.investor@example.com` or `sa223` | `investor123` | Portfolio view, documents & queries |
+| **Investor (David)** | `david.investor@example.com` or `da445` | `investor123` | Portfolio view, documents & queries |
+| **Investor (Michael)** | `michael.investor@example.com` or `mi667` | `investor123` | Portfolio view, documents & queries |
+| **Investor (Vinay)** | `vinaykl990280487@gmail.com` or `vi870` | `investor123` | Custom investor account |
 
 ---
 

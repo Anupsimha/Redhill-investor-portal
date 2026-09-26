@@ -652,10 +652,10 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="max-w-4xl mx-auto h-[600px] flex flex-col bg-redhill-gray rounded-2xl border border-white/[0.08] shadow-2xl overflow-hidden"
+              className="max-w-4xl mx-auto h-[640px] sm:h-[700px] flex flex-col bg-redhill-gray rounded-2xl border border-white/[0.08] shadow-2xl overflow-hidden"
             >
               {/* Support Desk Header */}
-              <div className="p-5 sm:p-6 border-b border-white/[0.08] bg-[#1A1D27] flex items-center justify-between">
+              <div className="p-4 sm:p-5 border-b border-white/[0.08] bg-[#1A1D27] flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3.5">
                   <div className="w-11 h-11 bg-gradient-to-br from-redhill-red to-red-700 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-redhill-red/20 border border-white/10">
                     <MessageCircle className="w-5 h-5" />
@@ -676,7 +676,7 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
               </div>
 
               {/* Chat Message Stream */}
-              <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#10121A] to-[#141620] min-h-[420px] max-h-[550px]">
+              <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#10121A] to-[#141620]">
                 {queries.length > 0 ? queries.map((q) => {
                   const isInvestor = q.sender_role === 'investor';
                   return (
@@ -717,9 +717,9 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
                     </div>
                   );
                 }) : (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-12">
-                    <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mb-4 border border-white/10">
-                      <MessageCircle className="w-8 h-8 text-gray-400" />
+                  <div className="h-full min-h-[220px] flex flex-col items-center justify-center text-center p-8">
+                    <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-3 border border-white/10">
+                      <MessageCircle className="w-7 h-7 text-gray-400" />
                     </div>
                     <h3 className="font-bold text-white text-base mb-1 font-serif">No inquiries posted yet</h3>
                     <p className="text-xs text-gray-400 max-w-sm">Have a question regarding construction progress, payment receipts, or allotment details? Submit a query below.</p>
@@ -729,9 +729,9 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
               </div>
 
               {/* Quick Inquiry Chips */}
-              <div className="px-4 py-2 bg-[#171A24] border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto pb-2">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest shrink-0 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-amber-400" />
+              <div className="px-4 py-2.5 bg-[#171A24] border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto shrink-0 z-10">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest shrink-0 flex items-center gap-1.5 pl-1">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                   Suggestions:
                 </span>
                 {[
@@ -743,7 +743,7 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
                     key={idx}
                     type="button"
                     onClick={() => setNewMessage(text)}
-                    className="px-3 py-1 bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.08] rounded-lg text-xs text-gray-300 hover:text-white whitespace-nowrap transition-all cursor-pointer text-left"
+                    className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] hover:border-redhill-red/30 rounded-xl text-xs text-gray-300 hover:text-white whitespace-nowrap transition-all cursor-pointer text-left shrink-0"
                   >
                     {text}
                   </button>
@@ -751,7 +751,7 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
               </div>
 
               {/* Input Form */}
-              <form onSubmit={handleSendMessage} className="p-4 bg-[#151722] border-t border-white/[0.08] flex items-center gap-3">
+              <form onSubmit={handleSendMessage} className="p-4 bg-[#151722] border-t border-white/[0.08] flex items-center gap-3 shrink-0">
                 <input
                   type="text"
                   value={newMessage}

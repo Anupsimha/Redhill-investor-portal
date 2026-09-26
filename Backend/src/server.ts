@@ -79,6 +79,11 @@ try {
   console.error('Database seeding failed:', err);
 }
 
+// Root Health Check
+app.get('/', (_req, res) => {
+  res.json({ status: 'online', message: 'Redhill Investor Portal Backend API is running' });
+});
+
 // Register Routes
 app.use(routes);
 
