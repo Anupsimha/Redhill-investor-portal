@@ -28,7 +28,7 @@ export const seedData = () => {
   const inv4 = ensureUser('michael.investor@example.com', 'investor123', 'Michael Chang', 'investor', '+91 98765 55667', 'mi667');
   const invVinay = ensureUser('vinaykl990280487@gmail.com', 'investor123', 'Vinay (You)', 'investor', '+91 99028 04870', 'vi870');
 
-  // 3. Ensure Projects exist
+  // 3. Ensure Projects exist and update to high-res demo visuals
   let projectA: any = db.prepare('SELECT * FROM projects WHERE name LIKE ?').get('%Signature Towers%');
   if (!projectA) {
     const res = db.prepare('INSERT INTO projects (name, location, total_value, status, image_url, completion_percentage, cctv_url) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
@@ -36,11 +36,16 @@ export const seedData = () => {
       'Whitefield, Bangalore',
       '₹450 Cr',
       'Construction',
-      'https://images.unsplash.com/photo-1541888946425-d81bb19480c5?auto=format&fit=crop&q=80&w=2070',
+      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=2070',
       60,
       'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
     );
     projectA = { id: res.lastInsertRowid, name: 'Redhill Signature Towers (Project A)' };
+  } else {
+    db.prepare('UPDATE projects SET image_url = ? WHERE id = ?').run(
+      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=2070',
+      projectA.id
+    );
   }
 
   let projectB: any = db.prepare('SELECT * FROM projects WHERE name LIKE ?').get('%Emerald Gardens%');
@@ -50,11 +55,16 @@ export const seedData = () => {
       'Sarjapur Road, Bangalore',
       '₹280 Cr',
       'Approval',
-      'https://images.unsplash.com/photo-1503387762-592dea58ef23?auto=format&fit=crop&q=80&w=2070',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2070',
       25,
       'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
     );
     projectB = { id: res.lastInsertRowid, name: 'Redhill Emerald Gardens (Project B)' };
+  } else {
+    db.prepare('UPDATE projects SET image_url = ? WHERE id = ?').run(
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2070',
+      projectB.id
+    );
   }
 
   let projectC: any = db.prepare('SELECT * FROM projects WHERE name LIKE ?').get('%Pinnacle Heights%');
@@ -69,6 +79,11 @@ export const seedData = () => {
       'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
     );
     projectC = { id: res.lastInsertRowid, name: 'Redhill Pinnacle Heights (Project C)' };
+  } else {
+    db.prepare('UPDATE projects SET image_url = ? WHERE id = ?').run(
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=2070',
+      projectC.id
+    );
   }
 
   let projectD: any = db.prepare('SELECT * FROM projects WHERE name LIKE ?').get('%Sovereign Estates%');
@@ -83,6 +98,11 @@ export const seedData = () => {
       'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
     );
     projectD = { id: res.lastInsertRowid, name: 'Redhill Sovereign Estates (Project D)' };
+  } else {
+    db.prepare('UPDATE projects SET image_url = ? WHERE id = ?').run(
+      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=2070',
+      projectD.id
+    );
   }
 
   // 4. Assign Investors to Projects & populate Ledger:
