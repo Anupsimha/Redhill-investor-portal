@@ -27,9 +27,13 @@ export default function Login({ onLogin }: LoginProps) {
 
     try {
       const endpoint = isLogin ? '/api/login' : '/api/signup';
+      const cleanEmail = email.trim();
+      const cleanName = name.trim();
+      const cleanPhone = phone.trim();
+
       const body = isLogin 
-        ? { email, password }
-        : { name, email, phone, password };
+        ? { email: cleanEmail, password }
+        : { name: cleanName, email: cleanEmail, phone: cleanPhone, password };
 
       const res = await apiFetch(endpoint, {
         method: 'POST',
@@ -142,7 +146,9 @@ export default function Login({ onLogin }: LoginProps) {
             </AnimatePresence>
 
             <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{isLogin ? 'Email or Login ID' : 'Email Address'}</label>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                {isLogin ? 'Email, Login ID or Phone Number' : 'Email Address'}
+              </label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
                 <input 
@@ -150,7 +156,7 @@ export default function Login({ onLogin }: LoginProps) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-11 pr-4 py-3.5 bg-white/[0.04] border border-white/[0.08] text-white placeholder-gray-600 rounded-xl focus:bg-white/[0.06] focus:ring-2 focus:ring-redhill-red/20 focus:border-redhill-red/50 transition-all outline-none"
-                  placeholder={isLogin ? 'name@example.com or jo210' : 'name@example.com'}
+                  placeholder={isLogin ? 'name@example.com, jo210 or +91...' : 'name@example.com'}
                   required
                 />
               </div>

@@ -4,13 +4,14 @@ import bcrypt from 'bcryptjs';
 export const seedData = () => {
   // Helper to upsert user
   const ensureUser = (email: string, passwordPlain: string, name: string, role: string, phone: string = '', login_id: string = '') => {
-    let u: any = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    const cleanEmail = email.trim().toLowerCase();
+    let u: any = db.prepare('SELECT * FROM users WHERE LOWER(TRIM(email)) = ?').get(cleanEmail);
     if (!u) {
       const hashedPassword = bcrypt.hashSync(passwordPlain, 10);
       const res = db.prepare('INSERT INTO users (email, password, name, role, phone, login_id) VALUES (?, ?, ?, ?, ?, ?)').run(
-        email, hashedPassword, name, role, phone, login_id || null
+        cleanEmail, hashedPassword, name, role, phone, login_id || null
       );
-      u = { id: res.lastInsertRowid, email, name, role, phone, login_id };
+      u = { id: res.lastInsertRowid, email: cleanEmail, name, role, phone, login_id };
     }
     return u;
   };

@@ -155,6 +155,13 @@ if (!hasLoginId) {
     }
 }
 
+// Migration: Normalize all user emails to lowercase and trimmed
+try {
+    db.exec('UPDATE users SET email = LOWER(TRIM(email)) WHERE email IS NOT NULL');
+} catch (e) {
+    console.error('Migration for normalizing user emails failed:', e);
+}
+
 const tableInfoProjects = db.prepare("PRAGMA table_info(projects)").all() as any[];
 const hasCctvUrl = tableInfoProjects.some(col => col.name === 'cctv_url');
 if (!hasCctvUrl) {
