@@ -57,6 +57,34 @@ export const seedData = () => {
     projectB = { id: res.lastInsertRowid, name: 'Redhill Emerald Gardens (Project B)' };
   }
 
+  let projectC: any = db.prepare('SELECT * FROM projects WHERE name LIKE ?').get('%Pinnacle Heights%');
+  if (!projectC) {
+    const res = db.prepare('INSERT INTO projects (name, location, total_value, status, image_url, completion_percentage, cctv_url) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+      'Redhill Pinnacle Heights (Project C)',
+      'Hebbal / Airport Corridor, Bangalore',
+      '₹620 Cr',
+      'Pre-Launch',
+      'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=2070',
+      10,
+      'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
+    );
+    projectC = { id: res.lastInsertRowid, name: 'Redhill Pinnacle Heights (Project C)' };
+  }
+
+  let projectD: any = db.prepare('SELECT * FROM projects WHERE name LIKE ?').get('%Sovereign Estates%');
+  if (!projectD) {
+    const res = db.prepare('INSERT INTO projects (name, location, total_value, status, image_url, completion_percentage, cctv_url) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+      'Redhill Sovereign Estates (Project D)',
+      'Devanahalli, Bangalore',
+      '₹540 Cr',
+      'Exclusive Edition',
+      'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=2070',
+      15,
+      'https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4'
+    );
+    projectD = { id: res.lastInsertRowid, name: 'Redhill Sovereign Estates (Project D)' };
+  }
+
   // 4. Assign Investors to Projects & populate Ledger:
   const assignIfNotExists = (userId: number, projectId: number, contribution: string, amount: number, sqft: number, price: number) => {
     const existing = db.prepare('SELECT * FROM investor_projects WHERE user_id = ? AND project_id = ?').get(userId, projectId);

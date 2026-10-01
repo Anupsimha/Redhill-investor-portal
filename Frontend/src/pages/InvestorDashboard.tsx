@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { User, Project } from '../types';
 import { Link } from 'react-router-dom';
 import {
   LogOut, MapPin, TrendingUp, ChevronRight,
   IndianRupee, Maximize, BarChart3, Wallet, LayoutDashboard, Calendar,
-  Sparkles, Building2, Phone, X, Download
+  Sparkles, Building2, Phone, X, Download, Compass
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -15,6 +15,7 @@ import Layout from '../components/Layout';
 import Skeleton from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
 import StatusChip from '../components/StatusChip';
+import ShowcaseExplore from '../components/ShowcaseExplore';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { apiFetch } from '../api/client';
 import { getAssetUrl } from '../config/env';
@@ -30,6 +31,7 @@ function formatNumber(n: number): string {
 
 export default function InvestorDashboard({ user, onLogout }: InvestorDashboardProps) {
   const [showAdSidebar, setShowAdSidebar] = useState(true);
+  const [viewMode, setViewMode] = useState<'portfolio' | 'explore'>('portfolio');
 
   const { data: projects = [], isLoading: loadingProjects } = useQuery<Project[]>({
     queryKey: ['investor-projects'],
@@ -123,6 +125,19 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
     }
   };
 
+  // If user has 0 assigned projects (e.g. newly signed-up non-investor) or toggled to explore mode, show the Showcase Ads experience
+  if (!loading && (projects.length === 0 || viewMode === 'explore')) {
+    return (
+      <ShowcaseExplore 
+        user={user} 
+        onLogout={onLogout} 
+        apiProjects={newProjects} 
+        hasInvestments={projects.length > 0}
+        onNavigateToPortfolio={() => setViewMode('portfolio')}
+      />
+    );
+  }
+
   return (
     <Layout user={user} onLogout={onLogout}>
 
@@ -134,9 +149,18 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
         
         <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div className="flex items-center gap-2 text-redhill-red font-bold uppercase tracking-[0.2em] text-[10px] mb-3">
-              <span className="w-8 h-[2px] bg-redhill-red" />
-              Portfolio Overview
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2 text-redhill-red font-bold uppercase tracking-[0.2em] text-[10px]">
+                <span className="w-8 h-[2px] bg-redhill-red" />
+                Portfolio Overview
+              </div>
+              <button
+                onClick={() => setViewMode('explore')}
+                className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500/20 to-redhill-red/20 hover:from-amber-500/30 hover:to-redhill-red/30 text-amber-300 px-4 py-2 rounded-xl border border-amber-500/30 transition-all font-bold text-xs cursor-pointer shadow-md"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                Explore New Launches
+              </button>
             </div>
             <h1 className="text-4xl sm:text-5xl font-bold text-white mb-2">
               {(() => {

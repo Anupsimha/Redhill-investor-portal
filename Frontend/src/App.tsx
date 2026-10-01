@@ -8,6 +8,7 @@ const Login = lazy(() => import('./pages/Login'));
 const InvestorDashboard = lazy(() => import('./pages/InvestorDashboard'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
+const ShowcaseExplore = lazy(() => import('./components/ShowcaseExplore'));
 
 const LoadingScreen = () => (
   <div className="min-h-screen flex items-center justify-center bg-redhill-gray">
@@ -67,6 +68,11 @@ export default function App() {
           <Route 
             path="/project/:id" 
             element={user ? <ProjectDetail user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} 
+          />
+
+          <Route 
+            path="/explore" 
+            element={user ? <ShowcaseExplore user={user} onLogout={handleLogout} /> : <Navigate to="/login" />} 
           />
 
           <Route 
