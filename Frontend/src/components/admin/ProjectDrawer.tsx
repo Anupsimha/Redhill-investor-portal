@@ -12,7 +12,6 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { apiFetch } from '../../api/client';
 import { getAssetUrl } from '../../config/env';
-import InteractiveMap from '../InteractiveMap';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -45,7 +44,7 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
   const [loading, setLoading] = useState(false);
 
   // Active tab
-  const [activeTab, setActiveTab] = useState<'milestones' | 'updates' | 'cctv' | 'map'>('milestones');
+  const [activeTab, setActiveTab] = useState<'milestones' | 'updates' | 'cctv'>('milestones');
 
   // Milestone form state
   const [showMilestoneForm, setShowMilestoneForm] = useState(false);
@@ -339,7 +338,6 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
             { id: 'milestones' as const, label: 'Milestones', count: milestones.length },
             { id: 'updates' as const, label: 'Media Updates', count: updates.length },
             { id: 'cctv' as const, label: 'CCTV Feed' },
-            { id: 'map' as const, label: 'GIS Location Map' },
           ].map(tab => (
             <button
               key={tab.id}
@@ -918,16 +916,6 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
                   {savingCctv ? 'Saving...' : 'Save CCTV URL'}
                 </button>
               </div>
-            </div>
-          )}
-
-          {/* Tab 4: GIS Location Map */}
-          {activeTab === 'map' && (
-            <div className="space-y-6 animate-fade-in">
-              <InteractiveMap
-                highlightProjectId={project.id}
-                standalone
-              />
             </div>
           )}
         </div>

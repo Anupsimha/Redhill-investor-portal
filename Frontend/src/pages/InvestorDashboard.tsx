@@ -16,6 +16,7 @@ import Skeleton from '../components/Skeleton';
 import EmptyState from '../components/EmptyState';
 import StatusChip from '../components/StatusChip';
 import ShowcaseExplore from '../components/ShowcaseExplore';
+import InteractiveMap from '../components/InteractiveMap';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { apiFetch } from '../api/client';
 import { getAssetUrl } from '../config/env';
@@ -464,6 +465,11 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
               })}
             </div>
           )}
+
+          {/* Strategic Asset Google Map */}
+          <div className="mt-10">
+            <InteractiveMap />
+          </div>
         </main>
 
         {/* Advertisement Sidebar */}
