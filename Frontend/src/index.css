@@ -6,13 +6,13 @@
   --font-serif: "Playfair Display", serif;
   
   --color-redhill-red: #E31E24;
-  --color-redhill-dark: #1E222B;
-  --color-redhill-gray: #292F3D;
+  --color-redhill-dark: #13161F;
+  --color-redhill-gray: #1E222B;
 }
 
 @layer base {
   body {
-    @apply font-sans bg-[#1E222B] text-gray-100 antialiased;
+    @apply font-sans bg-[#13161F] text-gray-100 antialiased;
   }
 
   /* Custom Scrollbar for premium feel */
@@ -21,10 +21,10 @@
     height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: #1E222B;
+    background: #13161F;
   }
   ::-webkit-scrollbar-thumb {
-    background: #373E4F;
+    background: #2A303F;
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
@@ -33,11 +33,11 @@
 }
 
 .glass {
-  @apply bg-[#292F3D]/80 backdrop-blur-xl border border-white/[0.08];
+  @apply bg-[#1E222B]/80 backdrop-blur-xl border border-white/[0.08];
 }
 
 .card-shadow {
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
 }
 
 

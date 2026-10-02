@@ -566,34 +566,37 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
 
   // Navigation Items
   const sidebarNav = (closeMenu: () => void) => (
-    <nav className="flex-1 p-4 space-y-2">
+    <nav className="flex-1 space-y-1.5 pt-2">
       {[
-        { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-        { id: 'projects', label: 'Projects', icon: Building2, hidden: isSupportAgent },
-        { id: 'investors', label: 'Investors', icon: Users, hidden: isSiteManager || isMarketingManager || isSupportAgent },
+        { id: 'overview', label: 'Executive Overview', icon: LayoutDashboard },
+        { id: 'projects', label: 'Flagship Projects', icon: Building2, hidden: isSupportAgent },
+        { id: 'investors', label: 'Investor Directory', icon: Users, hidden: isSiteManager || isMarketingManager || isSupportAgent },
         { id: 'ledger', label: 'Investment Ledger', icon: BookOpen, hidden: isSiteManager || isMarketingManager || isSupportAgent },
-        { id: 'queries', label: 'Investor Queries', icon: MessageCircle },
-        { id: 'admins', label: 'Admin Management', icon: Shield, hidden: !isSuperAdmin },
-      ].filter(item => !item.hidden).map((item) => (
-        <button
-          key={item.id}
-          onClick={() => { setActiveView(item.id as any); closeMenu(); }}
-          className={cn(
-            "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm cursor-pointer",
-            activeView === item.id
-              ? "bg-redhill-red text-white shadow-lg shadow-redhill-red/20"
-              : "text-gray-400 hover:text-white hover:bg-white/5"
-          )}
-        >
-          <item.icon className="w-5 h-5" />
-          <span className="flex-1 text-left">{item.label}</span>
-          {item.id === 'queries' && unansweredCount > 0 && (
-            <span className="min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
-              {unansweredCount}
-            </span>
-          )}
-        </button>
-      ))}
+        { id: 'queries', label: 'Inquiries & Site Visits', icon: MessageCircle },
+        { id: 'admins', label: 'Staff & Roles', icon: Shield, hidden: !isSuperAdmin },
+      ].filter(item => !item.hidden).map((item) => {
+        const isActive = activeView === item.id;
+        return (
+          <button
+            key={item.id}
+            onClick={() => { setActiveView(item.id as any); closeMenu(); }}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold text-xs sm:text-sm cursor-pointer",
+              isActive
+                ? "bg-gradient-to-r from-redhill-red via-red-600 to-amber-600 text-white shadow-lg shadow-redhill-red/30 border border-redhill-red/40 font-bold scale-[1.02]"
+                : "text-gray-300 hover:text-white hover:bg-white/[0.06] border border-transparent"
+            )}
+          >
+            <item.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-gray-400")} />
+            <span className="flex-1 text-left">{item.label}</span>
+            {item.id === 'queries' && unansweredCount > 0 && (
+              <span className="min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center animate-pulse shadow-sm">
+                {unansweredCount}
+              </span>
+            )}
+          </button>
+        );
+      })}
     </nav>
   );
 
@@ -607,79 +610,98 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
             projects={projects}
             investors={investors}
             unansweredCount={unansweredCount}
+            adminsCount={adminsList.length}
             analytics={analyticsData}
             setActiveView={setActiveView}
+            onNewProject={() => setShowProjectModal(true)}
+            onNewInvestor={() => setShowInvestorModal(true)}
           />
         )}
 
         {/* Projects Tab */}
         {activeView === 'projects' && !isSupportAgent && (
           <div className="space-y-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-white/[0.08]">
               <div>
-                <h1 className="text-3xl font-bold text-white font-serif">Project Management</h1>
-                <p className="text-gray-400 mt-1">Manage infrastructure developments, milestones, and live CCTV feeds.</p>
+                <div className="flex items-center gap-2 text-redhill-red font-bold uppercase tracking-[0.2em] text-xs mb-1">
+                  <span className="w-5 h-[2px] bg-redhill-red" />
+                  Portfolio Developments
+                </div>
+                <h1 className="text-3xl font-extrabold text-white font-serif tracking-tight">Project Management</h1>
+                <p className="text-gray-400 mt-1 text-xs sm:text-sm">Manage construction developments, milestone schedules, and live CCTV feeds.</p>
               </div>
               {!isSiteManager && (
                 <button
                   onClick={() => setShowProjectModal(true)}
-                  className="bg-redhill-red text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-redhill-red/20 hover:bg-red-700 transition-all cursor-pointer"
+                  className="bg-redhill-red hover:bg-red-700 text-white px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-xl shadow-redhill-red/30 transition-all cursor-pointer text-xs sm:text-sm hover:scale-[1.02]"
                 >
-                  <PlusCircle className="w-5 h-5" />
-                  New Project
+                  <PlusCircle className="w-4 h-4" />
+                  <span>New Project Launch</span>
                 </button>
               )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {projects.map(p => (
-                <div key={p.id} className="bg-redhill-gray rounded-2xl border border-white/[0.06] shadow-lg overflow-hidden flex flex-col hover:border-white/10 transition-all">
-                  <div className="h-44 relative">
+                <div 
+                  key={p.id} 
+                  className="bg-[#1E222B] rounded-2xl border border-white/[0.08] shadow-xl overflow-hidden flex flex-col hover:border-redhill-red/50 hover:shadow-2xl hover:shadow-redhill-red/15 transition-all duration-300 group hover:-translate-y-1"
+                >
+                  <div className="h-48 relative overflow-hidden">
                     <img
                       src={getAssetUrl(p.image_url) || 'https://picsum.photos/seed/project/800/600'}
                       alt={p.name}
                       referrerPolicy="no-referrer"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/fallback/800/600';
+                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=600';
                       }}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
                     />
-                    <div className="absolute top-4 right-4 shadow-lg shadow-black/20 rounded-full bg-black/40 backdrop-blur">
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E222B] via-transparent to-black/30" />
+                    <div className="absolute top-3 right-3 shadow-lg rounded-full bg-black/60 backdrop-blur border border-white/20">
                       <StatusChip status={p.status} />
                     </div>
                   </div>
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="flex justify-between items-start gap-4 mb-2">
-                      <h3 className="text-lg font-bold text-white font-serif leading-tight">{p.name}</h3>
-                      <Link
-                        to={`/project/${p.id}`}
-                        target="_blank"
-                        className="p-1.5 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-colors"
-                        title="Preview as Investor"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </Link>
+                  <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      <div className="flex justify-between items-start gap-4 mb-1">
+                        <h3 className="text-lg font-bold text-white font-serif leading-tight group-hover:text-amber-300 transition-colors">
+                          {p.name}
+                        </h3>
+                        <Link
+                          to={`/project/${p.id}`}
+                          target="_blank"
+                          className="p-1.5 bg-white/[0.06] hover:bg-white/[0.12] text-gray-300 hover:text-white rounded-lg transition-colors border border-white/10"
+                          title="Preview as Investor"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Link>
+                      </div>
+                      <p className="text-xs text-gray-400 flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-redhill-red shrink-0" />
+                        <span className="truncate">{p.location}</span>
+                      </p>
                     </div>
-                    <p className="text-xs text-gray-400 flex items-center gap-1 mb-4">
-                      <MapPin className="w-3.5 h-3.5 text-redhill-red shrink-0" />
-                      <span className="truncate">{p.location}</span>
-                    </p>
                     
-                    <div className="mt-auto space-y-3">
+                    <div className="space-y-3 pt-3 border-t border-white/[0.06]">
                       <div>
-                        <div className="flex justify-between text-xs text-gray-400 mb-1">
-                          <span>Completion Progress</span>
-                          <span className="font-bold text-white">{p.completion_percentage}%</span>
+                        <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                          <span>Construction Completion</span>
+                          <span className="font-bold text-amber-400">{p.completion_percentage}%</span>
                         </div>
-                        <div className="w-full bg-black/30 h-2 rounded-full overflow-hidden">
-                          <div className="bg-redhill-red h-full rounded-full transition-all duration-500" style={{ width: `${p.completion_percentage}%` }} />
+                        <div className="w-full bg-black/40 h-2 rounded-full overflow-hidden border border-white/10">
+                          <div 
+                            className="bg-gradient-to-r from-redhill-red to-amber-500 h-full rounded-full transition-all duration-500" 
+                            style={{ width: `${p.completion_percentage}%` }} 
+                          />
                         </div>
                       </div>
                       <button
                         onClick={() => openProjectDrawer(p)}
-                        className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white text-xs font-bold rounded-xl transition-all border border-white/10 cursor-pointer"
+                        className="w-full py-3 bg-white/[0.06] hover:bg-redhill-red text-white text-xs font-bold rounded-xl transition-all border border-white/[0.08] hover:border-redhill-red cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                       >
-                        Manage Milestones & Updates &rarr;
+                        <span>Manage Milestones & CCTV Updates</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
@@ -692,49 +714,53 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
         {/* Investors Tab */}
         {activeView === 'investors' && (isSuperAdmin || isFinancialOfficer) && (
           <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-white/[0.08]">
               <div>
-                <h1 className="text-3xl font-bold text-white font-serif">Investor Directory & Allocations</h1>
-                <p className="text-gray-400 mt-1">Manage investor profiles, login credentials, and project assignments.</p>
+                <div className="flex items-center gap-2 text-emerald-400 font-bold uppercase tracking-[0.2em] text-xs mb-1">
+                  <span className="w-5 h-[2px] bg-emerald-400" />
+                  Client Relationship Desk
+                </div>
+                <h1 className="text-3xl font-extrabold text-white font-serif tracking-tight">Investor Directory & Allocations</h1>
+                <p className="text-gray-400 mt-1 text-xs sm:text-sm">Manage investor accounts, login credentials, and project portfolio allocations.</p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowAssignModal(true)}
-                  className="px-5 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-bold border border-white/10 transition-all flex items-center gap-2 cursor-pointer text-sm"
+                  className="px-5 py-3 bg-white/[0.06] hover:bg-white/[0.12] text-white rounded-xl font-bold border border-white/[0.1] transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
                 >
-                  <PlusCircle className="w-4 h-4" />
-                  Assign Project
+                  <PlusCircle className="w-4 h-4 text-amber-400" />
+                  <span>Assign Project</span>
                 </button>
                 <button
                   onClick={() => setShowInvestorModal(true)}
-                  className="px-5 py-3 bg-redhill-red hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-redhill-red/20 flex items-center gap-2 cursor-pointer text-sm"
+                  className="px-5 py-3 bg-redhill-red hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-redhill-red/30 flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
                 >
                   <UserPlus className="w-4 h-4" />
-                  Add Investor
+                  <span>Add Investor</span>
                 </button>
               </div>
             </div>
 
             {/* Investors Table */}
-            <div className="bg-redhill-gray rounded-2xl border border-white/[0.06] shadow-lg overflow-hidden">
-              <div className="p-6 border-b border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4 bg-black/10">
-                <h2 className="font-bold text-white text-lg font-serif">Registered Investors</h2>
-                <div className="relative w-full sm:w-64">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <div className="bg-[#1E222B] rounded-3xl border border-white/[0.08] shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-white/[0.08] flex flex-col sm:flex-row justify-between items-center gap-4 bg-black/20">
+                <h2 className="font-bold text-white text-lg font-serif">Registered Investors ({investors.length})</h2>
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
                   <input
                     type="text"
-                    placeholder="Search investor..."
+                    placeholder="Search name, email, or ID..."
                     value={investorSearch}
                     onChange={(e) => setInvestorSearch(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-sm text-white focus:bg-white/[0.05]"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl outline-none text-xs sm:text-sm text-white focus:bg-white/[0.08] focus:border-redhill-red/40"
                   />
                 </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-black/5 border-b border-white/[0.06] text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                      <th className="px-6 py-4">Name</th>
+                    <tr className="bg-black/30 border-b border-white/[0.08] text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <th className="px-6 py-4">Investor</th>
                       <th className="px-6 py-4">Email</th>
                       <th className="px-6 py-4">Login ID</th>
                       <th className="px-6 py-4">Phone</th>
@@ -744,18 +770,25 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                   <tbody className="divide-y divide-white/[0.05] text-sm">
                     {paginatedInvestors.map(i => (
                       <tr key={i.id} className="hover:bg-white/[0.02] transition-colors">
-                        <td className="px-6 py-4 font-bold text-white">{i.name}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-redhill-red to-amber-500 flex items-center justify-center text-white font-bold text-xs shadow-md">
+                              {i.name ? i.name.charAt(0).toUpperCase() : 'I'}
+                            </div>
+                            <span className="font-bold text-white">{i.name}</span>
+                          </div>
+                        </td>
                         <td className="px-6 py-4 text-gray-300 font-mono text-xs">{i.email}</td>
                         <td className="px-6 py-4">
-                          <span className="font-mono text-xs bg-white/5 px-2 py-1 rounded border border-white/10 text-amber-400">
+                          <span className="font-mono text-xs bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/20 text-amber-400 font-bold">
                             {i.login_id || 'N/A'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-gray-400">{i.phone || 'N/A'}</td>
+                        <td className="px-6 py-4 text-gray-400 text-xs">{i.phone || 'N/A'}</td>
                         <td className="px-6 py-4 text-right">
                           <button
                             onClick={() => handleDeleteInvestor(i.id, i.name)}
-                            className="p-2 text-gray-500 hover:text-red-400 transition-colors cursor-pointer"
+                            className="p-2 text-gray-500 hover:text-redhill-red hover:bg-white/[0.04] rounded-lg transition-colors cursor-pointer"
                             title="Delete Investor"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -770,21 +803,21 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
 
             {/* Assignments Table */}
             {assignments.length > 0 && (
-              <div className="bg-redhill-gray rounded-2xl border border-white/[0.06] shadow-lg overflow-hidden">
-                <div className="p-6 border-b border-white/[0.06] bg-black/10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="bg-[#1E222B] rounded-3xl border border-white/[0.08] shadow-2xl overflow-hidden">
+                <div className="p-6 border-b border-white/[0.08] bg-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <h2 className="font-bold text-white text-lg font-serif">Active Investments</h2>
-                    <p className="text-sm text-gray-400 mt-1">Financial allocations per investor & project.</p>
+                    <h2 className="font-bold text-white text-lg font-serif">Active Portfolio Allocations</h2>
+                    <p className="text-xs text-gray-400 mt-0.5">Assigned developments and allotted area per investor.</p>
                   </div>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="bg-black/5 border-b border-white/[0.06] text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      <tr className="bg-black/30 border-b border-white/[0.08] text-[10px] font-black text-gray-400 uppercase tracking-widest">
                         <th className="px-5 py-3">Investor</th>
                         <th className="px-5 py-3">Project</th>
                         <th className="px-5 py-3">Investment</th>
-                        <th className="px-5 py-3">Allotted Sqft</th>
+                        <th className="px-5 py-3">Allotted Area</th>
                         <th className="px-5 py-3">Market Rate</th>
                         <th className="px-5 py-3 text-right">Actions</th>
                       </tr>
@@ -801,14 +834,14 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => { setTargetAssignment(a); setShowPaymentModal(true); }}
-                                className="p-2 text-gray-400 hover:text-emerald-400 bg-white/5 hover:bg-emerald-500/10 rounded-lg transition-all cursor-pointer"
+                                className="p-2 text-gray-400 hover:text-emerald-400 bg-white/[0.04] hover:bg-emerald-500/10 rounded-lg transition-all cursor-pointer border border-white/[0.06]"
                                 title="Record Payment / Invoice"
                               >
                                 <IndianRupee className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => { setTargetAssignment(a); setShowSubInvestmentModal(true); }}
-                                className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                                className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-emerald-500/20"
                                 title="Add Sub-Investment"
                               >
                                 <TrendingUp className="w-3.5 h-3.5" />
