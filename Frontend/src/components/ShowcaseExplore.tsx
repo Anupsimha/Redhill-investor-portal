@@ -44,6 +44,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
+import InteractiveMap, { MapProject } from './InteractiveMap';
 import { SHOWCASE_CONFIG, ShowcaseProject } from '../config/showcaseConfig';
 import { apiFetch } from '../api/client';
 
@@ -660,6 +661,36 @@ export default function ShowcaseExplore({
             ))}
           </div>
 
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      {/* 3.5 STRATEGIC INFRASTRUCTURE & LOCATION MATRIX MAP       */}
+      {/* ======================================================== */}
+      <section id="infrastructure-map-section" className="py-16 bg-[#13161F] border-t border-white/[0.06]">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 text-amber-300 text-xs font-bold border border-amber-500/20">
+              <Compass className="w-3.5 h-3.5 text-amber-400" />
+              <span>Bangalore Strategic Growth Corridors</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white font-serif tracking-tight">
+              Interactive Asset & Connectivity Map
+            </h2>
+            <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+              Explore the prime geographical positioning of Redhill developments across Bangalore's highest appreciating real estate sectors — with live transit times to Kempegowda Airport, Metro corridors, and IT SEZs.
+            </p>
+          </div>
+
+          <InteractiveMap
+            onBookSiteVisit={(mapProj) => {
+              const matchedShowcase = SHOWCASE_CONFIG.projects.find(p => p.id === mapProj.id || p.name.toLowerCase().includes(mapProj.name.toLowerCase()));
+              if (matchedShowcase) {
+                setSelectedProject(matchedShowcase);
+              }
+              setShowSiteVisitModal(true);
+            }}
+          />
         </div>
       </section>
 
