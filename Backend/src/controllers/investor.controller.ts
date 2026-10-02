@@ -18,26 +18,35 @@ export const getProjects = (req: AuthRequest, res: Response) => {
 export const getProjectById = (req: AuthRequest, res: Response) => {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
-  const isStaff = ['admin', 'super_admin', 'senior_admin', 'site_manager', 'financial_officer', 'marketing_manager', 'support_agent'].includes(req.user.role);
-  if (!access && !isStaff) return res.status(403).json({ error: 'Access denied' });
+  try {
+    const isStaff = ['admin', 'super_admin', 'senior_admin', 'site_manager', 'financial_officer', 'marketing_manager', 'support_agent'].includes(req.user.role);
+    const access: any = db.prepare('SELECT * FROM investor_projects WHERE user_id = ? AND project_id = ?').get(req.user.id, req.params.id);
 
-  const project: any = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+    if (!access && !isStaff) return res.status(403).json({ error: 'Access denied' });
 
-  if (access && project) {
-    project.contribution = access.contribution;
-    project.investment_amount = access.investment_amount;
-    project.allotted_sqft = access.allotted_sqft;
-    project.market_price_per_sqft = access.market_price_per_sqft;
-    project.price_at_investment = access.price_at_investment;
-    project.investment_date = access.investment_date;
+    const project: any = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+
+    if (access && project) {
+      project.contribution = access.contribution;
+      project.investment_amount = access.investment_amount;
+      project.allotted_sqft = access.allotted_sqft;
+      project.market_price_per_sqft = access.market_price_per_sqft;
+      project.price_at_investment = access.price_at_investment;
+      project.investment_date = access.investment_date;
+    }
+
+    const milestones = db.prepare('SELECT * FROM milestones WHERE project_id = ? ORDER BY id ASC').all(req.params.id);
+    const updates = db.prepare('SELECT * FROM progress_updates WHERE project_id = ? ORDER BY date DESC, id DESC').all(req.params.id);
+    const announcements = db.prepare('SELECT * FROM announcements WHERE project_id = ? ORDER BY date DESC, id DESC').all(req.params.id);
+    const queries = isStaff
+      ? db.prepare('SELECT * FROM queries WHERE project_id = ? ORDER BY created_at ASC').all(req.params.id)
+      : db.prepare('SELECT * FROM queries WHERE user_id = ? AND project_id = ? ORDER BY created_at ASC').all(req.user.id, req.params.id);
+
+    res.json({ project, milestones, updates, announcements, queries });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
   }
-
-  const milestones = db.prepare('SELECT * FROM milestones WHERE project_id = ? ORDER BY id ASC').all(req.params.id);
-  const updates = db.prepare('SELECT * FROM progress_updates WHERE project_id = ? ORDER BY date DESC, id DESC').all(req.params.id);
-  const announcements = db.prepare('SELECT * FROM announcements WHERE project_id = ? ORDER BY date DESC, id DESC').all(req.params.id);
-  const queries = db.prepare('SELECT * FROM queries WHERE user_id = ? AND project_id = ? ORDER BY created_at ASC').all(req.user.id, req.params.id);
-
-  res.json({ project, milestones, updates, announcements, queries });
 };
 
 export const getNewProjects = (req: AuthRequest, res: Response) => {

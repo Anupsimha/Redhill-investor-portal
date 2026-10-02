@@ -18,6 +18,7 @@ export const seedData = () => {
 
   // 1. Seed Staff / Admin Accounts (from demo credentials)
   ensureUser('admin@redhillinfra.com', 'admin123', 'Super Admin', 'super_admin');
+  ensureUser('admin@redhill.in', 'admin123', 'Super Admin', 'super_admin');
   ensureUser('sitemanager@redhillinfra.com', 'site123', 'Site Engineer', 'site_manager');
   ensureUser('finance@redhillinfra.com', 'finance123', 'Financial Officer', 'financial_officer');
   ensureUser('support@redhillinfra.com', 'support123', 'Support Agent', 'support_agent');
