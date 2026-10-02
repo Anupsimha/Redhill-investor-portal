@@ -37,6 +37,7 @@ interface AdminOverviewProps {
   setActiveView: (view: 'overview' | 'investors' | 'projects' | 'queries' | 'admins' | 'ledger') => void;
   onNewProject?: () => void;
   onNewInvestor?: () => void;
+  onSelectProject?: (project: Project) => void;
 }
 
 export default function AdminOverview({
@@ -47,7 +48,8 @@ export default function AdminOverview({
   adminsCount = 4,
   setActiveView,
   onNewProject,
-  onNewInvestor
+  onNewInvestor,
+  onSelectProject
 }: AdminOverviewProps) {
   const isSuperAdmin = user.role === 'super_admin' || user.role === 'senior_admin';
   const isSiteManager = user.role === 'site_manager';
@@ -164,7 +166,7 @@ export default function AdminOverview({
 
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
-                Flagship Developments
+                Projects
               </span>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl sm:text-4xl font-black text-white font-sans tracking-tight">
@@ -300,15 +302,15 @@ export default function AdminOverview({
       {/* 3. SHOWCASE PREVIEW PANELS (Matching Showcase Style)     */}
       {/* ======================================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Column: Active Flagship Developments */}
+        {/* Left Column: Active Projects */}
         {!isSupportAgent && (
           <div className="bg-[#1E222B] rounded-3xl border border-white/[0.08] shadow-2xl overflow-hidden flex flex-col">
             <div className="p-6 border-b border-white/[0.08] bg-black/20 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="w-3 h-3 rounded-full bg-blue-400 animate-ping" />
                 <div>
-                  <h2 className="font-bold text-white text-lg font-serif">Flagship Developments</h2>
-                  <p className="text-xs text-gray-400">Live infrastructure construction progress</p>
+                  <h2 className="font-bold text-white text-lg font-serif">Projects</h2>
+                  <p className="text-xs text-gray-400">Live construction progress & milestones</p>
                 </div>
               </div>
               <button
@@ -324,7 +326,9 @@ export default function AdminOverview({
               {projects.slice(0, 4).map(p => (
                 <div 
                   key={p.id} 
-                  className="p-4 rounded-2xl hover:bg-white/[0.03] transition-all flex items-center justify-between gap-4 group"
+                  onClick={() => onSelectProject ? onSelectProject(p) : setActiveView('projects')}
+                  className="p-4 rounded-2xl hover:bg-white/[0.05] border border-transparent hover:border-white/10 transition-all flex items-center justify-between gap-4 group cursor-pointer"
+                  title="Click to manage milestones, CCTV and progress updates"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
                     <div className="w-14 h-14 rounded-xl overflow-hidden bg-black/40 border border-white/10 shrink-0 relative">
@@ -339,8 +343,9 @@ export default function AdminOverview({
                       />
                     </div>
                     <div className="min-w-0">
-                      <h4 className="font-bold text-sm text-white group-hover:text-amber-300 transition-colors truncate">
-                        {p.name}
+                      <h4 className="font-bold text-sm text-white group-hover:text-amber-300 transition-colors truncate flex items-center gap-1.5">
+                        <span>{p.name}</span>
+                        <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-amber-400" />
                       </h4>
                       <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5 truncate">
                         <MapPin className="w-3 h-3 text-redhill-red shrink-0" />
@@ -349,11 +354,11 @@ export default function AdminOverview({
                     </div>
                   </div>
 
-                  <div className="text-right shrink-0">
+                  <div className="text-right shrink-0 flex flex-col items-end gap-1.5">
                     <span className="text-[10px] font-extrabold text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded-full border border-amber-400/20">
                       {p.status}
                     </span>
-                    <div className="flex items-center gap-2 mt-2 justify-end">
+                    <div className="flex items-center gap-2">
                       <div className="w-20 bg-black/40 h-1.5 rounded-full overflow-hidden border border-white/10">
                         <div 
                           className="bg-gradient-to-r from-redhill-red to-amber-500 h-full rounded-full" 

@@ -18,8 +18,8 @@ export const getProjects = (req: AuthRequest, res: Response) => {
 export const getProjectById = (req: AuthRequest, res: Response) => {
   if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
 
-  const access: any = db.prepare('SELECT * FROM investor_projects WHERE user_id = ? AND project_id = ?').get(req.user.id, req.params.id);
-  if (!access && req.user.role !== 'admin') return res.status(403).json({ error: 'Access denied' });
+  const isStaff = ['admin', 'super_admin', 'senior_admin', 'site_manager', 'financial_officer', 'marketing_manager', 'support_agent'].includes(req.user.role);
+  if (!access && !isStaff) return res.status(403).json({ error: 'Access denied' });
 
   const project: any = db.prepare('SELECT * FROM projects WHERE id = ?').get(req.params.id);
 

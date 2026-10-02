@@ -569,7 +569,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
     <nav className="flex-1 space-y-1.5 pt-2">
       {[
         { id: 'overview', label: 'Executive Overview', icon: LayoutDashboard },
-        { id: 'projects', label: 'Flagship Projects', icon: Building2, hidden: isSupportAgent },
+        { id: 'projects', label: 'Projects', icon: Building2, hidden: isSupportAgent },
         { id: 'investors', label: 'Investor Directory', icon: Users, hidden: isSiteManager || isMarketingManager || isSupportAgent },
         { id: 'ledger', label: 'Investment Ledger', icon: BookOpen, hidden: isSiteManager || isMarketingManager || isSupportAgent },
         { id: 'queries', label: 'Inquiries & Site Visits', icon: MessageCircle },
@@ -615,6 +615,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
             setActiveView={setActiveView}
             onNewProject={() => setShowProjectModal(true)}
             onNewInvestor={() => setShowInvestorModal(true)}
+            onSelectProject={openProjectDrawer}
           />
         )}
 
@@ -625,7 +626,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
               <div>
                 <div className="flex items-center gap-2 text-redhill-red font-bold uppercase tracking-[0.2em] text-xs mb-1">
                   <span className="w-5 h-[2px] bg-redhill-red" />
-                  Portfolio Developments
+                  Projects
                 </div>
                 <h1 className="text-3xl font-extrabold text-white font-serif tracking-tight">Project Management</h1>
                 <p className="text-gray-400 mt-1 text-xs sm:text-sm">Manage construction developments, milestone schedules, and live CCTV feeds.</p>
@@ -645,7 +646,8 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
               {projects.map(p => (
                 <div 
                   key={p.id} 
-                  className="bg-[#1E222B] rounded-2xl border border-white/[0.08] shadow-xl overflow-hidden flex flex-col hover:border-redhill-red/50 hover:shadow-2xl hover:shadow-redhill-red/15 transition-all duration-300 group hover:-translate-y-1"
+                  className="bg-[#1E222B] rounded-2xl border border-white/[0.08] shadow-xl overflow-hidden flex flex-col hover:border-redhill-red/50 hover:shadow-2xl hover:shadow-redhill-red/15 transition-all duration-300 group hover:-translate-y-1 cursor-pointer"
+                  onClick={() => openProjectDrawer(p)}
                 >
                   <div className="h-48 relative overflow-hidden">
                     <img
