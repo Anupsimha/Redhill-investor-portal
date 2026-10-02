@@ -21,7 +21,7 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-[#13161F] flex flex-col md:flex-row text-gray-100 overflow-hidden relative selection:bg-redhill-red selection:text-white">
+    <div className="min-h-screen bg-[#13161F] flex flex-col md:flex-row text-gray-100 relative selection:bg-redhill-red selection:text-white">
       {/* Background Ambient Glows */}
       <div className="fixed top-0 left-1/4 w-[600px] h-[600px] bg-redhill-red/5 rounded-full blur-[160px] pointer-events-none -z-10" />
       <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none -z-10" />
@@ -118,7 +118,7 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-screen overflow-y-auto relative min-w-0 custom-scrollbar">
+      <main className="flex-1 flex flex-col min-h-screen relative min-w-0">
          {/* If no sidebar (e.g. Investor dashboard), show desktop top-header */}
          {!sidebarContent && (
            <header className="hidden md:flex bg-[#1E222B]/90 backdrop-blur-xl border-b border-white/[0.08] sticky top-0 z-30">

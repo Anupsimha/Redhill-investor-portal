@@ -602,7 +602,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
 
   return (
     <Layout user={user} onLogout={handleLogout} sidebarContent={sidebarNav}>
-      <div className={cn("p-4 sm:p-6 lg:p-10", activeView === 'queries' ? "h-full flex flex-col" : "")}>
+      <div className={cn("p-4 sm:p-6 lg:p-10 max-w-[1600px] mx-auto w-full pb-24", activeView === 'queries' ? "h-full flex flex-col" : "")}>
         {/* Overview Tab */}
         {activeView === 'overview' && (
           <AdminOverview
