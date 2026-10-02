@@ -673,6 +673,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                         <Link
                           to={`/project/${p.id}`}
                           target="_blank"
+                          onClick={(e) => e.stopPropagation()}
                           className="p-1.5 bg-white/[0.06] hover:bg-white/[0.12] text-gray-300 hover:text-white rounded-lg transition-colors border border-white/10"
                           title="Preview as Investor"
                         >
@@ -699,7 +700,10 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                         </div>
                       </div>
                       <button
-                        onClick={() => openProjectDrawer(p)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openProjectDrawer(p);
+                        }}
                         className="w-full py-3 bg-white/[0.06] hover:bg-redhill-red text-white text-xs font-bold rounded-xl transition-all border border-white/[0.08] hover:border-redhill-red cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                       >
                         <span>Manage Milestones & CCTV Updates</span>

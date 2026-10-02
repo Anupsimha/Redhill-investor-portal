@@ -174,7 +174,7 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <div className="flex items-center gap-2 text-sm text-gray-400">
           <Link 
-            to={['admin', 'super_admin', 'site_manager', 'support_agent'].includes(user.role) ? '/admin' : '/dashboard'} 
+            to={['admin', 'super_admin', 'senior_admin', 'site_manager', 'financial_officer', 'marketing_manager', 'support_agent'].includes(user.role) ? '/admin' : '/dashboard'} 
             className="hover:text-white transition-colors flex items-center gap-1"
           >
             <ChevronLeft className="w-4 h-4" />

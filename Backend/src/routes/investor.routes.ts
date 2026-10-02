@@ -4,6 +4,7 @@ import {
   getProjectById, 
   getNewProjects,
   getPayments,
+  getInvestorLedger,
   getNotifications
 } from '../controllers/investor.controller.js';
 import { authenticateToken } from '../middlewares/auth.middleware.js';
@@ -14,6 +15,8 @@ router.get('/investor/projects', authenticateToken, getProjects);
 router.get('/investor/new-projects', authenticateToken, getNewProjects);
 router.get('/investor/projects/:id', authenticateToken, getProjectById);
 router.get('/investor/payments/:projectId', authenticateToken, getPayments);
+router.get('/investor/ledger/:projectId', authenticateToken, getInvestorLedger);
 router.get('/investor/notifications', authenticateToken, getNotifications);
 
 export default router;
+

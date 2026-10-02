@@ -63,8 +63,27 @@ export const getPayments = (req: AuthRequest, res: Response) => {
     const userId = req.user?.id;
     if (!userId) return res.status(401).json({ error: 'Unauthorized' });
 
-    const payments = db.prepare('SELECT * FROM payments WHERE project_id = ? AND user_id = ? ORDER BY date DESC').all(projectId, userId);
+    const isStaff = ['admin', 'super_admin', 'senior_admin', 'site_manager', 'financial_officer', 'marketing_manager', 'support_agent'].includes(req.user.role);
+    const payments = isStaff
+      ? db.prepare('SELECT * FROM payments WHERE project_id = ? ORDER BY date DESC').all(projectId)
+      : db.prepare('SELECT * FROM payments WHERE project_id = ? AND user_id = ? ORDER BY date DESC').all(projectId, userId);
     res.json(payments);
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+};
+
+export const getInvestorLedger = (req: AuthRequest, res: Response) => {
+  try {
+    const { projectId } = req.params;
+    const userId = req.user?.id;
+    if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+    const isStaff = ['admin', 'super_admin', 'senior_admin', 'site_manager', 'financial_officer', 'marketing_manager', 'support_agent'].includes(req.user.role);
+    const entries = isStaff
+      ? db.prepare('SELECT * FROM ledger WHERE project_id = ? ORDER BY transaction_date DESC').all(projectId)
+      : db.prepare('SELECT * FROM ledger WHERE project_id = ? AND user_id = ? ORDER BY transaction_date DESC').all(projectId, userId);
+    res.json(entries);
   } catch (e: any) {
     res.status(500).json({ error: e.message });
   }
@@ -81,3 +100,4 @@ export const getNotifications = (req: AuthRequest, res: Response) => {
     res.status(500).json({ error: e.message });
   }
 };
+
