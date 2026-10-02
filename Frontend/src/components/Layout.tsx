@@ -63,11 +63,11 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
             <div className="p-4 border-t border-white/[0.08] flex items-center justify-between bg-[#1E222B]/90">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-redhill-red to-amber-500 flex items-center justify-center text-white font-bold text-xs shadow-md shrink-0">
-                  {user.name.charAt(0).toUpperCase()}
+                  {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-white truncate">{user.name}</p>
-                  <p className="text-[10px] text-gray-400 capitalize truncate mt-0.5">{user.role.replace('_', ' ')}</p>
+                  <p className="text-xs font-bold text-white truncate">{user?.name || user?.email || 'User'}</p>
+                  <p className="text-[10px] text-gray-400 capitalize truncate mt-0.5">{(user?.role || 'User').replace(/_/g, ' ')}</p>
                 </div>
               </div>
               <button 
@@ -97,12 +97,12 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
           <div className="p-4 border-t border-white/[0.08] bg-[#1E222B]/80 flex items-center justify-between gap-3">
              <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-redhill-red to-amber-500 flex items-center justify-center text-white font-black text-xs shadow-md shrink-0">
-                  {user.name.charAt(0).toUpperCase()}
+                  {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-white truncate">{user.name}</p>
+                  <p className="text-xs font-bold text-white truncate">{user?.name || user?.email || 'Admin'}</p>
                   <p className="text-[10px] text-amber-400 font-semibold uppercase tracking-wider capitalize truncate mt-0.5">
-                    {user.role.replace('_', ' ')}
+                    {(user?.role || 'admin').replace(/_/g, ' ')}
                   </p>
                 </div>
               </div>
@@ -129,11 +129,11 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-3 bg-white/[0.04] px-3.5 py-1.5 rounded-full border border-white/[0.08]">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-redhill-red to-amber-500 flex items-center justify-center text-white font-bold text-xs shadow-md">
-                      {user.name.charAt(0).toUpperCase()}
+                      {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
                     </div>
                     <div className="text-left">
-                      <p className="text-xs font-bold text-white leading-none">{user.name}</p>
-                      <p className="text-[10px] text-gray-400 capitalize mt-0.5">{user.role.replace('_', ' ')}</p>
+                      <p className="text-xs font-bold text-white leading-none">{user?.name || user?.email || 'User'}</p>
+                      <p className="text-[10px] text-gray-400 capitalize mt-0.5">{(user?.role || 'User').replace(/_/g, ' ')}</p>
                     </div>
                   </div>
                   <button 

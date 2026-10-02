@@ -51,14 +51,14 @@ export default function AdminOverview({
   onNewInvestor,
   onSelectProject
 }: AdminOverviewProps) {
-  const isSuperAdmin = user.role === 'super_admin' || user.role === 'senior_admin';
-  const isSiteManager = user.role === 'site_manager';
-  const isFinancialOfficer = user.role === 'financial_officer';
-  const isMarketingManager = user.role === 'marketing_manager';
-  const isSupportAgent = user.role === 'support_agent';
+  const isSuperAdmin = user?.role === 'super_admin' || user?.role === 'senior_admin';
+  const isSiteManager = user?.role === 'site_manager';
+  const isFinancialOfficer = user?.role === 'financial_officer';
+  const isMarketingManager = user?.role === 'marketing_manager';
+  const isSupportAgent = user?.role === 'support_agent';
 
-  const roleMeta = ROLE_CONFIG[user.role] || ROLE_CONFIG.super_admin;
-  const RoleIcon = roleMeta.icon;
+  const roleMeta = ROLE_CONFIG[user?.role || 'super_admin'] || ROLE_CONFIG.super_admin;
+  const RoleIcon = roleMeta?.icon || Shield;
 
   return (
     <div className="space-y-10 relative">
@@ -89,18 +89,18 @@ export default function AdminOverview({
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight font-serif leading-tight">
               Welcome back,{' '}
               <span className="bg-gradient-to-r from-white via-gray-100 to-amber-300 bg-clip-text text-transparent">
-                {user.name}
+                {user?.name || user?.email || 'Administrator'}
               </span>
             </h1>
 
             {/* Subheadline & Role Pill */}
             <div className="flex flex-wrap items-center gap-3 pt-0.5">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold ${roleMeta.bg} ${roleMeta.color} border ${roleMeta.border} shadow-sm`}>
+              <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold ${roleMeta?.bg || 'bg-amber-500/15'} ${roleMeta?.color || 'text-amber-400'} border ${roleMeta?.border || 'border-amber-500/30'} shadow-sm`}>
                 <RoleIcon className="w-3.5 h-3.5" />
-                {roleMeta.badge}
+                {roleMeta?.badge || 'STAFF'}
               </span>
               <p className="text-gray-300 text-xs sm:text-sm font-medium">
-                {roleMeta.desc} • Real-time project oversight & client relationship portal.
+                {roleMeta?.desc || 'Real-time project oversight & client relationship portal.'}
               </p>
             </div>
           </div>

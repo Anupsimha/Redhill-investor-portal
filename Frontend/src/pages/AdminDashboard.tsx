@@ -54,11 +54,11 @@ interface AdminDashboardProps {
 
 export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) {
   const { showToast } = useToast();
-  const isSuperAdmin = user.role === 'super_admin' || user.role === 'senior_admin';
-  const isSiteManager = user.role === 'site_manager';
-  const isFinancialOfficer = user.role === 'financial_officer';
-  const isMarketingManager = user.role === 'marketing_manager';
-  const isSupportAgent = user.role === 'support_agent';
+  const isSuperAdmin = user?.role === 'super_admin' || user?.role === 'senior_admin';
+  const isSiteManager = user?.role === 'site_manager';
+  const isFinancialOfficer = user?.role === 'financial_officer';
+  const isMarketingManager = user?.role === 'marketing_manager';
+  const isSupportAgent = user?.role === 'support_agent';
 
   const [activeView, setActiveView] = useState<'overview' | 'investors' | 'projects' | 'queries' | 'admins' | 'ledger'>('overview');
   const [selectedThread, setSelectedThread] = useState<Query | null>(null);
