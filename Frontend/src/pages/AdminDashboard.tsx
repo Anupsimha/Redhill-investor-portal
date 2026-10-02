@@ -5,7 +5,7 @@ import {
   Users, Building2, LayoutDashboard, CheckCircle2, Clock, AlertCircle,
   Image as ImageIcon, Video, Bell, Save, Trash2, UserPlus, MapPin,
   MessageCircle, Send, ArrowLeft, Pencil, Copy, Check, ExternalLink, Eye, EyeOff,
-  Search, MoreHorizontal, ChevronDown, ChevronUp, Wallet, MoreVertical, Hammer,
+  Search, MoreHorizontal, ChevronDown, ChevronUp, ChevronRight, Wallet, MoreVertical, Hammer,
   Upload, Link as LinkIcon, X, FileVideo, IndianRupee, Shield, Mail, BookOpen,
   PlusCircle, TrendingUp
 } from 'lucide-react';

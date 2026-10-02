@@ -137,11 +137,11 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
 
   if (!data) return <div className="text-center py-20 text-white">Project not found</div>;
 
-  const { project, milestones, updates, announcements, queries } = data;
+  const { project, milestones = [], updates = [], announcements = [], queries = [] } = data || {};
 
-  const docMilestones = milestones.filter(m => m.category === 'documentation');
-  const approvalMilestones = milestones.filter(m => m.category === 'approval');
-  const constructionMilestones = milestones.filter(m => m.category === 'construction');
+  const docMilestones = (milestones || []).filter(m => m.category === 'documentation');
+  const approvalMilestones = (milestones || []).filter(m => m.category === 'approval');
+  const constructionMilestones = (milestones || []).filter(m => m.category === 'construction');
 
   const StatusBadge = ({ status }: { status: string }) => {
     switch (status) {

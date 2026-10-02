@@ -42,10 +42,10 @@ interface AdminOverviewProps {
 
 export default function AdminOverview({
   user,
-  projects,
-  investors,
-  unansweredCount,
-  adminsCount = 4,
+  projects = [],
+  investors = [],
+  unansweredCount = 0,
+  adminsCount = 0,
   setActiveView,
   onNewProject,
   onNewInvestor,

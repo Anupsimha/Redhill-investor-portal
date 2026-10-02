@@ -19,7 +19,7 @@ interface AdminManagementProps {
 }
 
 export default function AdminManagement({
-  adminsList,
+  adminsList = [],
   currentUserId,
   onAddNewAdmin,
   onEditAdmin,

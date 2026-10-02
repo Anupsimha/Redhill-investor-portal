@@ -15,8 +15,8 @@ interface InvestmentLedgerProps {
 }
 
 export default function InvestmentLedger({
-  ledgerEntries,
-  projects
+  ledgerEntries = [],
+  projects = []
 }: InvestmentLedgerProps) {
   const [ledgerSearch, setLedgerSearch] = useState('');
   const [ledgerProjectFilter, setLedgerProjectFilter] = useState('all');
