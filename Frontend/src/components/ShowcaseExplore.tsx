@@ -684,7 +684,7 @@ export default function ShowcaseExplore({
 
           <InteractiveMap
             onBookSiteVisit={(mapProj) => {
-              const matchedShowcase = SHOWCASE_CONFIG.projects.find(p => p.id === mapProj.id || p.name.toLowerCase().includes(mapProj.name.toLowerCase()));
+              const matchedShowcase = SHOWCASE_CONFIG.featuredProjects.find(p => p.id === mapProj.id || p.name.toLowerCase().includes(mapProj.name.toLowerCase()));
               if (matchedShowcase) {
                 setSelectedProject(matchedShowcase);
               }

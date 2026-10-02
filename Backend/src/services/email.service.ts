@@ -268,3 +268,104 @@ export const generateMilestoneCompletedHtml = (params: MilestoneEmailParams): st
 </html>
   `;
 };
+
+export interface PasswordResetEmailParams {
+  userName: string;
+  otp: string;
+  expiryMinutes?: number;
+}
+
+export const generatePasswordResetOtpHtml = (params: PasswordResetEmailParams): string => {
+  const { userName, otp, expiryMinutes = 10 } = params;
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset OTP - Redhill Infra</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0d0f12; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #e2e8f0; line-height: 1.6;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #0d0f12; padding: 30px 15px;">
+    <tr>
+      <td align="center">
+        <!-- Main Container -->
+        <table width="560" border="0" cellspacing="0" cellpadding="0" style="background-color: #171a21; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+          
+          <!-- Header Banner -->
+          <tr>
+            <td style="padding: 28px 36px; background: linear-gradient(135deg, #1e222b 0%, #12141a 100%); border-bottom: 2px solid #D32F2F;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>
+                    <div style="font-size: 22px; font-weight: 800; letter-spacing: -0.5px; color: #ffffff;">
+                      REDHILL <span style="color: #D32F2F;">INFRA</span>
+                    </div>
+                    <div style="font-size: 11px; color: #94a3b8; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px;">
+                      Investor Portal Security
+                    </div>
+                  </td>
+                  <td align="right">
+                    <span style="display: inline-block; padding: 6px 14px; background-color: rgba(211, 47, 47, 0.15); border: 1px solid rgba(211, 47, 47, 0.3); border-radius: 20px; font-size: 12px; font-weight: 700; color: #f87171;">
+                      🔒 Password Reset
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Content Body -->
+          <tr>
+            <td style="padding: 36px 36px 28px 36px;">
+              <h1 style="margin: 0 0 12px 0; font-size: 22px; font-weight: 700; color: #ffffff;">
+                Password Reset Verification Code
+              </h1>
+              <p style="margin: 0 0 20px 0; font-size: 15px; color: #94a3b8;">
+                Hello <strong>${userName}</strong>, we received a request to reset the password for your Redhill Investor Portal account.
+              </p>
+
+              <!-- OTP Code Display Card -->
+              <div style="background-color: #101217; border-radius: 12px; padding: 24px; border: 1px solid rgba(211, 47, 47, 0.3); text-align: center; margin-bottom: 24px;">
+                <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #94a3b8; letter-spacing: 1.5px; margin-bottom: 10px;">
+                  Your One-Time Password (OTP)
+                </div>
+                <div style="font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #ffffff; background: linear-gradient(135deg, #ffffff 0%, #fca5a5 100%); -webkit-background-clip: text; font-family: 'Courier New', Courier, monospace; padding: 8px 0;">
+                  ${otp}
+                </div>
+                <div style="font-size: 12px; color: #f87171; margin-top: 8px; font-weight: 600;">
+                  ⏱ Valid for ${expiryMinutes} minutes
+                </div>
+              </div>
+
+              <div style="background-color: #1e232d; border-radius: 8px; padding: 16px 20px; border-left: 3px solid #eab308; margin-bottom: 20px;">
+                <p style="margin: 0; font-size: 13px; color: #cbd5e1; line-height: 1.5;">
+                  <strong>Important:</strong> Never share this verification code with anyone. Redhill Infrastructure support staff will never ask for your password or OTP.
+                </p>
+              </div>
+
+              <p style="margin: 0; font-size: 13px; color: #64748b; line-height: 1.5;">
+                If you did not make this request, you can safely ignore this email. Your current password will remain active and unchanged.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 36px; background-color: #101217; border-top: 1px solid rgba(255, 255, 255, 0.05); text-align: center;">
+              <p style="margin: 0 0 4px 0; font-size: 11px; color: #475569;">
+                © ${new Date().getFullYear()} Redhill Infrastructure. All rights reserved. • Automated Security Alert
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `;
+};
+
