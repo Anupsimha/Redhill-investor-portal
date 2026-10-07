@@ -13,7 +13,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Layout from '../components/Layout';
 import Skeleton from '../components/Skeleton';
 import StatusChip from '../components/StatusChip';
-import InteractiveMap from '../components/InteractiveMap';
 import { formatCurrency, formatDate, formatRelativeTime } from '../utils/formatters';
 import { apiFetch } from '../api/client';
 import { getAssetUrl } from '../config/env';
@@ -29,7 +28,7 @@ interface ProjectDetailProps {
 
 export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
   const { id } = useParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState<'progress' | 'docs' | 'media' | 'queries' | 'ledger' | 'location'>('progress');
+  const [activeTab, setActiveTab] = useState<'progress' | 'docs' | 'media' | 'queries' | 'ledger'>('progress');
   const [newMessage, setNewMessage] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null);
@@ -311,7 +310,6 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
               { id: 'progress', label: 'Progress', labelFull: 'Project Progress', icon: Clock, count: milestones.length },
               { id: 'docs', label: 'Documents', labelFull: 'Documents & Approvals', icon: FileText, count: docMilestones.length + approvalMilestones.length },
               { id: 'ledger', label: 'Ledger', labelFull: 'Investment Ledger', icon: IndianRupee, count: ledgerEntries.length },
-              { id: 'location', label: 'Map', labelFull: 'Strategic Map & Connectivity', icon: MapPin, count: 0 },
               { id: 'media', label: 'Media', labelFull: 'Media Feed', icon: ImageIcon, count: updates.length },
               { id: 'queries', label: 'Queries', labelFull: 'Queries & Help', icon: MessageCircle, count: queries.length },
             ].map((tab) => (
@@ -847,20 +845,6 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
                 </div>
               </div>
 
-            </motion.div>
-          )}
-
-          {activeTab === 'location' && (
-            <motion.div
-              key="location"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-8"
-            >
-              <InteractiveMap
-                highlightProjectId={project.id}
-              />
             </motion.div>
           )}
         </AnimatePresence>

@@ -419,8 +419,7 @@ export default function ShowcaseExplore({
               <div className="bg-[#1E222B]/90 backdrop-blur-xl rounded-2xl p-6 border border-white/[0.1] shadow-2xl space-y-4 hover:border-amber-500/30 transition-all duration-300">
                 <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
                   <div>
-                    <span className="text-[10px] uppercase tracking-widest text-amber-400 font-extrabold flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    <span className="text-[10px] uppercase tracking-widest text-amber-400 font-extrabold">
                       Official Portals
                     </span>
                     <h3 className="text-sm font-bold text-white mt-0.5">Connect With Redhill</h3>
@@ -735,14 +734,9 @@ export default function ShowcaseExplore({
 
               {/* Right Column: Direct "Refer Here" Action Panel */}
               <div className="lg:col-span-5 bg-black/40 backdrop-blur-xl rounded-2xl p-6 border border-white/[0.1] space-y-4 shadow-xl">
-                <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
-                  <div>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Direct Reward Tier</span>
-                    <span className="text-base font-black text-amber-400">₹50,000 – ₹3,00,000 INR</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20">
-                    Active Program
-                  </span>
+                <div className="pb-2 border-b border-white/[0.08]">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Direct Reward Tier</span>
+                  <span className="text-base font-black text-amber-400">₹50,000 – ₹3,00,000 INR</span>
                 </div>
 
                 <p className="text-xs text-gray-300 leading-relaxed">
@@ -767,14 +761,6 @@ export default function ShowcaseExplore({
                     <FileText className="w-3.5 h-3.5 text-amber-400" />
                     <span>Referral Program Terms & Guidelines</span>
                   </button>
-                </div>
-
-                {/* Trust Badges */}
-                <div className="pt-2 grid grid-cols-2 gap-2 text-[11px] text-gray-300 border-t border-white/[0.06]">
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> <span>Direct Bank Payout</span></div>
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> <span>Dedicated Concierge</span></div>
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> <span>Real-time Status</span></div>
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> <span>100% RERA Compliant</span></div>
                 </div>
               </div>
             </div>
