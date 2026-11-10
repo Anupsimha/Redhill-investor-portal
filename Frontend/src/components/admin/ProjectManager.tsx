@@ -37,11 +37,11 @@ export default function ProjectManager() {
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-white font-serif">Project Management</h1>
-          <p className="text-gray-400 mt-1">Create and manage Redhill infrastructure projects.</p>
+          <h1 className="text-3xl font-bold text-redhill-charcoal font-serif">Project Management</h1>
+          <p className="text-redhill-muted mt-1">Create and manage Redhill infrastructure projects.</p>
         </div>
         <button
-          className="bg-redhill-red text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-redhill-red/20 hover:bg-red-700 transition-all cursor-pointer"
+          className="bg-redhill-red text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg  hover:bg-red-700 transition-all cursor-pointer"
         >
           <Plus className="w-5 h-5" />
           New Project
@@ -50,14 +50,14 @@ export default function ProjectManager() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {projects.map(p => (
-          <div key={p.id} className="bg-redhill-gray rounded-2xl border border-white/[0.06] shadow-lg overflow-hidden flex flex-col hover:border-white/10 transition-all">
+          <div key={p.id} className="bg-white rounded-2xl border border-redhill-line shadow-lg overflow-hidden flex flex-col hover:border-redhill-line transition-all">
             <div className="h-40 relative">
               <img
-                src={getAssetUrl(p.image_url) || 'https://picsum.photos/seed/project/800/600'}
+                src={getAssetUrl(p.image_url, p.id)}
                 alt=""
                 referrerPolicy="no-referrer"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = 'https://picsum.photos/seed/fallback/800/600';
+                  (e.target as HTMLImageElement).src = getAssetUrl(null, p.id);
                 }}
                 className="w-full h-full object-cover"
               />
@@ -67,10 +67,10 @@ export default function ProjectManager() {
             </div>
             <div className="p-6 flex-1 flex flex-col relative">
               <div className="flex justify-between items-start gap-4 mb-1">
-                <h3 className="text-lg font-bold text-white font-serif leading-tight">{p.name}</h3>
+                <h3 className="text-lg font-bold text-redhill-charcoal font-serif leading-tight">{p.name}</h3>
                 <div className="flex items-center gap-1">
                   <button
-                    className="p-1.5 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                    className="p-1.5 bg-redhill-sand/70 hover:bg-redhill-sand text-redhill-muted hover:text-redhill-charcoal rounded-lg transition-colors flex-shrink-0 cursor-pointer"
                     title="Edit Project"
                   >
                     <Pencil className="w-3.5 h-3.5" />
@@ -82,7 +82,7 @@ export default function ProjectManager() {
                       message: `Are you sure you want to delete ${p.name}? This will remove all associated milestones, CCTV feeds, and progress updates. This action cannot be undone.`,
                       onConfirm: () => deleteProjectMutation.mutate(p.id)
                     })}
-                    className="p-1.5 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg transition-colors flex-shrink-0 cursor-pointer"
+                    className="p-1.5 bg-redhill-sand/70 hover:bg-red-500/20 text-redhill-muted hover:text-red-700 rounded-lg transition-colors flex-shrink-0 cursor-pointer"
                     title="Delete Project"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -90,7 +90,7 @@ export default function ProjectManager() {
                   <Link
                     to={`/project/${p.id}`}
                     target="_blank"
-                    className="p-1.5 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white rounded-lg transition-colors flex-shrink-0"
+                    className="p-1.5 bg-redhill-sand/70 hover:bg-redhill-sand text-redhill-muted hover:text-redhill-charcoal rounded-lg transition-colors flex-shrink-0"
                     title="Preview as Investor"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -98,10 +98,10 @@ export default function ProjectManager() {
                 </div>
               </div>
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-gray-400 flex items-center gap-1 truncate">
+                <p className="text-sm text-redhill-muted flex items-center gap-1 truncate">
                   <MapPin className="w-3.5 h-3.5 text-redhill-red shrink-0" /> <span className="truncate">{p.location}</span>
                 </p>
-                <span className="text-[10px] font-bold bg-white/5 px-2 py-1 rounded text-gray-400 shrink-0 flex items-center gap-1">
+                <span className="text-[10px] font-bold bg-redhill-sand/70 px-2 py-1 rounded text-redhill-muted shrink-0 flex items-center gap-1">
                   <Users className="w-3 h-3" /> {assignments.filter((a: any) => a.project_id === p.id).length}
                 </span>
               </div>
@@ -109,23 +109,23 @@ export default function ProjectManager() {
               <div className="mt-auto space-y-4">
                 <div>
                   <div className="flex justify-between text-xs font-bold mb-1">
-                    <span className="text-gray-400">Progress</span>
-                    <span className="text-white">{p.completion_percentage}%</span>
+                    <span className="text-redhill-muted">Progress</span>
+                    <span className="text-redhill-charcoal">{p.completion_percentage}%</span>
                   </div>
-                  <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-                    <div className="bg-gradient-to-r from-redhill-red to-amber-500 h-full rounded-full" style={{ width: `${p.completion_percentage}%` }} />
+                  <div className="w-full bg-redhill-sand/70 h-1.5 rounded-full overflow-hidden">
+                    <div className="bg-redhill-gold h-full rounded-full" style={{ width: `${p.completion_percentage}%` }} />
                   </div>
                 </div>
 
                 <div className="flex gap-2">
-                  <button className="flex-1 bg-white/[0.03] text-gray-300 py-2 rounded-lg text-xs font-bold border border-white/[0.05] hover:bg-white/[0.06] transition-colors cursor-pointer">
+                  <button className="flex-1 bg-[#FBF9F5] text-stone-700 py-2 rounded-lg text-xs font-bold border border-redhill-line hover:bg-redhill-sand/70 transition-colors cursor-pointer">
                     Manage Milestones
                   </button>
-                  <button className="flex-1 bg-white/[0.03] text-gray-300 py-2 rounded-lg text-xs font-bold border border-white/[0.05] hover:bg-white/[0.06] transition-colors cursor-pointer">
+                  <button className="flex-1 bg-[#FBF9F5] text-stone-700 py-2 rounded-lg text-xs font-bold border border-redhill-line hover:bg-redhill-sand/70 transition-colors cursor-pointer">
                     Upload Progress
                   </button>
                 </div>
-                <button className="w-full bg-redhill-red/10 text-red-400 py-2 rounded-lg text-xs font-bold border border-red-500/10 hover:bg-redhill-red/20 transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                <button className="w-full bg-redhill-red/10 text-red-700 py-2 rounded-lg text-xs font-bold border border-red-500/10 hover:bg-redhill-red/20 transition-colors flex items-center justify-center gap-2 cursor-pointer">
                   <Video className="w-3 h-3" /> Manage CCTV
                 </button>
               </div>

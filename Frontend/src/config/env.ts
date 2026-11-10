@@ -45,12 +45,57 @@ export function getApiUrl(endpoint: string): string {
 }
 
 /**
- * Resolves a full asset/image URL for user uploads or media.
- * If path is an absolute URL or data URI, it is returned as is.
- * Otherwise, it prepends the backend ASSETS_BASE_URL.
+ * Curated Bengaluru Boutique Apartment architectural photography collection.
+ * Used as fallbacks and to replace generic stock / single-family house placeholders.
  */
-export function getAssetUrl(path?: string | null): string {
-  if (!path) return '';
+export const BOUTIQUE_APARTMENT_IMAGES = [
+  // 0: Contemporary G+4 white & charcoal boutique apartment block with cantilevered glass balconies
+  'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=85&w=1600',
+  // 1: Tropical G+3 boutique courtyard apartment complex with pergolas & lush greenery
+  'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=1600',
+  // 2: Warm terracotta-brick G+3 boutique apartment building with deep sit-out balconies
+  'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=85&w=1600',
+  // 3: Modern brick & dark-cladding boutique apartment facade with warm balcony lighting
+  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=85&w=1600',
+  // 4: Contemporary low-rise boutique apartment elevation with rooftop pergola frame
+  'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=85&w=1600',
+  // 5: Warm twilight architectural foyer & timber screen residence
+  'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=85&w=1600',
+];
+
+// Legacy single-family house / generic stock URLs stored in seed DB records that should map to boutique apartments
+const LEGACY_HOUSE_PATTERNS = [
+  'picsum.photos',
+  'photo-1600585154340-be6161a56a0c',
+  'photo-1600596542815-ffad4c1539a9',
+  'photo-1613490493576-7fde63acd811',
+  'photo-1582719478250-c89cae4dc85b',
+];
+
+function pickBoutiqueImage(seed?: number | string | null): string {
+  if (seed === undefined || seed === null) return BOUTIQUE_APARTMENT_IMAGES[0];
+  if (typeof seed === 'number') {
+    return BOUTIQUE_APARTMENT_IMAGES[Math.abs(seed) % BOUTIQUE_APARTMENT_IMAGES.length];
+  }
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash * 31 + seed.charCodeAt(i)) | 0;
+  }
+  return BOUTIQUE_APARTMENT_IMAGES[Math.abs(hash) % BOUTIQUE_APARTMENT_IMAGES.length];
+}
+
+/**
+ * Resolves a full asset/image URL for user uploads or media.
+ * Automatically replaces generic picsum or legacy western house placeholders
+ * with curated Bengaluru boutique apartment photography.
+ */
+export function getAssetUrl(path?: string | null, seed?: number | string | null): string {
+  if (!path) return pickBoutiqueImage(seed);
+
+  if (LEGACY_HOUSE_PATTERNS.some((pattern) => path.includes(pattern))) {
+    return pickBoutiqueImage(seed ?? path);
+  }
+
   if (/^(https?:|\/\/|data:)/i.test(path)) return path;
 
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;

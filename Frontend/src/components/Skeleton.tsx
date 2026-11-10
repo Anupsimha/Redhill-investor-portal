@@ -7,7 +7,7 @@ interface SkeletonProps {
 }
 
 export default function Skeleton({ className = '', type = 'text' }: SkeletonProps) {
-  const baseClasses = 'bg-white/[0.04] relative overflow-hidden rounded-xl';
+  const baseClasses = 'bg-redhill-sand/70 relative overflow-hidden rounded-xl';
   
   const typeClasses = {
     card: 'h-64 w-full rounded-2xl',

@@ -53,16 +53,16 @@ export default function EditAdminModal({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-[#1a1b23] rounded-3xl max-w-2xl w-full border border-white/10 overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+      <div className="bg-white rounded-3xl max-w-2xl w-full border border-redhill-line overflow-hidden shadow-2xl max-h-[90vh] flex flex-col">
+        <div className="p-6 border-b border-redhill-line flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-redhill-charcoal flex items-center gap-2">
               <Shield className="w-5 h-5 text-redhill-red" />
               Edit Staff Role & Permissions
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">Modify administrator access levels or reset password</p>
+            <p className="text-xs text-redhill-muted mt-0.5">Modify administrator access levels or reset password</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+          <button onClick={onClose} className="text-redhill-muted hover:text-redhill-charcoal transition-colors cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -70,30 +70,30 @@ export default function EditAdminModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Full Name</label>
+              <label className="block text-xs font-bold text-redhill-muted uppercase tracking-widest mb-1.5">Full Name</label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={e => setName(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-redhill-red/50"
+                className="w-full bg-redhill-ivory border border-redhill-line rounded-xl px-4 py-2.5 text-redhill-charcoal outline-none focus:border-redhill-red/50"
               />
             </div>
             
             <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Email Address</label>
+              <label className="block text-xs font-bold text-redhill-muted uppercase tracking-widest mb-1.5">Email Address</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-white outline-none focus:border-redhill-red/50"
+                className="w-full bg-redhill-ivory border border-redhill-line rounded-xl px-4 py-2.5 text-redhill-charcoal outline-none focus:border-redhill-red/50"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Change Role & Access Level</label>
+            <label className="block text-xs font-bold text-redhill-muted uppercase tracking-widest mb-2">Change Role & Access Level</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {Object.entries(ROLE_CONFIG).map(([roleKey, cfg]) => {
                 const isSelected = role === roleKey;
@@ -106,8 +106,8 @@ export default function EditAdminModal({
                     className={cn(
                       "p-4 rounded-2xl border text-left transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between",
                       isSelected
-                        ? cn("bg-white/[0.08] border-white/40 shadow-lg ring-2", cfg.ring)
-                        : "bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04]"
+                        ? cn("bg-redhill-sand border-redhill-stone shadow-lg ring-2", cfg.ring)
+                        : "bg-[#FBF9F5] border-redhill-line hover:bg-redhill-sand/70"
                     )}
                   >
                     <div>
@@ -121,8 +121,8 @@ export default function EditAdminModal({
                           </span>
                         )}
                       </div>
-                      <p className="font-bold text-white text-sm">{cfg.label}</p>
-                      <p className="text-[10px] text-gray-400 mt-1 leading-snug">{cfg.tag}</p>
+                      <p className="font-bold text-redhill-charcoal text-sm">{cfg.label}</p>
+                      <p className="text-[10px] text-redhill-muted mt-1 leading-snug">{cfg.tag}</p>
                     </div>
                   </button>
                 );
@@ -133,15 +133,15 @@ export default function EditAdminModal({
             {role && ROLE_CONFIG[role] && (
               <div className={cn("mt-4 p-4 rounded-2xl border", ROLE_CONFIG[role].bg, ROLE_CONFIG[role].border)}>
                 <div className="flex items-start gap-3">
-                  <div className={cn("p-2 rounded-xl border bg-black/20", ROLE_CONFIG[role].color, ROLE_CONFIG[role].border)}>
+                  <div className={cn("p-2 rounded-xl border bg-redhill-ivory", ROLE_CONFIG[role].color, ROLE_CONFIG[role].border)}>
                     {React.createElement(ROLE_CONFIG[role].icon, { className: "w-5 h-5" })}
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-bold text-white uppercase tracking-wider">{ROLE_CONFIG[role].label} Scope</p>
-                    <p className="text-xs text-gray-300 mt-0.5">{ROLE_CONFIG[role].desc}</p>
+                    <p className="text-xs font-bold text-redhill-charcoal uppercase tracking-wider">{ROLE_CONFIG[role].label} Scope</p>
+                    <p className="text-xs text-stone-700 mt-0.5">{ROLE_CONFIG[role].desc}</p>
                     <div className="mt-2.5 flex flex-wrap gap-1.5">
                       {ROLE_CONFIG[role].permissions.map((perm, idx) => (
-                        <span key={idx} className="text-[10px] font-medium bg-black/30 text-gray-300 px-2 py-0.5 rounded-md border border-white/10">
+                        <span key={idx} className="text-[10px] font-medium bg-redhill-ivory text-stone-700 px-2 py-0.5 rounded-md border border-redhill-line">
                           ✓ {perm}
                         </span>
                       ))}
@@ -153,13 +153,13 @@ export default function EditAdminModal({
           </div>
           
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">Reset Password (Optional)</label>
+            <label className="block text-xs font-bold text-redhill-muted uppercase tracking-widest mb-1.5">Reset Password (Optional)</label>
             <input
               type="password"
               placeholder="Leave blank to keep existing password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 outline-none focus:border-redhill-red/50"
+              className="w-full bg-redhill-ivory border border-redhill-line rounded-xl px-4 py-2.5 text-redhill-charcoal placeholder-stone-400 outline-none focus:border-redhill-red/50"
             />
           </div>
 
@@ -167,14 +167,14 @@ export default function EditAdminModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-xl transition-all cursor-pointer"
+              className="flex-1 py-3 bg-redhill-sand/70 hover:bg-redhill-sand text-stone-700 font-bold rounded-xl transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 py-3 bg-gradient-to-r from-redhill-red to-red-700 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-redhill-red/20 transition-all cursor-pointer disabled:opacity-50"
+              className="flex-1 py-3 bg-redhill-red hover:bg-redhill-crimson text-white font-bold rounded-xl hover:shadow-lg hover: transition-all cursor-pointer disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

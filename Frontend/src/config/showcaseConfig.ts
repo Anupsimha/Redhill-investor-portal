@@ -45,12 +45,12 @@ export const SHOWCASE_CONFIG = {
 
   // Hero Section
   hero: {
-    headlinePrefix: 'Nothing Like',
-    headlineMain: "You've Seen Before.",
-    subheadline: 'Crafting landmark architectural marvels, integrated luxury townships, and sustainable smart living across Bangalore’s prime growth corridors.',
-    ctaExploreText: 'Explore Featured Projects',
+    headlinePrefix: 'Boutique Living,',
+    headlineMain: 'Crafted for Bengaluru.',
+    subheadline: 'Thoughtfully proportioned low-rise and mid-rise boutique apartment residences with private sit-out decks, terracotta & timber detailing, and lush courtyard greens across Bengaluru’s prime neighbourhoods.',
+    ctaExploreText: 'Explore Boutique Residences',
     ctaSiteVisitText: 'Book Visit',
-    backgroundImage: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=2070',
+    backgroundImage: 'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=85&w=2070',
   },
 
   // Social Media Handles - Update your links here
@@ -92,7 +92,7 @@ export const SHOWCASE_CONFIG = {
     },
   ] as SocialLink[],
 
-  // Redhill Infrastructure Featured Projects
+  // Redhill Infrastructure Featured Projects (Bengaluru Boutique Apartments)
   featuredProjects: [
     {
       id: 'redhill-signature',
@@ -101,47 +101,47 @@ export const SHOWCASE_CONFIG = {
       location: 'Whitefield, Bangalore',
       badge: 'New Launch',
       rating: '4.9/5',
-      image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1600',
+      image: 'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=85&w=1600',
       priceStarting: '₹2.85 Cr onwards',
-      configuration: '3 & 4 BHK Sky Condos',
+      configuration: '3 & 4 BHK Boutique Residences',
       possessionDate: 'Dec 2026',
-      carpetArea: '2,150 – 3,850 sq.ft.',
-      description: 'An iconic landmark high-rise in Whitefield featuring ultra-luxury duplex sky condominiums, temperature-controlled infinity pools, and panoramic skyline vistas.',
+      carpetArea: '2,150 – 3,450 sq.ft.',
+      description: 'An intimate boutique apartment development in Whitefield featuring only two residences per floor, deep cantilevered sit-out balconies, and landscaped courtyard decks.',
       highlights: [
-        'Helipad & Private Sky Club',
-        'Triple-Height Grand Reception Lobby',
+        'Low-Density: Only 2 Apartments Per Floor',
+        'Terracotta Jali & Timber Arrival Court',
         'IGBC Platinum Green Certification',
-        'Smart Home IoT Automation'
+        'Private Lift Lobby & Smart Home Automation'
       ],
       gallery: [
         {
-          url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1600',
-          title: 'Tower Facade & Architectural Skyline',
+          url: 'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=85&w=1600',
+          title: 'Cantilevered Boutique Apartment Elevation',
           tag: 'Exterior'
         },
         {
-          url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=1600',
-          title: 'Duplex Penthouse Living Room',
+          url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=85&w=1600',
+          title: 'Sunlit Boutique Apartment Living Suite',
           tag: 'Living Suite'
         },
         {
-          url: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fit=crop&q=80&w=1600',
-          title: 'Temperature-Controlled Infinity Sky Pool',
-          tag: 'Sky Amenities'
+          url: 'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=1600',
+          title: 'Landscaped Courtyard & Resident Lap Pool',
+          tag: 'Courtyard Amenities'
         },
         {
-          url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1600',
-          title: 'Master Bedroom Suite with City Balcony',
-          tag: 'Bedrooms'
+          url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=85&w=1600',
+          title: 'Open-Plan Dining & Lounge',
+          tag: 'Interiors'
         },
         {
-          url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=1600',
-          title: 'Triple-Height Grand Reception Lobby',
+          url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=85&w=1600',
+          title: 'Timber-Screened Double-Height Entrance Foyer',
           tag: 'Lobby & Concierge'
         },
         {
-          url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1600',
-          title: 'Golden Hour Sunset Skyline Elevation',
+          url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=85&w=1600',
+          title: 'Evening Facade & Recessed Balconies',
           tag: 'Twilight View'
         }
       ]
@@ -153,48 +153,48 @@ export const SHOWCASE_CONFIG = {
       location: 'Sarjapur Road, Bangalore',
       badge: 'New Launch',
       rating: '4.8/5',
-      image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1600',
+      image: 'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=1600',
       priceStarting: '₹1.95 Cr onwards',
-      configuration: '2, 3 & 3.5 BHK Forest Living',
+      configuration: '2, 3 & 3.5 BHK Courtyard Apartments',
       possessionDate: 'June 2027',
       carpetArea: '1,450 – 2,600 sq.ft.',
-      description: 'Nature-infused residential community situated amidst 18 acres of lush green canopy, featuring organic botanical trails and biophilic architectural planning.',
+      description: 'Low-rise G+4 boutique garden apartments nestled amidst mature Bengaluru rain trees, featuring shaded pergola terraces, cross-ventilated floor plates, and a central lap pool.',
       highlights: [
-        '80% Open Green Canopy',
-        'Olympic-Length Swimming Complex',
+        'Low-Rise G+4 Boutique Courtyard Blocks',
+        'Central Lap Pool & Shaded Pergola Decks',
         'Solar-Powered Common Infrastructure',
-        'Multi-Tier 24/7 Security'
+        'Multi-Tier 24/7 Perimeter Security'
       ],
       gallery: [
         {
-          url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1600',
-          title: '18-Acre Biophilic Township Canopy',
-          tag: 'Exterior & Parks'
+          url: 'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=1600',
+          title: 'Low-Rise Boutique Apartment Blocks & Canopy',
+          tag: 'Exterior & Courtyard'
         },
         {
-          url: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80&w=1600',
-          title: 'Botanical Walkways & Manicured Lawns',
-          tag: 'Landscape'
-        },
-        {
-          url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=80&w=1600',
-          title: 'Sunlit Living Room Overlooking Forest Canopy',
-          tag: 'Interiors'
-        },
-        {
-          url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=1600',
-          title: 'Olympic-Length Resort Swimming Pavilion',
+          url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=85&w=1600',
+          title: 'Stone-Walled Courtyard Swimming Pavilion',
           tag: 'Clubhouse'
         },
         {
-          url: 'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=80&w=1600',
-          title: 'Private Garden Deck & Outdoor Patio',
+          url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=85&w=1600',
+          title: 'Sunlit Living Room Opening to Verandah Deck',
+          tag: 'Interiors'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=85&w=1600',
+          title: 'Biophilic Study & Lounge Corner',
+          tag: 'Living Space'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=85&w=1600',
+          title: 'Terracotta Brick Facade & Deep Sit-Out Balconies',
           tag: 'Balcony'
         },
         {
-          url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1600',
-          title: 'Ayurvedic Wellness Spa & Yoga Retreat',
-          tag: 'Wellness Pavilion'
+          url: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=85&w=1600',
+          title: 'Natural Oak Herringbone Apartment Suite',
+          tag: 'Master Suite'
         }
       ]
     },
@@ -205,38 +205,38 @@ export const SHOWCASE_CONFIG = {
       location: 'Hebbal / Airport Corridor, Bangalore',
       badge: 'Pre-Launch',
       rating: '4.7/5',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=1600',
+      image: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=85&w=1600',
       priceStarting: '₹3.40 Cr onwards',
-      configuration: '4 & 5 BHK Penthouses',
+      configuration: '3 & 4 BHK Terrace Apartments',
       possessionDate: 'March 2027',
-      carpetArea: '3,200 – 5,400 sq.ft.',
-      description: 'Opulent penthouses on the fast-growing Airport Corridor offering private elevator entries, floor-to-ceiling glass facades, and curated concierge living.',
+      carpetArea: '2,800 – 4,200 sq.ft.',
+      description: 'Warm brick-and-concrete boutique residences along the Hebbal–Airport corridor, crafted with private elevator foyers, wrap-around planter balconies, and curated concierge living.',
       highlights: [
-        'Private Plunge Pool on Every Deck',
-        'Bespoke Italian Marble Finishes',
+        'Wrap-Around Landscaped Planter Balconies',
+        'Exposed Brick & Architectural Concrete Facade',
         'Dedicated EV Rapid Charging Bays',
-        'Direct Access to Express Highway'
+        '6 Mins from Manyata Tech Park & Hebbal Flyover'
       ],
       gallery: [
         {
-          url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80&w=1600',
-          title: 'Airport Corridor High-Rise Elevation',
+          url: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=85&w=1600',
+          title: 'Warm Brick Boutique Apartment Elevation',
           tag: 'Exterior'
         },
         {
-          url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=1600',
-          title: 'Private Penthouse Plunge Pool & Terrace',
+          url: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=85&w=1600',
+          title: 'Rooftop Pergola & Penthouse Crown',
           tag: 'Terrace Deck'
         },
         {
-          url: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&q=80&w=1600',
-          title: 'Italian Marble Designer Kitchen & Dining',
+          url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=85&w=1600',
+          title: 'Designer Kitchen & Timber Feature Wall',
           tag: 'Interiors'
         },
         {
-          url: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&q=80&w=1600',
-          title: 'Panoramic Glass Deck Skyline Lounge',
-          tag: 'Sky Lounge'
+          url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=85&w=1600',
+          title: 'Corner Apartment Lounge with Dual Aspect Views',
+          tag: 'Living Room'
         }
       ]
     },
@@ -244,41 +244,41 @@ export const SHOWCASE_CONFIG = {
       id: 'redhill-sovereign',
       name: 'Redhill Sovereign Estates',
       category: 'villas',
-      location: 'Devanahalli, Bangalore',
+      location: 'Indiranagar / Domlur Corridor, Bangalore',
       badge: 'Exclusive Edition',
       rating: '4.9/5',
-      image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=1600',
-      priceStarting: '₹4.80 Cr onwards',
-      configuration: '4 & 5 BHK Bespoke Villa Mansions',
+      image: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=85&w=1600',
+      priceStarting: '₹4.20 Cr onwards',
+      configuration: '4 BHK Single-Floor Boutique Residences',
       possessionDate: 'Nov 2026',
-      carpetArea: '4,500 – 7,200 sq.ft.',
-      description: 'A private gated enclave of handcrafted ultra-luxury villas with private landscaped courtyards, personal lap pools, and clubhouse privileges.',
+      carpetArea: '3,600 – 4,800 sq.ft.',
+      description: 'An ultra-exclusive G+5 boutique apartment address featuring one full-floor residence per level, private key-card elevator access, and a rooftop sky garden.',
       highlights: [
-        'Private 500 sq.ft. Landscaped Garden',
-        'Clubhouse with Squash & Tennis Courts',
-        'Subterranean 3-Car Parking',
-        '24/7 Butler & Chauffeur Services'
+        'One Full-Floor Residence Per Level (5 Units Total)',
+        'Rooftop Sky Deck & Private Resident Lounge',
+        'Subterranean 3-Car Basement Parking',
+        'Acoustic Double-Glazed Fenestration'
       ],
       gallery: [
         {
-          url: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&q=80&w=1600',
-          title: 'Handcrafted Villa Mansion Architecture',
+          url: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=85&w=1600',
+          title: 'G+5 Full-Floor Boutique Residence Facade',
           tag: 'Exterior'
         },
         {
-          url: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&q=80&w=1600',
-          title: 'Double-Height Grand Living Room',
+          url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=85&w=1600',
+          title: 'Full-Floor Living & Entertaining Lounge',
           tag: 'Interiors'
         },
         {
-          url: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80&w=1600',
-          title: 'Private Courtyard & Temperature Heated Pool',
+          url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=85&w=1600',
+          title: 'Private Courtyard Deck & Lap Pool',
           tag: 'Courtyard Pool'
         },
         {
-          url: 'https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&q=80&w=1600',
-          title: 'Presidential Master Suite with Garden Access',
-          tag: 'Master Suite'
+          url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=85&w=1600',
+          title: 'Timber-Louvered Arrival Foyer at Dusk',
+          tag: 'Arrival Court'
         }
       ]
     },

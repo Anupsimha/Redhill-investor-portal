@@ -14,7 +14,7 @@ export default function Logo({ className = "", light = false }: LogoProps) {
         <div className="w-[2px] h-[60%] bg-gradient-to-t from-[#8E6B3E] to-[#D4AF37] rounded-full" />
         <div className="w-[2px] h-[80%] bg-gradient-to-t from-[#8E6B3E] to-[#D4AF37] rounded-full" />
         <div className="w-[2px] h-[100%] bg-gradient-to-t from-[#8E6B3E] to-[#D4AF37] rounded-full" />
-        <div className="w-[1px] h-[100%] bg-white/10 mx-[1px]" />
+        <div className={`w-[1px] h-[100%] ${light ? 'bg-white/10' : 'bg-black/10'} mx-[1px]`} />
         <div className="w-[2px] h-[100%] bg-gradient-to-t from-[#8E6B3E] to-[#D4AF37] rounded-full" />
         <div className="w-[2px] h-[85%] bg-gradient-to-t from-[#8E6B3E] to-[#D4AF37] rounded-full" />
         <div className="w-[2px] h-[70%] bg-gradient-to-t from-[#8E6B3E] to-[#D4AF37] rounded-full" />
@@ -22,7 +22,7 @@ export default function Logo({ className = "", light = false }: LogoProps) {
       </div>
       
       {/* Text Part */}
-      <div className="flex flex-col leading-[0.9]">
+      <div className="flex flex-col leading-[0.9] whitespace-nowrap">
         <span className={`${light ? 'text-white' : 'text-redhill-dark'} font-black tracking-tight text-lg`}>RED HILL</span>
         <span className={`${light ? 'text-white' : 'text-redhill-dark'} font-black tracking-[0.15em] text-lg`}>INFRA</span>
         <span className={`${light ? 'text-white/50' : 'text-gray-400'} text-[7px] font-bold mt-0.5 tracking-widest`}>PVT LTD</span>

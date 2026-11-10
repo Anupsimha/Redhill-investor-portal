@@ -69,37 +69,37 @@ export default function CreateProjectModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-redhill-gray border border-white/[0.08] rounded-2xl w-full max-w-lg p-8 shadow-2xl text-white max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-white border border-redhill-line rounded-2xl w-full max-w-lg p-8 shadow-2xl text-redhill-charcoal max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white font-serif flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-redhill-charcoal font-serif flex items-center gap-2">
             <Building2 className="w-6 h-6 text-redhill-red" />
             Create New Project
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+          <button onClick={onClose} className="text-redhill-muted hover:text-redhill-charcoal transition-colors cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-bold text-gray-400 mb-1">Project Name</label>
+            <label className="block text-sm font-bold text-redhill-muted mb-1">Project Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 focus:ring-2 focus:ring-redhill-red/10 transition-all"
+              className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 focus:ring-2 focus:ring-redhill-red/10 transition-all"
               placeholder="e.g. Redhill Heights"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-400 mb-1">Location</label>
+            <label className="block text-sm font-bold text-redhill-muted mb-1">Location</label>
             <input
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 focus:ring-2 focus:ring-redhill-red/10 transition-all"
+              className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 focus:ring-2 focus:ring-redhill-red/10 transition-all"
               placeholder="e.g. Bangalore, KA"
               required
             />
@@ -107,46 +107,46 @@ export default function CreateProjectModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-bold text-gray-400 mb-1">Total Value</label>
+              <label className="block text-sm font-bold text-redhill-muted mb-1">Total Value</label>
               <input
                 type="text"
                 value={totalValue}
                 onChange={(e) => setTotalValue(e.target.value)}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 focus:ring-2 focus:ring-redhill-red/10 transition-all"
+                className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 focus:ring-2 focus:ring-redhill-red/10 transition-all"
                 placeholder="e.g. ₹150 Cr"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-gray-400 mb-1">Initial Status</label>
+              <label className="block text-sm font-bold text-redhill-muted mb-1">Initial Status</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 transition-all"
+                className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 transition-all"
               >
-                <option value="Planning" className="bg-redhill-gray">Planning</option>
-                <option value="Approval" className="bg-redhill-gray">Approval</option>
-                <option value="Construction" className="bg-redhill-gray">Construction</option>
-                <option value="Completed" className="bg-redhill-gray">Completed</option>
+                <option value="Planning" className="bg-white">Planning</option>
+                <option value="Approval" className="bg-white">Approval</option>
+                <option value="Construction" className="bg-white">Construction</option>
+                <option value="Completed" className="bg-white">Completed</option>
               </select>
             </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-bold text-gray-400">Cover Image</label>
-              <div className="flex bg-white/[0.04] p-0.5 rounded-lg border border-white/[0.08]">
+              <label className="block text-sm font-bold text-redhill-muted">Cover Image</label>
+              <div className="flex bg-redhill-sand/70 p-0.5 rounded-lg border border-redhill-line">
                 <button
                   type="button"
                   onClick={() => setImageUploadType('url')}
-                  className={cn("px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 cursor-pointer transition-all", imageUploadType === 'url' ? "bg-redhill-red text-white" : "text-gray-400 hover:text-white")}
+                  className={cn("px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 cursor-pointer transition-all", imageUploadType === 'url' ? "bg-redhill-red text-white" : "text-redhill-muted hover:text-redhill-charcoal")}
                 >
                   <LinkIcon className="w-3 h-3" /> URL
                 </button>
                 <button
                   type="button"
                   onClick={() => setImageUploadType('file')}
-                  className={cn("px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 cursor-pointer transition-all", imageUploadType === 'file' ? "bg-redhill-red text-white" : "text-gray-400 hover:text-white")}
+                  className={cn("px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1 cursor-pointer transition-all", imageUploadType === 'file' ? "bg-redhill-red text-white" : "text-redhill-muted hover:text-redhill-charcoal")}
                 >
                   <Upload className="w-3 h-3" /> Upload
                 </button>
@@ -158,13 +158,13 @@ export default function CreateProjectModal({
                 type="url"
                 value={imageUrl}
                 onChange={(e) => setImageUrl(e.target.value)}
-                className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 transition-all"
+                className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 transition-all"
                 placeholder="https://images.unsplash.com/..."
               />
             ) : (
               <div 
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full border-2 border-dashed border-white/[0.1] hover:border-redhill-red/40 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-white/[0.01] hover:bg-white/[0.03]"
+                className="w-full border-2 border-dashed border-redhill-line hover:border-redhill-red/40 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer transition-all bg-[#FBF9F5] hover:bg-[#FBF9F5]"
               >
                 <input 
                   type="file" 
@@ -173,8 +173,8 @@ export default function CreateProjectModal({
                   accept="image/*" 
                   className="hidden" 
                 />
-                <Upload className="w-6 h-6 text-gray-400 mb-1" />
-                <p className="text-xs text-gray-300 font-medium">
+                <Upload className="w-6 h-6 text-redhill-muted mb-1" />
+                <p className="text-xs text-stone-700 font-medium">
                   {imageFile ? imageFile.name : "Click to browse cover photo"}
                 </p>
               </div>
@@ -182,12 +182,12 @@ export default function CreateProjectModal({
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-400 mb-1">CCTV Stream URL (Optional)</label>
+            <label className="block text-sm font-bold text-redhill-muted mb-1">CCTV Stream URL (Optional)</label>
             <input
               type="url"
               value={cctvUrl}
               onChange={(e) => setCctvUrl(e.target.value)}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 transition-all"
+              className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 transition-all"
               placeholder="https://... live stream or video link"
             />
           </div>
@@ -196,7 +196,7 @@ export default function CreateProjectModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl font-bold transition-all text-gray-300 cursor-pointer"
+              className="flex-1 px-4 py-3 bg-redhill-sand/70 hover:bg-redhill-sand border border-redhill-line rounded-xl font-bold transition-all text-stone-700 cursor-pointer"
             >
               Cancel
             </button>

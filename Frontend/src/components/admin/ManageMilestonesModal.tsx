@@ -316,37 +316,37 @@ export default function ManageMilestonesModal({
       />
 
       {/* Main Container */}
-      <div className="relative bg-[#11141a] border border-white/10 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden z-10 text-white animate-in fade-in zoom-in duration-200">
+      <div className="relative bg-[#11141a] border border-redhill-line rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden z-10 text-redhill-charcoal animate-in fade-in zoom-in duration-200">
         
         {/* Header Banner */}
-        <div className="p-6 border-b border-white/[0.08] bg-gradient-to-r from-redhill-gray to-[#151922] flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-6 border-b border-redhill-line bg-redhill-ivory flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-4">
             <div className="w-12 h-12 rounded-xl bg-redhill-red/10 border border-red-500/20 flex items-center justify-center text-redhill-red shrink-0 mt-0.5">
               <Layers className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-2xl font-bold text-white font-serif">{project.name}</h2>
-                <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/10 text-gray-300 font-sans">
+                <h2 className="text-2xl font-bold text-redhill-charcoal font-serif">{project.name}</h2>
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-redhill-sand text-stone-700 font-sans">
                   {project.location}
                 </span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-redhill-muted mt-1">
                 Manage construction milestones, daily progress updates, and automated investor notifications.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-right">
-              <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Overall Progress</div>
-              <div className="text-xl font-bold text-emerald-400 font-serif">
+            <div className="bg-redhill-sand/70 border border-redhill-line rounded-xl px-4 py-2 text-right">
+              <div className="text-[10px] text-redhill-muted font-bold uppercase tracking-wider">Overall Progress</div>
+              <div className="text-xl font-bold text-emerald-700 font-serif">
                 {project.completion_percentage}%
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-redhill-sand/70 hover:bg-redhill-sand text-redhill-muted hover:text-redhill-charcoal transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -354,17 +354,17 @@ export default function ManageMilestonesModal({
         </div>
 
         {/* Targeted Audience Banner (Crucial Requirement Demonstration) */}
-        <div className="px-6 py-3.5 bg-gradient-to-r from-red-950/40 via-redhill-gray to-black/40 border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
+        <div className="px-6 py-3.5 bg-redhill-sand/70 border-b border-redhill-line flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-redhill-red/20 border border-red-500/30 flex items-center justify-center text-red-400 shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-redhill-red/20 border border-red-500/30 flex items-center justify-center text-red-700 shrink-0">
               <Users className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xs font-bold text-white">Targeted Investor Audience: </span>
-              <span className="text-xs text-red-300 font-semibold">
+              <span className="text-xs font-bold text-redhill-charcoal">Targeted Investor Audience: </span>
+              <span className="text-xs text-red-700 font-semibold">
                 {investors.length} Investor{investors.length === 1 ? '' : 's'} in this project
               </span>
-              <span className="text-[11px] text-gray-400 ml-2 hidden md:inline">
+              <span className="text-[11px] text-redhill-muted ml-2 hidden md:inline">
                 (Milestone completed emails are dispatched <strong>strictly</strong> to these investors)
               </span>
             </div>
@@ -372,19 +372,19 @@ export default function ManageMilestonesModal({
 
           <div className="flex items-center gap-2 overflow-x-auto max-w-full">
             {loadingAudience ? (
-              <span className="text-xs text-gray-400">Loading audience...</span>
+              <span className="text-xs text-redhill-muted">Loading audience...</span>
             ) : investors.length === 0 ? (
-              <span className="text-xs text-amber-400/80 italic">No investors assigned to this project yet.</span>
+              <span className="text-xs text-amber-700 italic">No investors assigned to this project yet.</span>
             ) : (
               investors.map((inv) => (
                 <div
                   key={inv.id}
-                  className="text-[11px] bg-white/5 hover:bg-white/10 border border-white/10 px-2.5 py-1 rounded-full text-gray-200 flex items-center gap-1.5 shrink-0 transition-colors"
+                  className="text-[11px] bg-redhill-sand/70 hover:bg-redhill-sand border border-redhill-line px-2.5 py-1 rounded-full text-redhill-charcoal flex items-center gap-1.5 shrink-0 transition-colors"
                   title={`${inv.name} (${inv.email})`}
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <strong className="text-white">{inv.name}</strong>
-                  <span className="text-gray-400">&lt;{inv.email}&gt;</span>
+                  <strong className="text-redhill-charcoal">{inv.name}</strong>
+                  <span className="text-redhill-muted">&lt;{inv.email}&gt;</span>
                 </div>
               ))
             )}
@@ -392,15 +392,15 @@ export default function ManageMilestonesModal({
         </div>
 
         {/* Tabs Bar */}
-        <div className="px-6 border-b border-white/[0.08] flex items-center justify-between bg-black/20">
+        <div className="px-6 border-b border-redhill-line flex items-center justify-between bg-redhill-ivory">
           <div className="flex gap-2">
             <button
               onClick={() => setActiveTab('milestones')}
               className={cn(
                 'py-3.5 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer',
                 activeTab === 'milestones'
-                  ? 'border-redhill-red text-white'
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  ? 'border-redhill-red text-redhill-charcoal'
+                  : 'border-transparent text-redhill-muted hover:text-redhill-charcoal'
               )}
             >
               <Layers className="w-4 h-4" />
@@ -411,11 +411,11 @@ export default function ManageMilestonesModal({
               className={cn(
                 'py-3.5 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer',
                 activeTab === 'daily'
-                  ? 'border-redhill-red text-white'
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  ? 'border-redhill-red text-redhill-charcoal'
+                  : 'border-transparent text-redhill-muted hover:text-redhill-charcoal'
               )}
             >
-              <Sparkles className="w-4 h-4 text-amber-400" />
+              <Sparkles className="w-4 h-4 text-amber-700" />
               Log Daily Construction Work
             </button>
             <button
@@ -423,8 +423,8 @@ export default function ManageMilestonesModal({
               className={cn(
                 'py-3.5 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 cursor-pointer',
                 activeTab === 'history'
-                  ? 'border-redhill-red text-white'
-                  : 'border-transparent text-gray-400 hover:text-gray-200'
+                  ? 'border-redhill-red text-redhill-charcoal'
+                  : 'border-transparent text-redhill-muted hover:text-redhill-charcoal'
               )}
             >
               <Mail className="w-4 h-4" />
@@ -435,7 +435,7 @@ export default function ManageMilestonesModal({
           {activeTab === 'milestones' && !showAddForm && (
             <button
               onClick={() => setShowAddForm(true)}
-              className="bg-redhill-red hover:bg-red-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-md shadow-redhill-red/20 cursor-pointer"
+              className="bg-redhill-red hover:bg-red-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-md  cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
               Add Milestone
@@ -451,15 +451,15 @@ export default function ManageMilestonesModal({
             <div className="space-y-6">
               {/* Add Milestone Inline Form */}
               {showAddForm && (
-                <div className="bg-redhill-gray/90 border border-white/10 rounded-xl p-5 space-y-4 shadow-xl">
+                <div className="bg-redhill-sand-deep border border-redhill-line rounded-xl p-5 space-y-4 shadow-xl">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-redhill-charcoal flex items-center gap-2">
                       <Plus className="w-4 h-4 text-redhill-red" /> Add New Project Milestone
                     </h3>
                     <button
                       type="button"
                       onClick={() => setShowAddForm(false)}
-                      className="text-gray-400 hover:text-white text-xs cursor-pointer"
+                      className="text-redhill-muted hover:text-redhill-charcoal text-xs cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -468,11 +468,11 @@ export default function ManageMilestonesModal({
                   <form onSubmit={handleAddMilestone} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 mb-1">Category</label>
+                        <label className="block text-xs font-bold text-redhill-muted mb-1">Category</label>
                         <select
                           value={newCat}
                           onChange={(e) => setNewCat(e.target.value as any)}
-                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-redhill-red"
+                          className="w-full px-3 py-2 bg-redhill-sand/70 border border-redhill-line rounded-lg text-redhill-charcoal text-xs outline-none focus:border-redhill-red"
                         >
                           <option value="construction" className="bg-[#171a21]">Construction</option>
                           <option value="approval" className="bg-[#171a21]">Approval</option>
@@ -481,13 +481,13 @@ export default function ManageMilestonesModal({
                       </div>
 
                       <div className="md:col-span-2">
-                        <label className="block text-xs font-bold text-gray-400 mb-1">Milestone Name</label>
+                        <label className="block text-xs font-bold text-redhill-muted mb-1">Milestone Name</label>
                         <input
                           type="text"
                           value={newName}
                           onChange={(e) => setNewName(e.target.value)}
                           placeholder="e.g. Pillar Work & Structural Columns (25-Day Cycle)"
-                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-redhill-red"
+                          className="w-full px-3 py-2 bg-redhill-sand/70 border border-redhill-line rounded-lg text-redhill-charcoal text-xs outline-none focus:border-redhill-red"
                           required
                         />
                       </div>
@@ -495,33 +495,33 @@ export default function ManageMilestonesModal({
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 mb-1">Target Cycle (Days)</label>
+                        <label className="block text-xs font-bold text-redhill-muted mb-1">Target Cycle (Days)</label>
                         <input
                           type="number"
                           value={newTargetDays}
                           onChange={(e) => setNewTargetDays(parseInt(e.target.value) || 0)}
                           placeholder="25"
-                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-redhill-red"
+                          className="w-full px-3 py-2 bg-redhill-sand/70 border border-redhill-line rounded-lg text-redhill-charcoal text-xs outline-none focus:border-redhill-red"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 mb-1">Current Day</label>
+                        <label className="block text-xs font-bold text-redhill-muted mb-1">Current Day</label>
                         <input
                           type="number"
                           value={newCurrentDay}
                           onChange={(e) => setNewCurrentDay(parseInt(e.target.value) || 0)}
                           placeholder="1"
-                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-redhill-red"
+                          className="w-full px-3 py-2 bg-redhill-sand/70 border border-redhill-line rounded-lg text-redhill-charcoal text-xs outline-none focus:border-redhill-red"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 mb-1">Status</label>
+                        <label className="block text-xs font-bold text-redhill-muted mb-1">Status</label>
                         <select
                           value={newStatus}
                           onChange={(e) => setNewStatus(e.target.value as any)}
-                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-redhill-red"
+                          className="w-full px-3 py-2 bg-redhill-sand/70 border border-redhill-line rounded-lg text-redhill-charcoal text-xs outline-none focus:border-redhill-red"
                         >
                           <option value="pending" className="bg-[#171a21]">Pending</option>
                           <option value="in_progress" className="bg-[#171a21]">In Progress</option>
@@ -530,26 +530,26 @@ export default function ManageMilestonesModal({
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-gray-400 mb-1">Progress %</label>
+                        <label className="block text-xs font-bold text-redhill-muted mb-1">Progress %</label>
                         <input
                           type="number"
                           min="0"
                           max="100"
                           value={newPct}
                           onChange={(e) => setNewPct(parseInt(e.target.value) || 0)}
-                          className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-redhill-red"
+                          className="w-full px-3 py-2 bg-redhill-sand/70 border border-redhill-line rounded-lg text-redhill-charcoal text-xs outline-none focus:border-redhill-red"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-1">Description / Notes</label>
+                      <label className="block text-xs font-bold text-redhill-muted mb-1">Description / Notes</label>
                       <input
                         type="text"
                         value={newNotes}
                         onChange={(e) => setNewNotes(e.target.value)}
                         placeholder="e.g. Pillar casting across Block A in progress"
-                        className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-redhill-red"
+                        className="w-full px-3 py-2 bg-redhill-sand/70 border border-redhill-line rounded-lg text-redhill-charcoal text-xs outline-none focus:border-redhill-red"
                       />
                     </div>
 
@@ -557,7 +557,7 @@ export default function ManageMilestonesModal({
                       <button
                         type="button"
                         onClick={() => setShowAddForm(false)}
-                        className="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white rounded-lg cursor-pointer"
+                        className="px-4 py-2 text-xs font-bold text-redhill-muted hover:text-redhill-charcoal rounded-lg cursor-pointer"
                       >
                         Cancel
                       </button>
@@ -576,10 +576,10 @@ export default function ManageMilestonesModal({
               {/* Milestones List Cards */}
               <div className="space-y-4">
                 {milestones.length === 0 ? (
-                  <div className="text-center py-12 bg-white/[0.02] border border-white/5 rounded-2xl">
-                    <Layers className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                    <p className="text-sm font-bold text-gray-300">No milestones yet for this project</p>
-                    <p className="text-xs text-gray-500 mt-1">Add your first milestone or log daily construction progress.</p>
+                  <div className="text-center py-12 bg-[#FBF9F5] border border-redhill-line rounded-2xl">
+                    <Layers className="w-12 h-12 text-stone-400 mx-auto mb-3" />
+                    <p className="text-sm font-bold text-stone-700">No milestones yet for this project</p>
+                    <p className="text-xs text-stone-500 mt-1">Add your first milestone or log daily construction progress.</p>
                   </div>
                 ) : (
                   milestones.map((m) => {
@@ -593,7 +593,7 @@ export default function ManageMilestonesModal({
                           'p-5 rounded-2xl border transition-all flex flex-col gap-4',
                           isCompleted
                             ? 'bg-emerald-950/15 border-emerald-500/20'
-                            : 'bg-white/[0.03] border-white/[0.08] hover:border-white/15'
+                            : 'bg-[#FBF9F5] border-redhill-line hover:border-redhill-line'
                         )}
                       >
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
@@ -602,8 +602,8 @@ export default function ManageMilestonesModal({
                               className={cn(
                                 'w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5',
                                 isCompleted
-                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                  : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                  ? 'bg-emerald-500/20 text-emerald-700 border border-emerald-500/30'
+                                  : 'bg-amber-500/20 text-amber-700 border border-amber-500/30'
                               )}
                             >
                               {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
@@ -611,19 +611,19 @@ export default function ManageMilestonesModal({
 
                             <div>
                               <div className="flex flex-wrap items-center gap-2">
-                                <h4 className="font-bold text-white text-base font-serif">{m.name}</h4>
-                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-gray-400 uppercase tracking-wider font-semibold">
+                                <h4 className="font-bold text-redhill-charcoal text-base font-serif">{m.name}</h4>
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-redhill-sand/70 text-redhill-muted uppercase tracking-wider font-semibold">
                                   {m.category}
                                 </span>
                                 {m.target_days ? (
-                                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-bold">
+                                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 border border-blue-500/20 font-bold">
                                     Cycle: Day {m.current_day || 0} / {m.target_days} Days
                                   </span>
                                 ) : null}
                               </div>
 
                               {m.notes && (
-                                <p className="text-xs text-gray-400 mt-1 italic">
+                                <p className="text-xs text-redhill-muted mt-1 italic">
                                   &ldquo;{m.notes}&rdquo;
                                 </p>
                               )}
@@ -652,16 +652,16 @@ export default function ManageMilestonesModal({
                                 setDailyIsComplete(true);
                                 setActiveTab('daily');
                               }}
-                              className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white text-xs font-bold rounded-lg border border-white/10 transition-colors flex items-center gap-1 cursor-pointer"
+                              className="px-3 py-1.5 bg-redhill-sand/70 hover:bg-redhill-sand text-stone-700 hover:text-redhill-charcoal text-xs font-bold rounded-lg border border-redhill-line transition-colors flex items-center gap-1 cursor-pointer"
                               title="Log daily construction work for this milestone"
                             >
-                              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                              <Sparkles className="w-3.5 h-3.5 text-amber-700" />
                               Log Daily Work
                             </button>
 
                             <button
                               onClick={() => deleteMilestoneMutation.mutate(m.id)}
-                              className="p-1.5 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-lg transition-colors cursor-pointer"
+                              className="p-1.5 bg-redhill-sand/70 hover:bg-red-500/20 text-redhill-muted hover:text-red-700 rounded-lg transition-colors cursor-pointer"
                               title="Delete Milestone"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -670,21 +670,21 @@ export default function ManageMilestonesModal({
                         </div>
 
                         {/* Progress Bar & Status Controls */}
-                        <div className="bg-black/30 p-3 rounded-xl border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="bg-redhill-ivory p-3 rounded-xl border border-redhill-line flex flex-col md:flex-row md:items-center justify-between gap-4">
                           <div className="flex-1 space-y-1.5">
                             <div className="flex justify-between text-xs font-bold">
-                              <span className="text-gray-400">Milestone Progress</span>
-                              <span className={isCompleted ? 'text-emerald-400' : 'text-white'}>
+                              <span className="text-redhill-muted">Milestone Progress</span>
+                              <span className={isCompleted ? 'text-emerald-700' : 'text-redhill-charcoal'}>
                                 {m.completion_percentage}%
                               </span>
                             </div>
-                            <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
+                            <div className="w-full bg-redhill-sand/70 h-2 rounded-full overflow-hidden">
                               <div
                                 className={cn(
                                   'h-full rounded-full transition-all duration-500',
                                   isCompleted
                                     ? 'bg-emerald-500'
-                                    : 'bg-gradient-to-r from-redhill-red to-amber-500'
+                                    : 'bg-redhill-gold'
                                 )}
                                 style={{ width: `${m.completion_percentage}%` }}
                               />
@@ -692,7 +692,7 @@ export default function ManageMilestonesModal({
                           </div>
 
                           <div className="flex items-center gap-3 shrink-0 text-xs">
-                            <span className="text-gray-400">Status:</span>
+                            <span className="text-redhill-muted">Status:</span>
                             <select
                               value={m.status}
                               onChange={(e) => {
@@ -710,8 +710,8 @@ export default function ManageMilestonesModal({
                               className={cn(
                                 'px-3 py-1.5 rounded-lg text-xs font-bold border outline-none cursor-pointer',
                                 isCompleted
-                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                                  : 'bg-white/5 text-gray-300 border-white/10'
+                                  ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/30'
+                                  : 'bg-redhill-sand/70 text-stone-700 border-redhill-line'
                               )}
                             >
                               <option value="pending" className="bg-[#171a21]">Pending</option>
@@ -730,13 +730,13 @@ export default function ManageMilestonesModal({
 
           {/* TAB 2: LOG DAILY CONSTRUCTION WORK (THE USER'S EXACT 25-DAY SCENARIO) */}
           {activeTab === 'daily' && (
-            <div className="max-w-2xl mx-auto bg-redhill-gray/80 border border-white/10 rounded-2xl p-6 shadow-2xl space-y-6">
+            <div className="max-w-2xl mx-auto bg-redhill-sand-deep border border-redhill-line rounded-2xl p-6 shadow-2xl space-y-6">
               <div>
-                <h3 className="text-lg font-bold text-white font-serif flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-amber-400" />
+                <h3 className="text-lg font-bold text-redhill-charcoal font-serif flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-amber-700" />
                   Log Daily Construction Work
                 </h3>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-redhill-muted mt-1">
                   Update daily progress (e.g. Day 1 through Day 25 for Pillar work or approvals). When completed, automated emails are sent directly to this project&apos;s investors.
                 </p>
               </div>
@@ -744,7 +744,7 @@ export default function ManageMilestonesModal({
               <form onSubmit={handleDailyProgressSubmit} className="space-y-5">
                 {/* Milestone Select */}
                 <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5">
+                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
                     Select Milestone / Work Stream
                   </label>
                   <select
@@ -759,7 +759,7 @@ export default function ManageMilestonesModal({
                         if (targetMilestone.notes) setDailyNotes(targetMilestone.notes);
                       }
                     }}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-redhill-red transition-all"
+                    className="w-full px-4 py-3 bg-redhill-sand/70 border border-redhill-line rounded-xl text-redhill-charcoal text-sm outline-none focus:border-redhill-red transition-all"
                   >
                     <option value="" className="bg-[#171a21]">-- General Project Progress Update --</option>
                     {milestones.map((m) => (
@@ -773,7 +773,7 @@ export default function ManageMilestonesModal({
                 {/* Day Number and Progress % Slider */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-gray-300 mb-1.5">
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5">
                       Construction Cycle Day (e.g. Day 25)
                     </label>
                     <div className="relative">
@@ -782,18 +782,18 @@ export default function ManageMilestonesModal({
                         min="1"
                         value={dailyDayNumber}
                         onChange={(e) => setDailyDayNumber(parseInt(e.target.value) || 1)}
-                        className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-redhill-red"
+                        className="w-full px-4 py-2.5 bg-redhill-sand/70 border border-redhill-line rounded-xl text-redhill-charcoal text-sm outline-none focus:border-redhill-red"
                         placeholder="25"
                         required
                       />
-                      <span className="absolute right-4 top-2.5 text-xs text-gray-500 font-bold">Day</span>
+                      <span className="absolute right-4 top-2.5 text-xs text-stone-500 font-bold">Day</span>
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-gray-300 mb-1.5 flex justify-between">
+                    <label className="block text-xs font-bold text-stone-700 mb-1.5 flex justify-between">
                       <span>Milestone Progress</span>
-                      <span className="text-emerald-400 font-bold">{dailyPct}%</span>
+                      <span className="text-emerald-700 font-bold">{dailyPct}%</span>
                     </label>
                     <input
                       type="range"
@@ -812,7 +812,7 @@ export default function ManageMilestonesModal({
 
                 {/* Daily Work Details */}
                 <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5">
+                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
                     Today&apos;s Work Summary / Inspection Notes
                   </label>
                   <textarea
@@ -820,14 +820,14 @@ export default function ManageMilestonesModal({
                     value={dailyNotes}
                     onChange={(e) => setDailyNotes(e.target.value)}
                     placeholder="e.g. Day 25: All structural columns and pillar work 100% completed. Concrete curing verified. Inspection passed."
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm outline-none focus:border-redhill-red transition-all"
+                    className="w-full px-4 py-3 bg-redhill-sand/70 border border-redhill-line rounded-xl text-redhill-charcoal text-sm outline-none focus:border-redhill-red transition-all"
                     required
                   />
                 </div>
 
                 {/* Optional Media Upload */}
                 <div>
-                  <label className="block text-xs font-bold text-gray-300 mb-1.5">
+                  <label className="block text-xs font-bold text-stone-700 mb-1.5">
                     Site Photo or Video (Optional)
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -835,14 +835,14 @@ export default function ManageMilestonesModal({
                       type="file"
                       accept="image/*,video/*"
                       onChange={(e) => setDailyFile(e.target.files?.[0] || null)}
-                      className="w-full text-xs text-gray-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-white/10 file:text-white hover:file:bg-white/20 cursor-pointer"
+                      className="w-full text-xs text-redhill-muted file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-redhill-sand file:text-redhill-charcoal hover:file:bg-redhill-sand-deep cursor-pointer"
                     />
                     <input
                       type="text"
                       value={dailyMediaUrl}
                       onChange={(e) => setDailyMediaUrl(e.target.value)}
                       placeholder="Or paste media URL"
-                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs outline-none focus:border-redhill-red"
+                      className="w-full px-3 py-2 bg-redhill-sand/70 border border-redhill-line rounded-lg text-redhill-charcoal text-xs outline-none focus:border-redhill-red"
                     />
                   </div>
                 </div>
@@ -857,11 +857,11 @@ export default function ManageMilestonesModal({
                     className="w-5 h-5 accent-emerald-500 rounded cursor-pointer mt-0.5"
                   />
                   <div>
-                    <label htmlFor="dailyIsComplete" className="text-sm font-bold text-white cursor-pointer flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <label htmlFor="dailyIsComplete" className="text-sm font-bold text-redhill-charcoal cursor-pointer flex items-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                       Mark Milestone as 100% Completed & Dispatch Automated Email
                     </label>
-                    <p className="text-xs text-emerald-300/80 mt-1">
+                    <p className="text-xs text-emerald-700 mt-1">
                       This will automatically find all {investors.length} registered investors in <strong>{project.name}</strong> and deliver the milestone completion email immediately.
                     </p>
                   </div>
@@ -871,7 +871,7 @@ export default function ManageMilestonesModal({
                   <button
                     type="button"
                     onClick={() => setActiveTab('milestones')}
-                    className="px-5 py-2.5 text-xs font-bold text-gray-400 hover:text-white rounded-xl transition-all cursor-pointer"
+                    className="px-5 py-2.5 text-xs font-bold text-redhill-muted hover:text-redhill-charcoal rounded-xl transition-all cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -898,20 +898,20 @@ export default function ManageMilestonesModal({
           {activeTab === 'history' && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <h3 className="text-sm font-bold text-redhill-charcoal flex items-center gap-2">
                   <Mail className="w-4 h-4 text-redhill-red" />
                   Automated Emails Dispatched for {project.name}
                 </h3>
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-redhill-muted">
                   {projectEmails.length} message{projectEmails.length === 1 ? '' : 's'} recorded
                 </span>
               </div>
 
               {projectEmails.length === 0 ? (
-                <div className="text-center py-12 bg-white/[0.02] border border-white/5 rounded-2xl">
-                  <Mail className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-sm font-bold text-gray-300">No automated emails sent yet</p>
-                  <p className="text-xs text-gray-500 mt-1">
+                <div className="text-center py-12 bg-[#FBF9F5] border border-redhill-line rounded-2xl">
+                  <Mail className="w-12 h-12 text-stone-400 mx-auto mb-3" />
+                  <p className="text-sm font-bold text-stone-700">No automated emails sent yet</p>
+                  <p className="text-xs text-stone-500 mt-1">
                     When you complete a milestone or log daily progress, emails sent to investors will appear here.
                   </p>
                 </div>
@@ -920,18 +920,18 @@ export default function ManageMilestonesModal({
                   {projectEmails.map((log) => (
                     <div
                       key={log.id}
-                      className="bg-white/[0.03] border border-white/[0.08] hover:border-white/15 p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all"
+                      className="bg-[#FBF9F5] border border-redhill-line hover:border-redhill-line p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-white">{log.subject}</span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+                          <span className="text-xs font-bold text-redhill-charcoal">{log.subject}</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 font-bold">
                             Sent
                           </span>
                         </div>
-                        <div className="text-xs text-gray-400 flex items-center gap-4">
+                        <div className="text-xs text-redhill-muted flex items-center gap-4">
                           <span>
-                            To: <strong className="text-gray-200">{log.recipient_name}</strong> &lt;{log.recipient_email}&gt;
+                            To: <strong className="text-redhill-charcoal">{log.recipient_name}</strong> &lt;{log.recipient_email}&gt;
                           </span>
                           <span>
                             {new Date(log.created_at).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}
@@ -941,7 +941,7 @@ export default function ManageMilestonesModal({
 
                       <button
                         onClick={() => setPreviewEmail(log)}
-                        className="px-3.5 py-1.5 bg-white/5 hover:bg-white/10 text-xs font-bold text-gray-200 rounded-lg border border-white/10 transition-colors flex items-center gap-1.5 self-start md:self-auto cursor-pointer"
+                        className="px-3.5 py-1.5 bg-redhill-sand/70 hover:bg-redhill-sand text-xs font-bold text-redhill-charcoal rounded-lg border border-redhill-line transition-colors flex items-center gap-1.5 self-start md:self-auto cursor-pointer"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
                         View Rendered Email
@@ -956,15 +956,15 @@ export default function ManageMilestonesModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-white/[0.08] bg-redhill-gray flex items-center justify-between">
-          <div className="text-xs text-gray-400 flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+        <div className="p-4 border-t border-redhill-line bg-white flex items-center justify-between">
+          <div className="text-xs text-redhill-muted flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-700" />
             <span>Targeted Dispatch: Emails are sent strictly to investors assigned to <strong>{project.name}</strong>.</span>
           </div>
 
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-white/10 hover:bg-white/15 text-white text-xs font-bold rounded-xl transition-all cursor-pointer"
+            className="px-5 py-2 bg-redhill-sand hover:bg-redhill-sand text-redhill-charcoal text-xs font-bold rounded-xl transition-all cursor-pointer"
           >
             Close
           </button>

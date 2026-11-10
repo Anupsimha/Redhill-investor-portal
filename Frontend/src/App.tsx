@@ -11,7 +11,7 @@ const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const ShowcaseExplore = lazy(() => import('./components/ShowcaseExplore'));
 
 const LoadingScreen = () => (
-  <div className="min-h-screen flex items-center justify-center bg-redhill-gray">
+  <div className="min-h-screen flex items-center justify-center bg-white">
     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-redhill-red"></div>
   </div>
 );

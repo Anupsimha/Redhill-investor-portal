@@ -42,61 +42,61 @@ export default function CreateInvestorModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-redhill-gray border border-white/[0.08] rounded-2xl w-full max-w-lg p-8 shadow-2xl text-white">
+      <div className="relative bg-white border border-redhill-line rounded-2xl w-full max-w-lg p-8 shadow-2xl text-redhill-charcoal">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white font-serif flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-redhill-charcoal font-serif flex items-center gap-2">
             <UserPlus className="w-6 h-6 text-redhill-red" />
             Add New Investor
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors cursor-pointer">
+          <button onClick={onClose} className="text-redhill-muted hover:text-redhill-charcoal transition-colors cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-sm font-bold text-gray-400 mb-1">Full Name</label>
+            <label className="block text-sm font-bold text-redhill-muted mb-1">Full Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 transition-all"
+              className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 transition-all"
               placeholder="e.g. John Doe"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-400 mb-1">Email Address</label>
+            <label className="block text-sm font-bold text-redhill-muted mb-1">Email Address</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 transition-all"
+              className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 transition-all"
               placeholder="john@example.com"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-400 mb-1">Phone Number</label>
+            <label className="block text-sm font-bold text-redhill-muted mb-1">Phone Number</label>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 transition-all"
+              className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 transition-all"
               placeholder="+91 98765 43210"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-400 mb-1">Initial Password</label>
+            <label className="block text-sm font-bold text-redhill-muted mb-1">Initial Password</label>
             <input
               type="text"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-white/[0.03] border border-white/[0.08] rounded-xl outline-none text-white focus:bg-white/[0.05] focus:border-redhill-red/40 font-mono transition-all"
+              className="w-full px-4 py-3 bg-[#FBF9F5] border border-redhill-line rounded-xl outline-none text-redhill-charcoal focus:bg-redhill-sand/70 focus:border-redhill-red/40 font-mono transition-all"
               required
             />
           </div>
@@ -105,7 +105,7 @@ export default function CreateInvestorModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-xl font-bold transition-all text-gray-300 cursor-pointer"
+              className="flex-1 px-4 py-3 bg-redhill-sand/70 hover:bg-redhill-sand border border-redhill-line rounded-xl font-bold transition-all text-stone-700 cursor-pointer"
             >
               Cancel
             </button>

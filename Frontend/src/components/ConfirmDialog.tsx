@@ -41,12 +41,12 @@ export default function ConfirmDialog({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="relative bg-redhill-gray border border-white/[0.08] rounded-2xl w-full max-w-md p-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)] text-white"
+            className="relative bg-white border border-redhill-line rounded-2xl w-full max-w-md p-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)] text-redhill-charcoal"
           >
             {/* Close button */}
             <button
               onClick={onCancel}
-              className="absolute top-4 right-4 p-1.5 text-gray-500 hover:text-gray-300 transition-colors cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 text-stone-500 hover:text-stone-700 transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -54,18 +54,18 @@ export default function ConfirmDialog({
             {/* Icon */}
             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 ${isDanger ? 'bg-red-500/10' : 'bg-amber-500/10'}`}>
               {isDanger ? (
-                <Trash2 className="w-7 h-7 text-red-400" />
+                <Trash2 className="w-7 h-7 text-red-700" />
               ) : (
-                <AlertTriangle className="w-7 h-7 text-amber-400" />
+                <AlertTriangle className="w-7 h-7 text-amber-700" />
               )}
             </div>
 
             {/* Content */}
-            <h2 className="text-xl font-bold text-white mb-2 font-serif">{title}</h2>
-            <p className="text-sm text-gray-400 leading-relaxed mb-6">{message}</p>
+            <h2 className="text-xl font-bold text-redhill-charcoal mb-2 font-serif">{title}</h2>
+            <p className="text-sm text-redhill-muted leading-relaxed mb-6">{message}</p>
 
-            <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 mb-6">
-              <p className="text-xs text-gray-500 font-medium">
+            <div className="bg-[#FBF9F5] border border-redhill-line rounded-xl px-4 py-3 mb-6">
+              <p className="text-xs text-stone-500 font-medium">
                 ⚠️ This action cannot be undone.
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function ConfirmDialog({
             <div className="flex gap-3">
               <button
                 onClick={onCancel}
-                className="flex-1 py-3 font-bold text-gray-400 hover:bg-white/5 rounded-xl transition-all cursor-pointer border border-white/[0.06]"
+                className="flex-1 py-3 font-bold text-redhill-muted hover:bg-redhill-sand/70 rounded-xl transition-all cursor-pointer border border-redhill-line"
               >
                 {cancelLabel}
               </button>

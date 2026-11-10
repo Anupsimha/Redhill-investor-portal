@@ -415,13 +415,43 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
 
     if (res.ok) {
       setShowAssignModal(false);
-      refetchAssignments();
+      await refetchAssignments();
       refetchLedger();
+      refetchAnalytics();
+      setAssignmentPage(1);
+      setAssignmentSearch('');
+      setAssignmentProjectFilter('');
       showToast('Investor assigned to project successfully!', 'success');
     } else {
       const err = await res.json();
       showToast(`Error: ${err.error}`, 'error');
     }
+  };
+
+  const handleDeleteAssignment = (userId: number, projectId: number, investorName: string, projectName: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: 'Remove Portfolio Allocation?',
+      message: `Are you sure you want to remove the portfolio allocation for "${investorName}" in "${projectName}"?`,
+      onConfirm: async () => {
+        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
+        try {
+          const res = await apiFetch(`/api/admin/investor-project/${userId}/${projectId}`, {
+            method: 'DELETE'
+          });
+          if (res.ok) {
+            refetchAssignments();
+            refetchLedger();
+            refetchAnalytics();
+            showToast('Portfolio allocation removed successfully', 'success');
+          } else {
+            showToast('Failed to remove allocation', 'error');
+          }
+        } catch {
+          showToast('An error occurred while removing allocation', 'error');
+        }
+      }
+    });
   };
 
   const handleRecordPayment = async (data: {
@@ -583,14 +613,14 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold text-xs sm:text-sm cursor-pointer",
               isActive
-                ? "bg-gradient-to-r from-redhill-red via-red-600 to-amber-600 text-white shadow-lg shadow-redhill-red/30 border border-redhill-red/40 font-bold scale-[1.02]"
-                : "text-gray-300 hover:text-white hover:bg-white/[0.06] border border-transparent"
+                ? "bg-redhill-red hover:bg-redhill-crimson text-white shadow-md border border-redhill-red/40 font-bold"
+                : "text-stone-700 hover:text-redhill-charcoal hover:bg-redhill-sand/70 border border-transparent"
             )}
           >
-            <item.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-gray-400")} />
+            <item.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-redhill-muted")} />
             <span className="flex-1 text-left">{item.label}</span>
             {item.id === 'queries' && unansweredCount > 0 && (
-              <span className="min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center animate-pulse shadow-sm">
+              <span className="min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
                 {unansweredCount}
               </span>
             )}
@@ -622,19 +652,19 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
         {/* Projects Tab */}
         {activeView === 'projects' && !isSupportAgent && (
           <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-white/[0.08]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-redhill-line">
               <div>
                 <div className="flex items-center gap-2 text-redhill-red font-bold uppercase tracking-[0.2em] text-xs mb-1">
                   <span className="w-5 h-[2px] bg-redhill-red" />
                   Projects
                 </div>
-                <h1 className="text-3xl font-extrabold text-white font-serif tracking-tight">Project Management</h1>
-                <p className="text-gray-400 mt-1 text-xs sm:text-sm">Manage construction developments, milestone schedules, and live CCTV feeds.</p>
+                <h1 className="text-3xl font-extrabold text-redhill-charcoal font-serif tracking-tight">Project Management</h1>
+                <p className="text-redhill-muted mt-1 text-xs sm:text-sm">Manage construction developments, milestone schedules, and live CCTV feeds.</p>
               </div>
               {!isSiteManager && (
                 <button
                   onClick={() => setShowProjectModal(true)}
-                  className="bg-redhill-red hover:bg-red-700 text-white px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-xl shadow-redhill-red/30 transition-all cursor-pointer text-xs sm:text-sm hover:scale-[1.02]"
+                  className="bg-redhill-red hover:bg-red-700 text-white px-6 py-3.5 rounded-xl font-bold flex items-center gap-2 shadow-xl  transition-all cursor-pointer text-xs sm:text-sm hover:scale-[1.02]"
                 >
                   <PlusCircle className="w-4 h-4" />
                   <span>New Project Launch</span>
@@ -646,20 +676,20 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
               {projects.map(p => (
                 <div 
                   key={p.id} 
-                  className="bg-[#1E222B] rounded-2xl border border-white/[0.08] shadow-xl overflow-hidden flex flex-col hover:border-redhill-red/50 hover:shadow-2xl hover:shadow-redhill-red/15 transition-all duration-300 group hover:-translate-y-1 cursor-pointer"
+                  className="bg-white rounded-2xl border border-redhill-line shadow-xl overflow-hidden flex flex-col hover:border-redhill-red/50 hover:shadow-2xl hover: transition-all duration-300 group hover:-translate-y-1 cursor-pointer"
                   onClick={() => openProjectDrawer(p)}
                 >
                   <div className="h-48 relative overflow-hidden">
                     <img
-                      src={getAssetUrl(p.image_url) || 'https://picsum.photos/seed/project/800/600'}
+                      src={getAssetUrl(p.image_url, p.id)}
                       alt={p.name}
                       referrerPolicy="no-referrer"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=600';
+                        (e.target as HTMLImageElement).src = getAssetUrl(null, p.id);
                       }}
                       className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1E222B] via-transparent to-black/30" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
                     <div className="absolute top-3 right-3 shadow-lg rounded-full bg-black/60 backdrop-blur border border-white/20">
                       <StatusChip status={p.status} />
                     </div>
@@ -667,34 +697,34 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                   <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                     <div>
                       <div className="flex justify-between items-start gap-4 mb-1">
-                        <h3 className="text-lg font-bold text-white font-serif leading-tight group-hover:text-amber-300 transition-colors">
+                        <h3 className="text-lg font-bold text-redhill-charcoal font-serif leading-tight group-hover:text-amber-700 transition-colors">
                           {p.name}
                         </h3>
                         <Link
                           to={`/project/${p.id}`}
                           target="_blank"
                           onClick={(e) => e.stopPropagation()}
-                          className="p-1.5 bg-white/[0.06] hover:bg-white/[0.12] text-gray-300 hover:text-white rounded-lg transition-colors border border-white/10"
+                          className="p-1.5 bg-redhill-sand/70 hover:bg-redhill-sand text-stone-700 hover:text-redhill-charcoal rounded-lg transition-colors border border-redhill-line"
                           title="Preview as Investor"
                         >
                           <ExternalLink className="w-4 h-4" />
                         </Link>
                       </div>
-                      <p className="text-xs text-gray-400 flex items-center gap-1">
+                      <p className="text-xs text-redhill-muted flex items-center gap-1">
                         <MapPin className="w-3.5 h-3.5 text-redhill-red shrink-0" />
                         <span className="truncate">{p.location}</span>
                       </p>
                     </div>
                     
-                    <div className="space-y-3 pt-3 border-t border-white/[0.06]">
+                    <div className="space-y-3 pt-3 border-t border-redhill-line">
                       <div>
-                        <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                        <div className="flex justify-between text-xs text-redhill-muted mb-1.5">
                           <span>Construction Completion</span>
-                          <span className="font-bold text-amber-400">{p.completion_percentage}%</span>
+                          <span className="font-bold text-amber-700">{p.completion_percentage}%</span>
                         </div>
-                        <div className="w-full bg-black/40 h-2 rounded-full overflow-hidden border border-white/10">
+                        <div className="w-full bg-redhill-ivory h-2 rounded-full overflow-hidden border border-redhill-line">
                           <div 
-                            className="bg-gradient-to-r from-redhill-red to-amber-500 h-full rounded-full transition-all duration-500" 
+                            className="bg-redhill-gold h-full rounded-full transition-all duration-500" 
                             style={{ width: `${p.completion_percentage}%` }} 
                           />
                         </div>
@@ -704,7 +734,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                           e.stopPropagation();
                           openProjectDrawer(p);
                         }}
-                        className="w-full py-3 bg-white/[0.06] hover:bg-redhill-red text-white text-xs font-bold rounded-xl transition-all border border-white/[0.08] hover:border-redhill-red cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+                        className="w-full py-3 bg-redhill-sand/70 hover:bg-redhill-red text-redhill-charcoal text-xs font-bold rounded-xl transition-all border border-redhill-line hover:border-redhill-red cursor-pointer flex items-center justify-center gap-2 shadow-sm"
                       >
                         <span>Manage Milestones & CCTV Updates</span>
                         <ChevronRight className="w-3.5 h-3.5" />
@@ -720,26 +750,26 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
         {/* Investors Tab */}
         {activeView === 'investors' && (isSuperAdmin || isFinancialOfficer) && (
           <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-white/[0.08]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-redhill-line">
               <div>
-                <div className="flex items-center gap-2 text-emerald-400 font-bold uppercase tracking-[0.2em] text-xs mb-1">
+                <div className="flex items-center gap-2 text-emerald-700 font-bold uppercase tracking-[0.2em] text-xs mb-1">
                   <span className="w-5 h-[2px] bg-emerald-400" />
                   Client Relationship Desk
                 </div>
-                <h1 className="text-3xl font-extrabold text-white font-serif tracking-tight">Investor Directory & Allocations</h1>
-                <p className="text-gray-400 mt-1 text-xs sm:text-sm">Manage investor accounts, login credentials, and project portfolio allocations.</p>
+                <h1 className="text-3xl font-extrabold text-redhill-charcoal font-serif tracking-tight">Investor Directory & Allocations</h1>
+                <p className="text-redhill-muted mt-1 text-xs sm:text-sm">Manage investor accounts, login credentials, and project portfolio allocations.</p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowAssignModal(true)}
-                  className="px-5 py-3 bg-white/[0.06] hover:bg-white/[0.12] text-white rounded-xl font-bold border border-white/[0.1] transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
+                  className="px-5 py-3 bg-redhill-sand/70 hover:bg-redhill-sand text-redhill-charcoal rounded-xl font-bold border border-redhill-line transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
                 >
-                  <PlusCircle className="w-4 h-4 text-amber-400" />
+                  <PlusCircle className="w-4 h-4 text-amber-700" />
                   <span>Assign Project</span>
                 </button>
                 <button
                   onClick={() => setShowInvestorModal(true)}
-                  className="px-5 py-3 bg-redhill-red hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-redhill-red/30 flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
+                  className="px-5 py-3 bg-redhill-red hover:bg-red-700 text-white rounded-xl font-bold transition-all shadow-lg  flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
                 >
                   <UserPlus className="w-4 h-4" />
                   <span>Add Investor</span>
@@ -748,24 +778,27 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
             </div>
 
             {/* Investors Table */}
-            <div className="bg-[#1E222B] rounded-3xl border border-white/[0.08] shadow-2xl overflow-hidden">
-              <div className="p-6 border-b border-white/[0.08] flex flex-col sm:flex-row justify-between items-center gap-4 bg-black/20">
-                <h2 className="font-bold text-white text-lg font-serif">Registered Investors ({investors.length})</h2>
+            <div className="bg-white rounded-3xl border border-redhill-line shadow-2xl overflow-hidden">
+              <div className="p-6 border-b border-redhill-line flex flex-col sm:flex-row justify-between items-center gap-4 bg-redhill-ivory">
+                <h2 className="font-bold text-redhill-charcoal text-lg font-serif">Registered Investors ({investors.length})</h2>
                 <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-500" />
                   <input
                     type="text"
                     placeholder="Search name, email, or ID..."
                     value={investorSearch}
-                    onChange={(e) => setInvestorSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-xl outline-none text-xs sm:text-sm text-white focus:bg-white/[0.08] focus:border-redhill-red/40"
+                    onChange={(e) => {
+                      setInvestorSearch(e.target.value);
+                      setInvestorPage(1);
+                    }}
+                    className="w-full pl-10 pr-4 py-2.5 bg-redhill-sand/70 border border-redhill-line rounded-xl outline-none text-xs sm:text-sm text-redhill-charcoal focus:bg-redhill-sand focus:border-redhill-red/40"
                   />
                 </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="bg-black/30 border-b border-white/[0.08] text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    <tr className="bg-redhill-ivory border-b border-redhill-line text-[10px] font-black text-redhill-muted uppercase tracking-widest">
                       <th className="px-6 py-4">Investor</th>
                       <th className="px-6 py-4">Email</th>
                       <th className="px-6 py-4">Login ID</th>
@@ -773,28 +806,28 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                       <th className="px-6 py-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.05] text-sm">
+                  <tbody className="divide-y divide-redhill-line text-sm">
                     {paginatedInvestors.map(i => (
-                      <tr key={i.id} className="hover:bg-white/[0.02] transition-colors">
+                      <tr key={i.id} className="hover:bg-[#FBF9F5] transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-redhill-red to-amber-500 flex items-center justify-center text-white font-bold text-xs shadow-md">
+                            <div className="w-8 h-8 rounded-full bg-redhill-charcoal flex items-center justify-center text-white font-bold text-xs shadow-md">
                               {i.name ? i.name.charAt(0).toUpperCase() : 'I'}
                             </div>
-                            <span className="font-bold text-white">{i.name}</span>
+                            <span className="font-bold text-redhill-charcoal">{i.name}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-gray-300 font-mono text-xs">{i.email}</td>
+                        <td className="px-6 py-4 text-stone-700 font-mono text-xs">{i.email}</td>
                         <td className="px-6 py-4">
-                          <span className="font-mono text-xs bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/20 text-amber-400 font-bold">
+                          <span className="font-mono text-xs bg-amber-500/10 px-2.5 py-1 rounded border border-amber-500/20 text-amber-700 font-bold">
                             {i.login_id || 'N/A'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-gray-400 text-xs">{i.phone || 'N/A'}</td>
+                        <td className="px-6 py-4 text-redhill-muted text-xs">{i.phone || 'N/A'}</td>
                         <td className="px-6 py-4 text-right">
                           <button
                             onClick={() => handleDeleteInvestor(i.id, i.name)}
-                            className="p-2 text-gray-500 hover:text-redhill-red hover:bg-white/[0.04] rounded-lg transition-colors cursor-pointer"
+                            className="p-2 text-stone-500 hover:text-redhill-red hover:bg-redhill-sand/70 rounded-lg transition-colors cursor-pointer"
                             title="Delete Investor"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -805,21 +838,84 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                   </tbody>
                 </table>
               </div>
+              {investorTotalPages > 1 && (
+                <div className="p-4 border-t border-redhill-line bg-redhill-ivory flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-redhill-muted">
+                  <span>
+                    Showing {(investorPage - 1) * 10 + 1}–{Math.min(investorPage * 10, filteredInvestors.length)} of {filteredInvestors.length} investors
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setInvestorPage(p => Math.max(1, p - 1))}
+                      disabled={investorPage === 1}
+                      className="px-3 py-1.5 rounded-lg bg-white hover:bg-redhill-sand/70 disabled:opacity-40 disabled:pointer-events-none text-redhill-charcoal font-medium border border-redhill-line transition-all cursor-pointer"
+                    >
+                      Previous
+                    </button>
+                    <span className="px-3 py-1.5 font-bold text-redhill-charcoal">
+                      {investorPage} / {investorTotalPages}
+                    </span>
+                    <button
+                      onClick={() => setInvestorPage(p => Math.min(investorTotalPages, p + 1))}
+                      disabled={investorPage >= investorTotalPages}
+                      className="px-3 py-1.5 rounded-lg bg-white hover:bg-redhill-sand/70 disabled:opacity-40 disabled:pointer-events-none text-redhill-charcoal font-medium border border-redhill-line transition-all cursor-pointer"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Assignments Table */}
             {assignments.length > 0 && (
-              <div className="bg-[#1E222B] rounded-3xl border border-white/[0.08] shadow-2xl overflow-hidden">
-                <div className="p-6 border-b border-white/[0.08] bg-black/20 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="bg-white rounded-3xl border border-redhill-line shadow-2xl overflow-hidden">
+                <div className="p-6 border-b border-redhill-line bg-redhill-ivory flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div>
-                    <h2 className="font-bold text-white text-lg font-serif">Active Portfolio Allocations</h2>
-                    <p className="text-xs text-gray-400 mt-0.5">Assigned developments and allotted area per investor.</p>
+                    <div className="flex items-center gap-3">
+                      <h2 className="font-bold text-redhill-charcoal text-lg font-serif">Active Portfolio Allocations</h2>
+                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
+                        {filteredAssignments.length} {filteredAssignments.length === 1 ? 'Record' : 'Records'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-redhill-muted mt-0.5">Assigned developments and allotted area per investor.</p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                    <div className="relative w-full sm:w-60">
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-500" />
+                      <input
+                        type="text"
+                        placeholder="Search investor or email..."
+                        value={assignmentSearch}
+                        onChange={(e) => {
+                          setAssignmentSearch(e.target.value);
+                          setAssignmentPage(1);
+                        }}
+                        className="w-full pl-9 pr-3 py-2 bg-white border border-redhill-line rounded-xl outline-none text-xs text-redhill-charcoal focus:bg-redhill-sand/40 focus:border-redhill-red/40 transition-all"
+                      />
+                    </div>
+
+                    <select
+                      value={assignmentProjectFilter}
+                      onChange={(e) => {
+                        setAssignmentProjectFilter(e.target.value);
+                        setAssignmentPage(1);
+                      }}
+                      className="px-3 py-2 bg-white border border-redhill-line rounded-xl outline-none text-xs text-redhill-charcoal focus:border-redhill-red/40 transition-all cursor-pointer"
+                    >
+                      <option value="">All Projects</option>
+                      {projects.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="bg-black/30 border-b border-white/[0.08] text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                      <tr className="bg-redhill-ivory border-b border-redhill-line text-[10px] font-black text-redhill-muted uppercase tracking-widest">
                         <th className="px-5 py-3">Investor</th>
                         <th className="px-5 py-3">Project</th>
                         <th className="px-5 py-3">Investment</th>
@@ -828,38 +924,78 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                         <th className="px-5 py-3 text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/[0.05]">
+                    <tbody className="divide-y divide-redhill-line">
                       {paginatedAssignments.map((a: any) => (
-                        <tr key={`${a.user_id}-${a.project_id}`} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="px-5 py-3 font-bold text-white">{a.investor_name}</td>
-                          <td className="px-5 py-3 text-gray-300">{a.project_name}</td>
-                          <td className="px-5 py-3 font-bold text-white">{a.contribution || formatCurrency(a.investment_amount)}</td>
-                          <td className="px-5 py-3 text-gray-300">{a.allotted_sqft?.toLocaleString('en-IN') || 0} sqft</td>
-                          <td className="px-5 py-3 text-emerald-400 font-bold">{formatCurrency(a.market_price_per_sqft)}/sqft</td>
+                        <tr key={`${a.user_id}-${a.project_id}`} className="hover:bg-[#FBF9F5] transition-colors">
+                          <td className="px-5 py-3 font-bold text-redhill-charcoal">{a.investor_name}</td>
+                          <td className="px-5 py-3 text-stone-700">{a.project_name}</td>
+                          <td className="px-5 py-3 font-bold text-redhill-charcoal">{a.contribution || formatCurrency(a.investment_amount)}</td>
+                          <td className="px-5 py-3 text-stone-700">{a.allotted_sqft?.toLocaleString('en-IN') || 0} sqft</td>
+                          <td className="px-5 py-3 text-emerald-700 font-bold">{formatCurrency(a.market_price_per_sqft)}/sqft</td>
                           <td className="px-5 py-3 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => { setTargetAssignment(a); setShowPaymentModal(true); }}
-                                className="p-2 text-gray-400 hover:text-emerald-400 bg-white/[0.04] hover:bg-emerald-500/10 rounded-lg transition-all cursor-pointer border border-white/[0.06]"
+                                className="p-2 text-redhill-muted hover:text-emerald-700 bg-redhill-sand/70 hover:bg-emerald-500/10 rounded-lg transition-all cursor-pointer border border-redhill-line"
                                 title="Record Payment / Invoice"
                               >
                                 <IndianRupee className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => { setTargetAssignment(a); setShowSubInvestmentModal(true); }}
-                                className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-emerald-500/20"
+                                className="px-3 py-1.5 bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/20 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-emerald-500/20"
                                 title="Add Sub-Investment"
                               >
                                 <TrendingUp className="w-3.5 h-3.5" />
                                 <span>Upgrade</span>
                               </button>
+                              <button
+                                onClick={() => handleDeleteAssignment(a.user_id, a.project_id, a.investor_name, a.project_name)}
+                                className="p-2 text-stone-500 hover:text-redhill-red hover:bg-redhill-sand/70 rounded-lg transition-colors cursor-pointer"
+                                title="Remove Allocation"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
                             </div>
                           </td>
                         </tr>
                       ))}
+                      {paginatedAssignments.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="px-6 py-12 text-center text-redhill-muted text-xs">
+                            No portfolio allocations match your search or filter criteria.
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
+                {assignmentTotalPages > 1 && (
+                  <div className="p-4 border-t border-redhill-line bg-redhill-ivory flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-redhill-muted">
+                    <span>
+                      Showing {(assignmentPage - 1) * 10 + 1}–{Math.min(assignmentPage * 10, filteredAssignments.length)} of {filteredAssignments.length} allocations
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => setAssignmentPage(p => Math.max(1, p - 1))}
+                        disabled={assignmentPage === 1}
+                        className="px-3 py-1.5 rounded-lg bg-white hover:bg-redhill-sand/70 disabled:opacity-40 disabled:pointer-events-none text-redhill-charcoal font-medium border border-redhill-line transition-all cursor-pointer"
+                      >
+                        Previous
+                      </button>
+                      <span className="px-3 py-1.5 font-bold text-redhill-charcoal">
+                        {assignmentPage} / {assignmentTotalPages}
+                      </span>
+                      <button
+                        onClick={() => setAssignmentPage(p => Math.min(assignmentTotalPages, p + 1))}
+                        disabled={assignmentPage >= assignmentTotalPages}
+                        className="px-3 py-1.5 rounded-lg bg-white hover:bg-redhill-sand/70 disabled:opacity-40 disabled:pointer-events-none text-redhill-charcoal font-medium border border-redhill-line transition-all cursor-pointer"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

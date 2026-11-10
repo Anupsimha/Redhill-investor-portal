@@ -14,6 +14,7 @@ import {
   updateCctv,
   assignInvestor,
   updateAssignment,
+  deleteAssignment,
   getAssignments,
   getLedger,
   addSubInvestment,
@@ -60,6 +61,7 @@ router.patch('/admin/projects/:id/cctv', authenticateToken, isAdmin, updateCctv)
 // Assignment & Financial Management
 router.post('/admin/assign', authenticateToken, isAdmin, assignInvestor);
 router.patch('/admin/investor-project/:userId/:projectId', authenticateToken, isAdmin, updateAssignment);
+router.delete('/admin/investor-project/:userId/:projectId', authenticateToken, isAdmin, deleteAssignment);
 router.get('/admin/investor-projects', authenticateToken, isAdmin, getAssignments);
 router.get('/admin/ledger', authenticateToken, isAdmin, getLedger);
 router.post('/admin/ledger/sub-investment', authenticateToken, isAdmin, addSubInvestment);

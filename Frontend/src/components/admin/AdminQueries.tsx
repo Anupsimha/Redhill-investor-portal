@@ -206,19 +206,19 @@ export default function AdminQueries() {
     switch (role) {
       case 'super_admin':
       case 'senior_admin':
-        return { label: 'SUPER ADMIN', bg: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
+        return { label: 'SUPER ADMIN', bg: 'bg-amber-500/20 text-amber-700 border-amber-500/30' };
       case 'site_manager':
-        return { label: 'SITE ENGINEER', bg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' };
+        return { label: 'SITE ENGINEER', bg: 'bg-emerald-500/20 text-emerald-700 border-emerald-500/30' };
       case 'financial_officer':
-        return { label: 'FINANCE LEAD', bg: 'bg-purple-500/20 text-purple-300 border-purple-500/30' };
+        return { label: 'FINANCE LEAD', bg: 'bg-purple-500/20 text-purple-700 border-purple-500/30' };
       case 'marketing_manager':
-        return { label: 'MARKETING', bg: 'bg-rose-500/20 text-rose-300 border-rose-500/30' };
+        return { label: 'MARKETING', bg: 'bg-rose-500/20 text-rose-700 border-rose-500/30' };
       case 'support_agent':
-        return { label: 'SUPPORT AGENT', bg: 'bg-blue-500/20 text-blue-300 border-blue-500/30' };
+        return { label: 'SUPPORT AGENT', bg: 'bg-blue-500/20 text-blue-700 border-blue-500/30' };
       case 'investor':
-        return { label: 'INVESTOR', bg: 'bg-white/10 text-gray-300 border-white/15' };
+        return { label: 'INVESTOR', bg: 'bg-redhill-sand text-stone-700 border-redhill-line' };
       default:
-        return { label: 'STAFF', bg: 'bg-red-500/20 text-red-300 border-red-500/30' };
+        return { label: 'STAFF', bg: 'bg-red-500/20 text-red-700 border-red-500/30' };
     }
   };
 
@@ -234,8 +234,8 @@ export default function AdminQueries() {
               <MessageCircle className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white font-serif">Investor Queries & Helpdesk</h1>
-              <p className="text-gray-400 text-xs sm:text-sm mt-0.5">Real-time support messenger and inquiry resolution center.</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-redhill-charcoal font-serif">Investor Queries & Helpdesk</h1>
+              <p className="text-redhill-muted text-xs sm:text-sm mt-0.5">Real-time support messenger and inquiry resolution center.</p>
             </div>
           </div>
         </div>
@@ -243,7 +243,7 @@ export default function AdminQueries() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowComposeModal(true)}
-            className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-redhill-red to-red-700 hover:from-red-600 hover:to-red-800 text-white text-xs font-bold rounded-xl shadow-lg shadow-redhill-red/20 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2 bg-redhill-red hover:bg-redhill-crimson text-white text-xs font-bold rounded-xl shadow-lg  transition-all cursor-pointer"
             title="Start New Conversation"
           >
             <Plus className="w-4 h-4" />
@@ -251,15 +251,15 @@ export default function AdminQueries() {
           </button>
           <button
             onClick={() => refetchThreads()}
-            className="flex items-center gap-1.5 px-3 py-2 bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 text-xs font-semibold rounded-xl border border-white/[0.08] transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 bg-redhill-sand/70 hover:bg-redhill-sand text-stone-700 text-xs font-semibold rounded-xl border border-redhill-line transition-all cursor-pointer"
             title="Refresh Threads"
           >
             <RefreshCw className={cn("w-3.5 h-3.5", isFetching && "animate-spin text-redhill-red")} />
             <span>Sync</span>
           </button>
           <div className="px-3.5 py-1.5 bg-redhill-red/15 border border-redhill-red/30 rounded-xl flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-redhill-red animate-pulse" />
-            <span className="text-xs font-bold text-red-300">
+            <span className="w-2 h-2 rounded-full bg-redhill-red" />
+            <span className="text-xs font-bold text-red-700">
               {unreadCount} {unreadCount === 1 ? 'Pending Inquiry' : 'Pending Inquiries'}
             </span>
           </div>
@@ -267,22 +267,22 @@ export default function AdminQueries() {
       </div>
 
       {/* Main Container */}
-      <div className="flex-1 bg-[#1A1D27] rounded-3xl border border-white/[0.08] shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-0">
+      <div className="flex-1 bg-white rounded-3xl border border-redhill-line shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-0">
         {/* Left Side: Threads List */}
         <div className={cn(
-          "w-full lg:w-[380px] xl:w-[420px] border-r border-white/[0.08] flex flex-col bg-[#161822] shrink-0",
+          "w-full lg:w-[380px] xl:w-[420px] border-r border-redhill-line flex flex-col bg-white shrink-0",
           selectedThread ? "hidden lg:flex" : "flex"
         )}>
           {/* Search & Filter bar */}
-          <div className="p-4 border-b border-white/[0.08] space-y-3 bg-black/20">
+          <div className="p-4 border-b border-redhill-line space-y-3 bg-redhill-ivory">
             <div className="relative">
-              <Search className="w-4 h-4 text-gray-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search investor, project, or message..."
-                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl pl-10 pr-3 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:bg-white/[0.06] focus:border-redhill-red/40 transition-all"
+                className="w-full bg-redhill-sand/70 border border-redhill-line rounded-xl pl-10 pr-3 py-2 text-xs text-redhill-charcoal placeholder-stone-400 focus:outline-none focus:bg-redhill-sand/70 focus:border-redhill-red/40 transition-all"
               />
             </div>
 
@@ -299,8 +299,8 @@ export default function AdminQueries() {
                   className={cn(
                     "flex-1 py-1.5 px-2 rounded-lg text-[11px] font-bold transition-all text-center cursor-pointer border",
                     filterStatus === tab.key
-                      ? "bg-redhill-red text-white border-redhill-red/50 shadow-md shadow-redhill-red/20"
-                      : "bg-white/[0.02] text-gray-400 border-white/[0.06] hover:bg-white/[0.05] hover:text-white"
+                      ? "bg-redhill-red text-white border-redhill-red/50 shadow-md "
+                      : "bg-[#FBF9F5] text-redhill-muted border-redhill-line hover:bg-redhill-sand/70 hover:text-redhill-charcoal"
                   )}
                 >
                   {tab.label}
@@ -310,7 +310,7 @@ export default function AdminQueries() {
           </div>
 
           {/* Thread Cards List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-white/[0.04]">
+          <div className="flex-1 overflow-y-auto divide-y divide-redhill-line">
             {filteredThreads.map((t: any) => {
               const isSelected = selectedThread?.user_id === t.user_id && selectedThread?.project_id === t.project_id;
               const isUnread = t.last_sender_role === 'investor';
@@ -328,8 +328,8 @@ export default function AdminQueries() {
                   className={cn(
                     "w-full text-left p-4.5 transition-all relative cursor-pointer block group",
                     isSelected
-                      ? "bg-white/[0.08] border-l-4 border-redhill-red shadow-inner"
-                      : "hover:bg-white/[0.03]"
+                      ? "bg-redhill-sand border-l-4 border-redhill-red shadow-inner"
+                      : "hover:bg-[#FBF9F5]"
                   )}
                 >
                   <div className="flex items-start justify-between gap-2 mb-1.5">
@@ -338,29 +338,29 @@ export default function AdminQueries() {
                         "w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 border",
                         isUnread
                           ? "bg-redhill-red text-white border-red-400"
-                          : "bg-white/10 text-gray-300 border-white/15"
+                          : "bg-redhill-sand text-stone-700 border-redhill-line"
                       )}>
                         {investorName.charAt(0).toUpperCase()}
                       </div>
-                      <p className="font-bold text-sm text-white truncate group-hover:text-redhill-red transition-colors">
+                      <p className="font-bold text-sm text-redhill-charcoal truncate group-hover:text-redhill-red transition-colors">
                         {investorName}
                       </p>
                     </div>
 
-                    <span className="text-[10px] text-gray-500 whitespace-nowrap font-mono shrink-0">
+                    <span className="text-[10px] text-stone-500 whitespace-nowrap font-mono shrink-0">
                       {formatRelativeTime(t.created_at || t.lastMessage)}
                     </span>
                   </div>
 
                   <div className="pl-10.5">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-red-400 bg-redhill-red/10 border border-redhill-red/20 px-2 py-0.5 rounded-md truncate max-w-[200px]">
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-red-700 bg-redhill-red/10 border border-redhill-red/20 px-2 py-0.5 rounded-md truncate max-w-[200px]">
                         <Building2 className="w-3 h-3 shrink-0" />
                         <span className="truncate">{projectName}</span>
                       </span>
                     </div>
 
-                    <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-2 font-normal">
+                    <p className="text-xs text-redhill-muted line-clamp-2 leading-relaxed mb-2 font-normal">
                       {lastMsgText}
                     </p>
 
@@ -368,14 +368,14 @@ export default function AdminQueries() {
                       <span className={cn(
                         "inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
                         isUnread
-                          ? "bg-red-500/20 text-red-300 border-red-500/30 animate-pulse"
-                          : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                          ? "bg-red-500/20 text-red-700 border-red-500/30"
+                          : "bg-emerald-500/10 text-emerald-700 border-emerald-500/20"
                       )}>
                         {isUnread ? 'Needs Reply' : 'Resolved'}
                       </span>
 
                       {t.investor_email && (
-                        <span className="text-[10px] text-gray-500 font-mono truncate max-w-[130px]">
+                        <span className="text-[10px] text-stone-500 font-mono truncate max-w-[130px]">
                           {t.investor_email}
                         </span>
                       )}
@@ -386,10 +386,10 @@ export default function AdminQueries() {
             })}
 
             {filteredThreads.length === 0 && (
-              <div className="p-12 text-center text-gray-500">
-                <MessageCircle className="w-10 h-10 mx-auto mb-3 opacity-20 text-gray-400" />
-                <p className="font-bold text-sm text-gray-300">No inquiry threads found</p>
-                <p className="text-xs text-gray-500 mt-1">Try adjusting your search or status filter.</p>
+              <div className="p-12 text-center text-stone-500">
+                <MessageCircle className="w-10 h-10 mx-auto mb-3 opacity-20 text-redhill-muted" />
+                <p className="font-bold text-sm text-stone-700">No inquiry threads found</p>
+                <p className="text-xs text-stone-500 mt-1">Try adjusting your search or status filter.</p>
               </div>
             )}
           </div>
@@ -397,65 +397,65 @@ export default function AdminQueries() {
 
         {/* Right Side: Chat Window */}
         <div className={cn(
-          "flex-1 flex flex-col bg-[#12141C] min-w-0",
+          "flex-1 flex flex-col bg-redhill-ivory min-w-0",
           !selectedThread ? "hidden lg:flex items-center justify-center" : "flex"
         )}>
           {!selectedThread ? (
             <div className="text-center p-12 max-w-md mx-auto">
-              <div className="w-20 h-20 bg-white/[0.03] border border-white/[0.08] rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-2xl">
-                <MessageCircle className="w-10 h-10 text-gray-500" />
+              <div className="w-20 h-20 bg-[#FBF9F5] border border-redhill-line rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-2xl">
+                <MessageCircle className="w-10 h-10 text-stone-500" />
               </div>
-              <h3 className="text-xl font-bold text-white font-serif">Select an Inquiry Thread</h3>
-              <p className="text-gray-400 text-xs sm:text-sm mt-2 leading-relaxed">
+              <h3 className="text-xl font-bold text-redhill-charcoal font-serif">Select an Inquiry Thread</h3>
+              <p className="text-redhill-muted text-xs sm:text-sm mt-2 leading-relaxed">
                 Choose a conversation from the left sidebar to view the discussion history and reply directly to the investor.
               </p>
             </div>
           ) : (
             <>
               {/* Chat Top Header */}
-              <div className="p-4 sm:p-5 border-b border-white/[0.08] bg-[#171A24] flex items-center justify-between gap-4">
+              <div className="p-4 sm:p-5 border-b border-redhill-line bg-redhill-sand/70 flex items-center justify-between gap-4">
                 <div className="flex items-center gap-3.5 min-w-0">
                   <button
                     onClick={() => {
                       setSelectedUserId(null);
                       setSelectedProjectId(null);
                     }}
-                    className="lg:hidden p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 cursor-pointer shrink-0"
+                    className="lg:hidden p-2 text-redhill-muted hover:text-redhill-charcoal rounded-lg hover:bg-redhill-sand/70 cursor-pointer shrink-0"
                     title="Back to Threads"
                   >
                     <ArrowLeft className="w-5 h-5" />
                   </button>
 
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-redhill-red to-red-700 text-white font-bold text-base flex items-center justify-center shadow-lg shadow-redhill-red/20 shrink-0 border border-white/10">
+                  <div className="w-11 h-11 rounded-2xl bg-redhill-red text-white font-bold text-base flex items-center justify-center shadow-lg  shrink-0 border border-white/10">
                     {(selectedThread.investor_name || selectedThread.userName || 'I').charAt(0).toUpperCase()}
                   </div>
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <h2 className="font-bold text-white text-base truncate font-serif">
+                      <h2 className="font-bold text-redhill-charcoal text-base truncate font-serif">
                         {selectedThread.investor_name || selectedThread.userName}
                       </h2>
-                      <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                         Verified Investor
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5 truncate">
+                    <div className="flex items-center gap-2 text-xs text-redhill-muted mt-0.5 truncate">
                       <span className="font-bold text-redhill-red flex items-center gap-1">
                         <Building2 className="w-3.5 h-3.5" />
                         {selectedThread.project_name || selectedThread.projectName}
                       </span>
                       {selectedThread.investor_email && (
                         <>
-                          <span className="text-gray-600">&bull;</span>
+                          <span className="text-stone-400">&bull;</span>
                           <button
                             onClick={() => handleCopyEmail(selectedThread.investor_email)}
-                            className="font-mono text-gray-400 hover:text-white flex items-center gap-1 transition-colors cursor-pointer"
+                            className="font-mono text-redhill-muted hover:text-redhill-charcoal flex items-center gap-1 transition-colors cursor-pointer"
                             title="Click to copy email"
                           >
                             <span>{selectedThread.investor_email}</span>
-                            {copiedEmail ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-gray-500" />}
+                            {copiedEmail ? <Check className="w-3 h-3 text-emerald-700" /> : <Copy className="w-3 h-3 text-stone-500" />}
                           </button>
                         </>
                       )}
@@ -464,19 +464,19 @@ export default function AdminQueries() {
                 </div>
 
                 <div className="shrink-0 flex items-center gap-2">
-                  <span className="text-xs text-gray-500 hidden sm:inline-block font-mono">
+                  <span className="text-xs text-stone-500 hidden sm:inline-block font-mono">
                     Thread ID: #{selectedThread.user_id}-{selectedThread.project_id}
                   </span>
                 </div>
               </div>
 
               {/* Chat Message Stream */}
-              <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 bg-gradient-to-b from-[#10121A] to-[#141620]">
+              <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 bg-redhill-ivory">
                 {threadMessages.length === 0 && !loadingMessages && (
-                  <div className="h-full min-h-[200px] flex flex-col items-center justify-center text-center p-8 text-gray-500">
+                  <div className="h-full min-h-[200px] flex flex-col items-center justify-center text-center p-8 text-stone-500">
                     <MessageCircle className="w-12 h-12 mb-3 opacity-20" />
-                    <p className="text-sm font-bold text-gray-400">No messages found in this discussion</p>
-                    <p className="text-xs text-gray-600 mt-1">Send a reply below to initiate communication.</p>
+                    <p className="text-sm font-bold text-redhill-muted">No messages found in this discussion</p>
+                    <p className="text-xs text-stone-400 mt-1">Send a reply below to initiate communication.</p>
                   </div>
                 )}
 
@@ -503,23 +503,23 @@ export default function AdminQueries() {
                         )}>
                           {badge.label}
                         </span>
-                        <span className="text-[10px] text-gray-400 font-mono">
+                        <span className="text-[10px] text-redhill-muted font-mono">
                           {formatRelativeTime(msg.created_at)}
                         </span>
                       </div>
 
                       {/* Message Bubble */}
                       <div className={cn(
-                        "p-4 max-w-[85%] sm:max-w-[75%] text-sm leading-relaxed shadow-xl break-words whitespace-pre-wrap transition-all",
+                        "p-4 max-w-[85%] sm:max-w-[75%] text-sm leading-relaxed shadow-sm break-words whitespace-pre-wrap transition-all",
                         isStaff
-                          ? "bg-gradient-to-br from-redhill-red to-[#B7151A] text-white rounded-3xl rounded-tr-none shadow-redhill-red/15 border border-red-500/30"
-                          : "bg-[#202534] text-gray-100 border border-white/[0.08] rounded-3xl rounded-tl-none shadow-black/40"
+                          ? "bg-redhill-charcoal text-white rounded-2xl rounded-tr-none border border-redhill-charcoal"
+                          : "bg-white text-redhill-charcoal border border-redhill-line rounded-2xl rounded-tl-none"
                       )}>
-                        <p className="text-[13px] sm:text-sm font-normal text-white">{msg.message}</p>
+                        <p className={cn("text-[13px] sm:text-sm font-normal", isStaff ? "text-white" : "text-redhill-charcoal")}>{msg.message}</p>
                       </div>
 
                       {/* Exact time on hover */}
-                      <span className="text-[9px] text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity mt-1 px-2 font-mono">
+                      <span className="text-[9px] text-redhill-muted opacity-0 group-hover:opacity-100 transition-opacity mt-1 px-2 font-mono">
                         {formatDate(msg.created_at)}
                       </span>
                     </div>
@@ -529,9 +529,9 @@ export default function AdminQueries() {
               </div>
 
               {/* Quick Reply Chips */}
-              <div className="px-4 py-2.5 bg-[#171A24] border-t border-white/[0.06] flex items-center gap-2 overflow-x-auto shrink-0 z-10">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest shrink-0 flex items-center gap-1.5 pl-1">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <div className="px-4 py-2.5 bg-redhill-sand/70 border-t border-redhill-line flex items-center gap-2 overflow-x-auto shrink-0 z-10">
+                <span className="text-[10px] font-bold text-redhill-muted uppercase tracking-widest shrink-0 flex items-center gap-1.5 pl-1">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-700" />
                   Quick:
                 </span>
                 {QUICK_REPLIES.map((text, idx) => (
@@ -539,7 +539,7 @@ export default function AdminQueries() {
                     key={idx}
                     type="button"
                     onClick={() => setReplyMessage(text)}
-                    className="px-3 py-1.5 bg-white/[0.04] hover:bg-white/[0.1] border border-white/[0.08] hover:border-redhill-red/30 rounded-xl text-xs text-gray-300 hover:text-white whitespace-nowrap transition-all cursor-pointer text-left shrink-0"
+                    className="px-3 py-1.5 bg-redhill-sand/70 hover:bg-redhill-sand border border-redhill-line hover:border-redhill-red/30 rounded-xl text-xs text-stone-700 hover:text-redhill-charcoal whitespace-nowrap transition-all cursor-pointer text-left shrink-0"
                   >
                     {text}
                   </button>
@@ -547,7 +547,7 @@ export default function AdminQueries() {
               </div>
 
               {/* Reply Input Box */}
-              <form onSubmit={handleReply} className="p-4 bg-[#151722] border-t border-white/[0.08] flex items-center gap-3 shrink-0">
+              <form onSubmit={handleReply} className="p-4 bg-redhill-sand/70 border-t border-redhill-line flex items-center gap-3 shrink-0">
                 <div className="relative flex-1">
                   <input
                     type="text"
@@ -555,14 +555,14 @@ export default function AdminQueries() {
                     onChange={e => setReplyMessage(e.target.value)}
                     placeholder="Type your official reply to the investor..."
                     disabled={replyMutation.isPending}
-                    className="w-full bg-white/[0.04] border border-white/[0.1] rounded-2xl px-5 py-3.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:bg-white/[0.06] focus:border-redhill-red/50 focus:ring-2 focus:ring-redhill-red/20 transition-all"
+                    className="w-full bg-redhill-sand/70 border border-redhill-line rounded-2xl px-5 py-3.5 text-sm text-redhill-charcoal placeholder-stone-400 focus:outline-none focus:bg-redhill-sand/70 focus:border-redhill-red/50 focus:ring-2 focus:ring-redhill-red/20 transition-all"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={replyMutation.isPending || !replyMessage.trim()}
-                  className="bg-gradient-to-r from-redhill-red to-red-700 hover:from-red-600 hover:to-red-800 disabled:opacity-40 disabled:cursor-not-allowed text-white px-6 py-3.5 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-redhill-red/20 cursor-pointer shrink-0"
+                  className="bg-redhill-red hover:bg-redhill-crimson disabled:opacity-40 disabled:cursor-not-allowed text-white px-6 py-3.5 rounded-2xl font-bold flex items-center gap-2 transition-all shadow-lg  cursor-pointer shrink-0"
                 >
                   <Send className="w-4 h-4" />
                   <span className="hidden sm:inline">
@@ -583,20 +583,20 @@ export default function AdminQueries() {
       >
         <form onSubmit={handleComposeSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-redhill-muted uppercase tracking-wider mb-2">
               Select Investor
             </label>
             <select
               value={composeUserId}
               onChange={e => setComposeUserId(e.target.value)}
               required
-              className="w-full bg-white/[0.04] border border-white/[0.1] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-redhill-red/50"
+              className="w-full bg-redhill-sand/70 border border-redhill-line rounded-xl px-4 py-3 text-sm text-redhill-charcoal focus:outline-none focus:border-redhill-red/50"
             >
-              <option value="" disabled className="bg-[#1a1d28] text-gray-400">
+              <option value="" disabled className="bg-[#1a1d28] text-redhill-muted">
                 Choose an investor...
               </option>
               {investors.map(inv => (
-                <option key={inv.id} value={inv.id} className="bg-[#1a1d28] text-white">
+                <option key={inv.id} value={inv.id} className="bg-[#1a1d28] text-redhill-charcoal">
                   {inv.name} ({inv.email}) {inv.login_id ? `[${inv.login_id}]` : ''}
                 </option>
               ))}
@@ -604,20 +604,20 @@ export default function AdminQueries() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-redhill-muted uppercase tracking-wider mb-2">
               Select Project
             </label>
             <select
               value={composeProjectId}
               onChange={e => setComposeProjectId(e.target.value)}
               required
-              className="w-full bg-white/[0.04] border border-white/[0.1] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-redhill-red/50"
+              className="w-full bg-redhill-sand/70 border border-redhill-line rounded-xl px-4 py-3 text-sm text-redhill-charcoal focus:outline-none focus:border-redhill-red/50"
             >
-              <option value="" disabled className="bg-[#1a1d28] text-gray-400">
+              <option value="" disabled className="bg-[#1a1d28] text-redhill-muted">
                 Choose a project...
               </option>
               {projects.map(proj => (
-                <option key={proj.id} value={proj.id} className="bg-[#1a1d28] text-white">
+                <option key={proj.id} value={proj.id} className="bg-[#1a1d28] text-redhill-charcoal">
                   {proj.name} ({proj.location})
                 </option>
               ))}
@@ -625,7 +625,7 @@ export default function AdminQueries() {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-redhill-muted uppercase tracking-wider mb-2">
               Message Content
             </label>
             <textarea
@@ -634,22 +634,22 @@ export default function AdminQueries() {
               placeholder="Type your official announcement or inquiry message..."
               rows={4}
               required
-              className="w-full bg-white/[0.04] border border-white/[0.1] rounded-xl p-4 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-redhill-red/50 resize-none"
+              className="w-full bg-redhill-sand/70 border border-redhill-line rounded-xl p-4 text-sm text-redhill-charcoal placeholder-stone-400 focus:outline-none focus:border-redhill-red/50 resize-none"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-white/[0.08]">
+          <div className="flex justify-end gap-3 pt-4 border-t border-redhill-line">
             <button
               type="button"
               onClick={() => setShowComposeModal(false)}
-              className="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] transition-all cursor-pointer"
+              className="px-5 py-2.5 rounded-xl text-sm font-bold text-redhill-muted hover:text-redhill-charcoal bg-redhill-sand/70 hover:bg-redhill-sand transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={composeMutation.isPending || !composeUserId || !composeProjectId || !composeMsgText.trim()}
-              className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-redhill-red to-red-700 hover:from-red-600 hover:to-red-800 disabled:opacity-40 transition-all flex items-center gap-2 shadow-lg shadow-redhill-red/20 cursor-pointer"
+              className="px-6 py-2.5 rounded-xl text-sm font-bold text-white bg-redhill-red hover:bg-redhill-crimson disabled:opacity-40 transition-all flex items-center gap-2 shadow-lg  cursor-pointer"
             >
               <Send className="w-4 h-4" />
               <span>{composeMutation.isPending ? 'Sending...' : 'Send Message'}</span>
