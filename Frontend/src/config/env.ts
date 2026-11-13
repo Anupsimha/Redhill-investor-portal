@@ -45,37 +45,40 @@ export function getApiUrl(endpoint: string): string {
 }
 
 /**
- * Curated Bengaluru Boutique Apartment architectural photography collection.
- * Used as fallbacks and to replace generic stock / single-family house placeholders.
+ * Curated Bengaluru Boutique High-Rise Apartment (12+ Floors) architectural photography collection.
+ * Used as fallbacks and to replace generic stock / low-rise / single-family house placeholders.
  */
 export const BOUTIQUE_APARTMENT_IMAGES = [
-  // 0: Contemporary G+4 white & charcoal boutique apartment block with cantilevered glass balconies
-  'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=85&w=1600',
-  // 1: Tropical G+3 boutique courtyard apartment complex with pergolas & lush greenery
-  'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=1600',
-  // 2: Warm terracotta-brick G+3 boutique apartment building with deep sit-out balconies
-  'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=85&w=1600',
-  // 3: Modern brick & dark-cladding boutique apartment facade with warm balcony lighting
-  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=85&w=1600',
-  // 4: Contemporary low-rise boutique apartment elevation with rooftop pergola frame
-  'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=85&w=1600',
-  // 5: Warm twilight architectural foyer & timber screen residence
-  'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=85&w=1600',
+  // 0: 15-Storey Contemporary Boutique Residential Tower (5-Acre Community, Whitefield)
+  '/assets/projects/signature-towers.jpg',
+  // 1: 12-Storey Twin Boutique Courtyard High-Rise (4-Acre Community, Sarjapur Road)
+  '/assets/projects/emerald-gardens.jpg',
+  // 2: 16-Storey Contemporary Boutique High-Rise (2-Acre Enclave, Hebbal)
+  '/assets/projects/pinnacle-heights.jpg',
+  // 3: 12-Storey Full-Floor Sky Residence Tower (2-Acre Enclave, Indiranagar)
+  '/assets/projects/sovereign-estates.jpg',
+  // 4: 14-Storey Flagship Boutique Residential Community (Bengaluru)
+  '/assets/projects/hero-highrise.jpg',
 ];
 
-// Legacy single-family house / generic stock URLs stored in seed DB records that should map to boutique apartments
+// Legacy single-family house, generic stock, or low-rise brick URLs stored in seed DB records that should map to 12+ floor boutique high-rise apartments
 const LEGACY_HOUSE_PATTERNS = [
   'picsum.photos',
   'photo-1600585154340-be6161a56a0c',
   'photo-1600596542815-ffad4c1539a9',
   'photo-1613490493576-7fde63acd811',
   'photo-1582719478250-c89cae4dc85b',
+  'photo-1580041065738-e72023775cdc',
+  'photo-1574362848149-11496d93a7c7',
+  'photo-1512915922686-57c11dde9b6b',
+  'photo-1545324418-cc1a3fa10c00',
 ];
 
 function pickBoutiqueImage(seed?: number | string | null): string {
   if (seed === undefined || seed === null) return BOUTIQUE_APARTMENT_IMAGES[0];
   if (typeof seed === 'number') {
-    return BOUTIQUE_APARTMENT_IMAGES[Math.abs(seed) % BOUTIQUE_APARTMENT_IMAGES.length];
+    const idx = Math.max(0, seed - 1);
+    return BOUTIQUE_APARTMENT_IMAGES[idx % BOUTIQUE_APARTMENT_IMAGES.length];
   }
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
@@ -97,6 +100,7 @@ export function getAssetUrl(path?: string | null, seed?: number | string | null)
   }
 
   if (/^(https?:|\/\/|data:)/i.test(path)) return path;
+  if (path.startsWith('/assets/')) return path;
 
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   return ASSETS_BASE_URL ? `${ASSETS_BASE_URL}${normalizedPath}` : normalizedPath;

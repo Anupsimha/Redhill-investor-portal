@@ -22,12 +22,16 @@ import {
   Camera,
   MessageCircle,
   MapPin,
+  Building2,
+  Maximize2,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import Logo from '../components/Logo';
 import Reveal from '../components/Reveal';
 import { apiFetch } from '../api/client';
-import { SHOWCASE_CONFIG } from '../config/showcaseConfig';
+import { SHOWCASE_CONFIG, ShowcaseProject } from '../config/showcaseConfig';
 
 type AuthMode = 'login' | 'signup' | 'forgot_request' | 'forgot_reset';
 
@@ -38,9 +42,9 @@ interface LoginProps {
 const HERO_VIDEO = import.meta.env.VITE_HERO_VIDEO_URL || '';
 const HERO_IMAGE =
   import.meta.env.VITE_HERO_POSTER_URL ||
-  'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=2200';
-const EXPERIENCE_IMAGE =
-  'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=85&w=1600';
+  '/assets/projects/hero-highrise.jpg';
+const EXPERIENCE_IMAGE = '/assets/projects/pinnacle-heights.jpg';
+const ACCESS_EDITORIAL_IMAGE = '/assets/projects/signature-towers.jpg';
 
 const NAV_LINKS = [
   { id: 'developments', label: 'Developments' },
@@ -91,6 +95,8 @@ export default function Login({ onLogin }: LoginProps) {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [entering, setEntering] = useState(false);
   const [activeProjectIdx, setActiveProjectIdx] = useState(0);
+  const [selectedPublicProject, setSelectedPublicProject] = useState<ShowcaseProject | null>(null);
+  const [activeGalleryIdx, setActiveGalleryIdx] = useState(0);
 
   const inlineFormRef = useRef<HTMLDivElement>(null);
   const drawerFormRef = useRef<HTMLDivElement>(null);
@@ -100,7 +106,7 @@ export default function Login({ onLogin }: LoginProps) {
   const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const { scrollY } = useScroll();
-  const heroParallax = useTransform(scrollY, [0, 800], [0, reduceMotion ? 0 : 70]);
+  const heroParallax = useTransform(scrollY, [0, 800], [0, reduceMotion ? 0 : 48]);
 
   const completeLogin = (user: User) => {
     setEntering(true);
@@ -119,7 +125,7 @@ export default function Login({ onLogin }: LoginProps) {
   }, [resendTimer]);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
+    const onScroll = () => setScrolled(window.scrollY > 32);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -142,15 +148,16 @@ export default function Login({ onLogin }: LoginProps) {
     return () => observer.disconnect();
   }, []);
 
-  // Escape & scroll lock for mobile nav and access drawer
+  // Escape & scroll lock for mobile nav, access drawer, and public project modal
   useEffect(() => {
-    if (!mobileNavOpen && !accessDrawerOpen) return;
+    if (!mobileNavOpen && !accessDrawerOpen && !selectedPublicProject) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setMobileNavOpen(false);
         setAccessDrawerOpen(false);
+        setSelectedPublicProject(null);
       }
     };
     window.addEventListener('keydown', onKey);
@@ -158,7 +165,7 @@ export default function Login({ onLogin }: LoginProps) {
       document.body.style.overflow = prev;
       window.removeEventListener('keydown', onKey);
     };
-  }, [mobileNavOpen, accessDrawerOpen]);
+  }, [mobileNavOpen, accessDrawerOpen, selectedPublicProject]);
 
   // Focus first field when the slide-over access drawer opens
   useEffect(() => {
@@ -171,12 +178,14 @@ export default function Login({ onLogin }: LoginProps) {
 
   const openAccessDrawer = useCallback((mode?: 'login' | 'signup') => {
     setMobileNavOpen(false);
+    setSelectedPublicProject(null);
     if (mode) { setAuthMode(mode); setError(''); setSuccessMsg(''); }
     setAccessDrawerOpen(true);
   }, []);
 
   const scrollToAccessSection = useCallback(() => {
     setMobileNavOpen(false);
+    setSelectedPublicProject(null);
     const el = document.getElementById('access');
     el?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
     window.setTimeout(() => {
@@ -372,16 +381,31 @@ export default function Login({ onLogin }: LoginProps) {
     reduceMotion
       ? {}
       : {
-          initial: { opacity: 0, y: 20 },
+          initial: { opacity: 0, y: 18 },
           animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.75, delay, ease: [0.22, 1, 0.36, 1] as const },
+          transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] as const },
         };
 
   const panelHeading =
-    authMode === 'login' ? { title: 'Investor Access', sub: 'Sign in to your private portfolio.' } :
-    authMode === 'signup' ? { title: 'Register Account', sub: 'Request onboarding to the Redhill portal.' } :
-    authMode === 'forgot_request' ? { title: 'Reset Password', sub: 'We will send a 6-digit verification code.' } :
-    { title: 'Verify & Set Password', sub: 'Confirm your code and choose a new password.' };
+    authMode === 'login'
+      ? {
+          title: 'Welcome to Your Private Portfolio',
+          sub: 'Access your investments, project updates and important documents in one place.',
+        }
+      : authMode === 'signup'
+      ? {
+          title: 'Create Your Investor Account',
+          sub: 'Register your profile to access Redhill residential developments and portfolio records.',
+        }
+      : authMode === 'forgot_request'
+      ? {
+          title: 'Reset Your Password',
+          sub: 'Enter your registered account details to receive a 6-digit verification code.',
+        }
+      : {
+          title: 'Verify & Set New Password',
+          sub: 'Confirm your 6-digit code and choose a new password.',
+        };
 
   // =====================================================================
   // Shared Authentication Form (rendered both in the inline #access
@@ -399,7 +423,7 @@ export default function Login({ onLogin }: LoginProps) {
               role="tab"
               aria-selected={authMode === mode}
               onClick={() => { setAuthMode(mode); setError(''); setSuccessMsg(''); }}
-              className={`relative pb-3 text-xs uppercase tracking-[0.18em] font-semibold transition-colors cursor-pointer ${
+              className={`relative pb-3 text-xs uppercase tracking-[0.16em] font-semibold transition-colors cursor-pointer ${
                 authMode === mode ? 'text-redhill-charcoal' : 'text-redhill-muted hover:text-redhill-charcoal'
               }`}
             >
@@ -426,7 +450,7 @@ export default function Login({ onLogin }: LoginProps) {
                     autoComplete="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="field pl-11"
+                    className="field field-icon-left"
                     placeholder="Full legal name"
                     required
                   />
@@ -442,7 +466,7 @@ export default function Login({ onLogin }: LoginProps) {
                     autoComplete="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="field pl-11"
+                    className="field field-icon-left"
                     placeholder="+91 98765 43210"
                     required
                   />
@@ -463,7 +487,7 @@ export default function Login({ onLogin }: LoginProps) {
                 autoComplete="username"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="field pl-11"
+                className="field field-icon-left"
                 placeholder={authMode === 'login' ? 'name@example.com, jo210 or +91…' : 'name@example.com'}
                 required
               />
@@ -491,7 +515,7 @@ export default function Login({ onLogin }: LoginProps) {
                 autoComplete={authMode === 'login' ? 'current-password' : 'new-password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="field pl-11 pr-11"
+                className="field field-icon-left field-icon-right"
                 placeholder="••••••••"
                 required
               />
@@ -517,18 +541,17 @@ export default function Login({ onLogin }: LoginProps) {
 
           <button type="submit" disabled={loading} className="btn-primary w-full py-3.5 group">
             {loading ? (
-              <><Spinner />{authMode === 'login' ? 'Authenticating…' : 'Registering…'}</>
+              <><Spinner />{authMode === 'login' ? 'Signing In…' : 'Registering…'}</>
             ) : (
               <>
-                {authMode === 'login' ? 'Enter Investor Portal' : 'Create Account'}
+                {authMode === 'login' ? 'Sign In to Portfolio' : 'Create Account'}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </>
             )}
           </button>
 
-          <p className="flex items-center justify-center gap-1.5 text-[11px] text-redhill-muted pt-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-redhill-gold" />
-            256-bit encrypted private investor session
+          <p className="text-center text-[11px] text-redhill-muted pt-1">
+            Dedicated portal for registered Redhill Infra investors and partners.
           </p>
         </form>
       )}
@@ -552,7 +575,7 @@ export default function Login({ onLogin }: LoginProps) {
                   autoComplete="username"
                   value={forgotIdentifier}
                   onChange={(e) => setForgotIdentifier(e.target.value)}
-                  className="field pl-11"
+                  className="field field-icon-left"
                   placeholder="Email, Login ID or phone number"
                   required
                 />
@@ -625,7 +648,7 @@ export default function Login({ onLogin }: LoginProps) {
                   autoComplete="new-password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="field pl-11 pr-11"
+                  className="field field-icon-left field-icon-right"
                   placeholder="At least 4 characters"
                   required
                 />
@@ -645,7 +668,7 @@ export default function Login({ onLogin }: LoginProps) {
                   autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="field pl-11 pr-11"
+                  className="field field-icon-left field-icon-right"
                   placeholder="Re-type new password"
                   required
                 />
@@ -688,31 +711,40 @@ export default function Login({ onLogin }: LoginProps) {
     <div className="min-h-screen bg-redhill-ivory text-redhill-charcoal">
 
       {/* ================================================================ */}
-      {/* EDITORIAL HEADER                                                  */}
+      {/* REFINED NAVIGATION BAR (Centered 3-column grid across all devices)*/}
       {/* ================================================================ */}
       <header
-        className={`fixed top-0 inset-x-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 border-b ${
-          scrolled ? 'bg-white/95 backdrop-blur-md border-redhill-line' : 'bg-redhill-ivory/85 backdrop-blur-sm border-transparent'
+        className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 border-b ${
+          scrolled
+            ? 'bg-white/95 backdrop-blur-md border-redhill-line shadow-[0_8px_30px_-18px_rgba(29,30,34,0.18)]'
+            : 'bg-gradient-to-b from-black/65 via-black/30 to-transparent border-white/10'
         }`}
       >
-        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 h-20 flex items-center justify-between gap-6">
+        <div className="page-container h-16 sm:h-20 grid grid-cols-2 md:grid-cols-[1fr_auto_1fr] items-center gap-4">
           <a
             href="#top"
             onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); }}
             aria-label="Redhill Infra — home"
+            className="justify-self-start shrink-0"
           >
-            <Logo />
+            <Logo light={!scrolled} />
           </a>
 
-          <nav aria-label="Primary" className="hidden md:flex items-center gap-10">
+          <nav aria-label="Primary" className="hidden md:flex items-center justify-center gap-7 lg:gap-10 justify-self-center">
             {NAV_LINKS.map(link => (
               <a
                 key={link.id}
                 href={`#${link.id}`}
                 onClick={(e) => { e.preventDefault(); scrollToSection(link.id); }}
                 aria-current={activeSection === link.id ? 'true' : undefined}
-                className={`nav-link text-[13px] tracking-[0.1em] uppercase transition-colors duration-300 ${
-                  activeSection === link.id ? 'text-redhill-charcoal font-semibold' : 'text-redhill-muted hover:text-redhill-charcoal'
+                className={`nav-link text-[13px] tracking-[0.06em] font-medium whitespace-nowrap transition-colors duration-300 ${
+                  scrolled
+                    ? activeSection === link.id
+                      ? 'text-redhill-charcoal font-semibold'
+                      : 'text-redhill-muted hover:text-redhill-charcoal'
+                    : activeSection === link.id
+                    ? 'text-white font-semibold'
+                    : 'text-white/85 hover:text-white'
                 }`}
               >
                 {link.label}
@@ -720,14 +752,18 @@ export default function Login({ onLogin }: LoginProps) {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-end gap-2.5 justify-self-end">
             <span className="hidden sm:inline-flex">
               <button
                 type="button"
                 onClick={() => openAccessDrawer('login')}
-                className="btn-dark py-2.5 px-5 text-xs uppercase tracking-[0.14em]"
+                className={`btn-press inline-flex items-center gap-2 rounded-md py-2.5 px-4 lg:px-5 text-xs font-semibold tracking-[0.1em] uppercase transition-all cursor-pointer whitespace-nowrap ${
+                  scrolled
+                    ? 'bg-redhill-charcoal text-white hover:bg-black'
+                    : 'bg-white/95 text-redhill-charcoal hover:bg-white'
+                }`}
               >
-                <Lock className="w-3.5 h-3.5 text-redhill-gold-soft" />
+                <Lock className={`w-3.5 h-3.5 ${scrolled ? 'text-redhill-gold-soft' : 'text-redhill-gold'}`} />
                 Investor Access
               </button>
             </span>
@@ -737,7 +773,11 @@ export default function Login({ onLogin }: LoginProps) {
               aria-label="Open navigation menu"
               aria-expanded={mobileNavOpen}
               aria-controls="mobile-nav"
-              className="md:hidden w-11 h-11 inline-flex items-center justify-center rounded-md text-redhill-charcoal hover:bg-redhill-sand transition-colors cursor-pointer"
+              className={`md:hidden w-11 h-11 inline-flex items-center justify-center rounded-md transition-colors cursor-pointer ${
+                scrolled
+                  ? 'text-redhill-charcoal hover:bg-redhill-sand'
+                  : 'text-white hover:bg-white/15'
+              }`}
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -750,7 +790,7 @@ export default function Login({ onLogin }: LoginProps) {
         {mobileNavOpen && (
           <div className="md:hidden fixed inset-0 z-50" id="mobile-nav" role="dialog" aria-modal="true" aria-label="Navigation">
             <motion.div
-              className="absolute inset-0 bg-redhill-ink/40"
+              className="absolute inset-0 bg-redhill-ink/45"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setMobileNavOpen(false)}
@@ -778,9 +818,9 @@ export default function Login({ onLogin }: LoginProps) {
                     key={link.id}
                     type="button"
                     onClick={() => scrollToSection(link.id)}
-                    className="text-left min-h-[56px] border-b border-redhill-line flex items-center justify-between text-lg font-serif text-redhill-charcoal cursor-pointer"
+                    className="text-left min-h-[56px] border-b border-redhill-line flex items-center justify-between text-base font-medium text-redhill-charcoal cursor-pointer"
                   >
-                    <span><span className="text-redhill-gold text-xs font-sans tracking-[0.2em] mr-3">0{i + 1}</span>{link.label}</span>
+                    <span><span className="text-redhill-gold text-xs font-mono tracking-[0.18em] mr-3">0{i + 1}</span>{link.label}</span>
                     <ArrowRight className="w-4 h-4 text-redhill-muted" />
                   </button>
                 ))}
@@ -812,7 +852,7 @@ export default function Login({ onLogin }: LoginProps) {
               ref={drawerFormRef}
               className="absolute right-0 top-0 h-full w-full max-w-[460px] bg-white border-l border-redhill-line shadow-2xl flex flex-col overflow-y-auto"
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-              transition={{ duration: reduceMotion ? 0 : 0.38, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: reduceMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="h-20 px-6 sm:px-8 border-b border-redhill-line flex items-center justify-between shrink-0">
                 <span className="eyebrow text-redhill-gold">Redhill Investor Portal</span>
@@ -827,13 +867,15 @@ export default function Login({ onLogin }: LoginProps) {
               </div>
 
               <div className="p-6 sm:p-8 flex-1">
-                <h2 className="font-serif text-3xl text-redhill-charcoal">{panelHeading.title}</h2>
-                <p className="text-sm text-redhill-muted mt-1 mb-7">{panelHeading.sub}</p>
+                <h2 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal font-semibold tracking-tight">
+                  {panelHeading.title}
+                </h2>
+                <p className="text-sm text-redhill-muted mt-1.5 mb-7 leading-relaxed">{panelHeading.sub}</p>
                 {renderAuthForm('drawer')}
               </div>
 
               <div className="px-6 sm:px-8 py-4 border-t border-redhill-line bg-redhill-ivory text-xs text-redhill-muted flex items-center justify-between">
-                <span>Need assistance?</span>
+                <span>Concierge Desk</span>
                 <span className="font-mono text-redhill-charcoal">invest@redhillinfra.com</span>
               </div>
             </motion.div>
@@ -842,202 +884,332 @@ export default function Login({ onLogin }: LoginProps) {
       </AnimatePresence>
 
       {/* ================================================================ */}
-      {/* EDITORIAL HERO — Warm Ivory composition with framed architecture  */}
+      {/* CINEMATIC FULL-VIEWPORT ARCHITECTURAL HERO (100% Dynamic VH)      */}
       {/* ================================================================ */}
-      <section id="top" className="pt-28 sm:pt-32 lg:pt-36 pb-16 sm:pb-24 border-b border-redhill-line">
-        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-12 items-center">
-            {/* Editorial copy */}
-            <div className="lg:col-span-5 space-y-7">
-              <motion.div {...rise(0.05)} className="flex items-center gap-3">
-                <span className="w-10 h-px bg-redhill-red" />
-                <span className="eyebrow text-redhill-gold">Redhill Infrastructure · Bengaluru</span>
-              </motion.div>
+      <section
+        id="top"
+        className="relative min-h-dvh flex flex-col justify-between overflow-hidden bg-redhill-ink text-white"
+      >
+        {/* Architectural Photograph / Video Backdrop */}
+        <motion.div style={{ y: heroParallax }} className="absolute -inset-y-8 inset-x-0 z-0">
+          {HERO_VIDEO && !reduceMotion ? (
+            <video
+              className="w-full h-full object-cover object-center"
+              src={HERO_VIDEO}
+              poster={HERO_IMAGE}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            <img
+              src={HERO_IMAGE}
+              alt="Redhill contemporary 14-storey boutique residential community in Bengaluru"
+              className={`w-full h-full object-cover object-[center_35%] ${reduceMotion ? '' : 'animate-ken-burns'}`}
+            />
+          )}
+        </motion.div>
 
-              <motion.h1
-                {...rise(0.15)}
-                className="display text-4xl sm:text-5xl xl:text-[3.25rem] font-semibold text-redhill-charcoal"
+        {/* Subtle Dark Architectural Gradient for Legibility */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#141519]/92 via-[#141519]/45 to-[#141519]/35" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#141519]/80 via-[#141519]/30 to-transparent" />
+
+        {/* Top Header Spacer */}
+        <div className="h-16 sm:h-20 shrink-0" aria-hidden="true" />
+
+        {/* Hero Editorial Content (Optically centered in available viewport height) */}
+        <div className="relative z-20 page-container flex-1 flex items-center py-8 sm:py-12">
+          <div className="max-w-3xl space-y-5 sm:space-y-6">
+            <motion.div {...rise(0.05)} className="flex items-center gap-3">
+              <span className="w-8 sm:w-10 h-px bg-redhill-gold-soft shrink-0" />
+              <span className="eyebrow text-redhill-gold-soft">
+                Redhill Infra Pvt Ltd · Contemporary Boutique High-Rise Living
+              </span>
+            </motion.div>
+
+            <motion.h1
+              {...rise(0.14)}
+              className="display text-[clamp(2.15rem,4.5vw,4.15rem)] text-white font-semibold tracking-tight leading-[1.06]"
+            >
+              Thoughtfully Designed.{' '}
+              <span className="block text-redhill-gold-soft mt-1.5">
+                Built for Better Living.
+              </span>
+            </motion.h1>
+
+            <motion.p
+              {...rise(0.22)}
+              className="text-base sm:text-lg lg:text-xl text-white/85 leading-relaxed max-w-2xl font-normal"
+            >
+              Contemporary residential communities crafted for modern urban living across Bengaluru’s prime neighbourhoods.
+            </motion.p>
+
+            <motion.div {...rise(0.3)} className="flex flex-wrap items-center gap-3.5 pt-2">
+              <button
+                type="button"
+                onClick={() => scrollToSection('developments')}
+                className="btn-primary py-3.5 px-6 text-xs uppercase tracking-[0.14em]"
               >
-                Beyond buildings.{' '}
-                <span className="block text-redhill-gold mt-1">We build enduring value.</span>
-              </motion.h1>
-
-              <motion.p {...rise(0.25)} className="text-base sm:text-lg text-redhill-muted leading-relaxed max-w-md">
-                A private real-estate platform connecting discerning investors with residential and commercial developments across Bengaluru’s high-growth corridors.
-              </motion.p>
-
-              <motion.div {...rise(0.35)} className="flex flex-wrap items-center gap-3 pt-1">
-                <button
-                  type="button"
-                  onClick={() => openAccessDrawer('login')}
-                  className="btn-primary py-3.5 px-6 text-xs uppercase tracking-[0.14em]"
-                >
-                  Investor Sign In
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => scrollToSection('developments')}
-                  className="btn-secondary py-3.5 px-6 text-xs uppercase tracking-[0.14em]"
-                >
-                  View Developments
-                </button>
-              </motion.div>
-
-              <motion.dl {...rise(0.45)} className="grid grid-cols-3 gap-6 pt-8 border-t border-redhill-line">
-                <div>
-                  <dt className="eyebrow text-redhill-muted">Corridors</dt>
-                  <dd className="font-serif text-2xl sm:text-3xl text-redhill-charcoal mt-1 tabular">04</dd>
-                </div>
-                <div>
-                  <dt className="eyebrow text-redhill-muted">Compliance</dt>
-                  <dd className="font-serif text-2xl sm:text-3xl text-redhill-charcoal mt-1">RERA</dd>
-                </div>
-                <div>
-                  <dt className="eyebrow text-redhill-muted">Telemetry</dt>
-                  <dd className="font-serif text-2xl sm:text-3xl text-redhill-charcoal mt-1">24/7</dd>
-                </div>
-              </motion.dl>
-            </div>
-
-            {/* Framed architectural plate */}
-            <motion.div {...rise(0.2)} className="lg:col-span-7">
-              <div className="relative overflow-hidden rounded-lg bg-redhill-sand border border-redhill-line aspect-[16/11] sm:aspect-[16/10]">
-                <motion.div style={{ y: heroParallax }} className="absolute -inset-y-6 inset-x-0">
-                  {HERO_VIDEO && !reduceMotion ? (
-                    <video
-                      className="w-full h-full object-cover"
-                      src={HERO_VIDEO}
-                      poster={HERO_IMAGE}
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                    />
-                  ) : (
-                    <img
-                      src={HERO_IMAGE}
-                      alt="Redhill residential architecture, Bengaluru"
-                      className={`w-full h-full object-cover ${reduceMotion ? '' : 'animate-ken-burns'}`}
-                    />
-                  )}
-                </motion.div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-
-                {/* Architectural plate caption */}
-                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 flex flex-col sm:flex-row sm:items-end justify-between gap-3 text-white">
-                  <div>
-                    <p className="eyebrow text-redhill-gold-soft">Featured Address · Whitefield</p>
-                    <p className="font-serif text-xl sm:text-2xl mt-0.5">Redhill Signature Towers</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={scrollToAccessSection}
-                    className="self-start sm:self-auto inline-flex items-center gap-2 bg-white/95 hover:bg-white text-redhill-charcoal text-xs font-semibold uppercase tracking-[0.14em] px-4 py-2.5 rounded-md cursor-pointer transition-colors"
-                  >
-                    Access Project Dossier
-                    <ArrowUpRight className="w-3.5 h-3.5 text-redhill-red" />
-                  </button>
-                </div>
-              </div>
+                Explore Developments
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={scrollToAccessSection}
+                className="btn-press inline-flex items-center gap-2 rounded-md py-3.5 px-6 text-xs font-semibold uppercase tracking-[0.14em] bg-white/95 hover:bg-white text-redhill-charcoal transition-colors cursor-pointer"
+              >
+                <Lock className="w-3.5 h-3.5 text-redhill-gold" />
+                Investor Access
+              </button>
             </motion.div>
           </div>
+        </div>
+
+        {/* Architectural Portfolio Metrics Bar (Evenly aligned 4-column grid with vertical dividers) */}
+        <div className="relative z-20 page-container pb-6 sm:pb-8 lg:pb-10 shrink-0">
+          <motion.div
+            {...rise(0.4)}
+            className="pt-5 sm:pt-6 border-t border-white/20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-0 text-xs"
+          >
+            <div className="lg:pr-8">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-redhill-gold-soft font-semibold">01 · Community Scale</p>
+              <p className="text-sm sm:text-base text-white font-medium mt-1">2, 4 &amp; 5 Acre Developments</p>
+            </div>
+            <div className="lg:border-l lg:border-white/20 lg:px-8">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-redhill-gold-soft font-semibold">02 · Architectural Typology</p>
+              <p className="text-sm sm:text-base text-white font-medium mt-1">12+ Floor Boutique High-Rises</p>
+            </div>
+            <div className="lg:border-l lg:border-white/20 lg:px-8">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-redhill-gold-soft font-semibold">03 · Bengaluru Corridors</p>
+              <p className="text-sm sm:text-base text-white font-medium mt-1">Whitefield · Sarjapur · Hebbal</p>
+            </div>
+            <div className="lg:border-l lg:border-white/20 lg:pl-8">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-redhill-gold-soft font-semibold">04 · Investor Transparency</p>
+              <button
+                type="button"
+                onClick={() => openAccessDrawer('login')}
+                className="text-sm sm:text-base text-white/95 hover:text-redhill-gold-soft inline-flex items-center gap-1.5 mt-1 font-medium cursor-pointer transition-colors"
+              >
+                Open Private Portfolio <ArrowUpRight className="w-4 h-4 text-redhill-gold-soft" />
+              </button>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* ================================================================ */}
-      {/* 01 — SIGNATURE DEVELOPMENTS (Light editorial showcase)            */}
+      {/* 01 — DEVELOPMENTS SECTION (Editorial Showcase + Adjacent Panel)   */}
       {/* ================================================================ */}
-      <section id="developments" className="py-20 sm:py-28 bg-white border-b border-redhill-line">
-        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-14 items-end">
+      <section id="developments" className="py-16 sm:py-24 lg:py-28 bg-white border-b border-redhill-line">
+        <div className="page-container">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 mb-10 sm:mb-12 items-end">
             <Reveal className="lg:col-span-7">
               <p className="eyebrow text-redhill-gold mb-3 flex items-center gap-3">
-                <span className="w-8 h-px bg-redhill-gold" />01 — Portfolio of Developments
+                <span className="w-8 h-px bg-redhill-gold" />01 — Developments
               </p>
-              <h2 className="display text-3xl sm:text-4xl lg:text-5xl text-redhill-charcoal">
-                Landmark addresses across Bengaluru’s prime corridors.
+              <h2 className="display text-[clamp(1.75rem,3.2vw,3rem)] text-redhill-charcoal">
+                Contemporary high-rise communities across Bengaluru.
               </h2>
             </Reveal>
             <Reveal className="lg:col-span-5" delay={0.08}>
-              <p className="text-redhill-muted leading-relaxed text-base">
-                Every Redhill development is conceived around connectivity, architectural longevity and transparent capital stewardship — from Whitefield to the Devanahalli aerotropolis.
+              <p className="text-redhill-muted leading-relaxed text-sm sm:text-base">
+                Thoughtfully planned 12+ storey residential developments set across 2-acre, 4-acre, and 5-acre landscaped communities — combining warm contemporary facades, generous balconies, and enduring build quality.
               </p>
             </Reveal>
           </div>
 
-          {/* Interactive editorial spotlight + list */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
-            <Reveal className="lg:col-span-7">
-              <div className="relative h-full min-h-[360px] sm:min-h-[460px] rounded-lg overflow-hidden bg-redhill-sand border border-redhill-line">
-                <img
-                  key={activeProject.id}
-                  src={activeProject.image}
-                  alt={activeProject.name}
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover transition-opacity duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
-                <span className="absolute top-5 left-5 eyebrow bg-white/95 text-redhill-charcoal px-3 py-1.5 rounded-sm">
-                  {activeProject.badge}
-                </span>
-                <div className="absolute bottom-0 inset-x-0 p-6 sm:p-8 text-white">
-                  <p className="eyebrow text-redhill-gold-soft flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5" />{activeProject.location}
-                  </p>
-                  <h3 className="font-serif text-2xl sm:text-4xl mt-1">{activeProject.name}</h3>
-                  <p className="text-sm text-white/80 mt-2 max-w-xl line-clamp-2">{activeProject.description}</p>
-                  <dl className="grid grid-cols-3 gap-4 pt-5 mt-5 border-t border-white/20 text-xs">
-                    <div>
-                      <dt className="text-white/60 uppercase tracking-[0.14em] text-[10px]">Configuration</dt>
-                      <dd className="text-white font-medium mt-1">{activeProject.configuration}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-white/60 uppercase tracking-[0.14em] text-[10px]">Indicative Entry</dt>
-                      <dd className="text-white font-medium mt-1 tabular">{activeProject.priceStarting}</dd>
-                    </div>
-                    <div>
-                      <dt className="text-white/60 uppercase tracking-[0.14em] text-[10px]">Possession</dt>
-                      <dd className="text-white font-medium mt-1">{activeProject.possessionDate}</dd>
-                    </div>
-                  </dl>
+          {/* Elegant Project Selector Tabs */}
+          <div
+            role="tablist"
+            aria-label="Select Redhill development"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8"
+          >
+            {featured.map((project, idx) => {
+              const selected = idx === activeProjectIdx;
+              return (
+                <button
+                  key={project.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => setActiveProjectIdx(idx)}
+                  className={`text-left p-4 sm:p-5 rounded-lg border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2.5 ${
+                    selected
+                      ? 'bg-redhill-ivory border-redhill-charcoal shadow-xs'
+                      : 'bg-white border-redhill-line hover:border-redhill-stone hover:bg-redhill-ivory/50'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`text-xs font-mono font-semibold tabular ${selected ? 'text-redhill-red' : 'text-redhill-muted'}`}>
+                      0{idx + 1}
+                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.14em] text-redhill-gold font-semibold">
+                      {project.landArea || 'Bengaluru'} · {project.floors || '12+ Floors'}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-base font-semibold text-redhill-charcoal truncate">
+                      {project.name}
+                    </h3>
+                    <p className="text-xs text-redhill-muted truncate mt-0.5">{project.location}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Main Editorial Showcase: Large Architectural Image + Refined Adjacent Information Panel */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+            {/* Left: Large Architectural Photograph with Crossfade */}
+            <div className="lg:col-span-7 flex flex-col">
+              <div className="relative flex-1 min-h-[320px] sm:min-h-[440px] lg:min-h-full rounded-lg overflow-hidden bg-redhill-sand border border-redhill-line group">
+                <AnimatePresence mode="wait">
+                  <motion.img
+                    key={activeProject.id}
+                    src={activeProject.image}
+                    alt={`${activeProject.name} — ${activeProject.location}`}
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    initial={{ opacity: 0, scale: reduceMotion ? 1 : 1.02 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    className="w-full h-full object-cover"
+                  />
+                </AnimatePresence>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+
+                <div className="absolute top-5 left-5 right-5 flex items-center justify-between gap-3">
+                  <span className="eyebrow bg-white/95 text-redhill-charcoal px-3 py-1.5 rounded-sm shadow-xs">
+                    {activeProject.statusText || activeProject.badge}
+                  </span>
+                  {activeProject.landArea && (
+                    <span className="eyebrow bg-redhill-ink/80 backdrop-blur-xs text-white px-3 py-1.5 rounded-sm border border-white/15">
+                      {activeProject.landArea} · {activeProject.floors}
+                    </span>
+                  )}
+                </div>
+
+                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 text-white">
+                  <div>
+                    <p className="eyebrow text-redhill-gold-soft flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5" />
+                      {activeProject.location}
+                    </p>
+                    <p className="font-serif text-xl sm:text-2xl font-semibold mt-0.5">{activeProject.name}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedPublicProject(activeProject);
+                      setActiveGalleryIdx(0);
+                    }}
+                    className="inline-flex items-center gap-2 bg-white/95 hover:bg-white text-redhill-charcoal text-xs font-semibold uppercase tracking-[0.12em] px-3.5 py-2 rounded-md cursor-pointer transition-colors shrink-0"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5 text-redhill-gold" />
+                    Gallery ({activeProject.gallery.length})
+                  </button>
                 </div>
               </div>
-            </Reveal>
+            </div>
 
-            <div className="lg:col-span-5 flex flex-col justify-between divide-y divide-redhill-line border-y border-redhill-line">
-              {featured.map((project, idx) => {
-                const selected = idx === activeProjectIdx;
-                return (
-                  <button
-                    key={project.id}
-                    type="button"
-                    onClick={() => setActiveProjectIdx(idx)}
-                    onMouseEnter={() => setActiveProjectIdx(idx)}
-                    className={`w-full text-left py-5 px-4 transition-colors flex items-start justify-between gap-4 cursor-pointer ${
-                      selected ? 'bg-redhill-ivory' : 'hover:bg-redhill-ivory/60'
-                    }`}
-                  >
-                    <div className="flex items-start gap-4 min-w-0">
-                      <span className={`font-serif text-sm tabular pt-1 ${selected ? 'text-redhill-red font-semibold' : 'text-redhill-muted'}`}>
-                        0{idx + 1}
+            {/* Right: Refined Adjacent Information Panel */}
+            <div className="lg:col-span-5 lux-card p-6 sm:p-8 flex flex-col justify-between space-y-6 bg-[#FBF9F5]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeProject.id}
+                  initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  className="space-y-6"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="eyebrow text-redhill-gold flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {activeProject.location}
                       </span>
-                      <div className="min-w-0">
-                        <p className="eyebrow text-redhill-gold">{project.location.replace(', Bangalore', '')}</p>
-                        <h3 className="font-serif text-xl text-redhill-charcoal mt-0.5 truncate">{project.name}</h3>
-                        <p className="text-xs text-redhill-muted mt-1">{project.configuration} · {project.carpetArea}</p>
-                      </div>
+                      <span className="text-xs font-mono text-redhill-muted">
+                        0{activeProjectIdx + 1} / 0{featured.length}
+                      </span>
                     </div>
-                    <span className={`mt-1 w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                      selected ? 'border-redhill-red bg-redhill-red text-white' : 'border-redhill-stone text-redhill-muted'
-                    }`}>
-                      <ArrowUpRight className="w-4 h-4" />
-                    </span>
-                  </button>
-                );
-              })}
+                    <h3 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal font-semibold tracking-tight">
+                      {activeProject.name}
+                    </h3>
+                    <p className="text-sm text-redhill-muted leading-relaxed mt-3">
+                      {activeProject.description}
+                    </p>
+                  </div>
+
+                  {/* Verified Project Metadata Grid */}
+                  <dl className="grid grid-cols-2 gap-3 pt-4 border-t border-redhill-line text-xs">
+                    <div className="p-3.5 rounded-md bg-white border border-redhill-line">
+                      <dt className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted">Land Area &amp; Scale</dt>
+                      <dd className="font-serif text-sm font-semibold text-redhill-charcoal mt-1">
+                        {activeProject.landArea || 'Boutique Community'} · {activeProject.floors || '12+ Floors'}
+                      </dd>
+                    </div>
+                    <div className="p-3.5 rounded-md bg-white border border-redhill-line">
+                      <dt className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted">Configuration</dt>
+                      <dd className="font-serif text-sm font-semibold text-redhill-charcoal mt-1">
+                        {activeProject.configuration}
+                      </dd>
+                    </div>
+                    <div className="p-3.5 rounded-md bg-white border border-redhill-line">
+                      <dt className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted">Residence Area</dt>
+                      <dd className="font-serif text-sm font-semibold text-redhill-charcoal mt-1 tabular">
+                        {activeProject.carpetArea}
+                      </dd>
+                    </div>
+                    <div className="p-3.5 rounded-md bg-white border border-redhill-line">
+                      <dt className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted">Project Status</dt>
+                      <dd className="font-serif text-sm font-semibold text-emerald-800 mt-1">
+                        {activeProject.statusText || activeProject.badge}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  {/* Architectural Highlights */}
+                  <div className="space-y-2 pt-2">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-redhill-muted font-semibold">
+                      Architectural Highlights
+                    </p>
+                    <ul className="grid grid-cols-1 gap-2">
+                      {activeProject.highlights.map((item) => (
+                        <li key={item} className="flex items-center gap-2.5 text-xs text-redhill-charcoal">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-redhill-gold shrink-0" />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* View Project & Investor Dossier Actions */}
+              <div className="pt-5 border-t border-redhill-line flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedPublicProject(activeProject);
+                    setActiveGalleryIdx(0);
+                  }}
+                  className="btn-dark flex-1 py-3 px-5 text-xs uppercase tracking-[0.14em]"
+                >
+                  View Project Details
+                  <ArrowUpRight className="w-4 h-4 text-redhill-gold-soft" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => openAccessDrawer('login')}
+                  className="btn-secondary py-3 px-5 text-xs uppercase tracking-[0.14em]"
+                >
+                  Investor Dossier
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1046,21 +1218,21 @@ export default function Login({ onLogin }: LoginProps) {
       {/* ================================================================ */}
       {/* 02 — THE INVESTOR EXPERIENCE (Intentional dark architectural band)*/}
       {/* ================================================================ */}
-      <section id="experience" className="band-dark py-20 sm:py-28">
-        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <section id="experience" className="band-dark py-16 sm:py-24 lg:py-28">
+        <div className="page-container grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           <Reveal className="lg:col-span-5">
             <div className="relative aspect-[4/5] rounded-lg overflow-hidden border border-white/10">
               <img
                 src={EXPERIENCE_IMAGE}
-                alt="Redhill private client lounge"
+                alt="Redhill 16-storey boutique high-rise residence at twilight in Bengaluru"
                 loading="lazy"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-5 left-5 right-5 text-xs text-white/80 flex items-center justify-between border-t border-white/20 pt-3">
-                <span className="uppercase tracking-[0.18em]">Private Wealth Desk</span>
-                <span className="text-redhill-gold-soft">Bengaluru</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <div className="absolute bottom-5 left-5 right-5 text-xs text-white/85 flex items-center justify-between border-t border-white/20 pt-3">
+                <span className="uppercase tracking-[0.18em]">Contemporary High-Rise Living</span>
+                <span className="text-redhill-gold-soft">12+ Storeys · Bengaluru</span>
               </div>
             </div>
           </Reveal>
@@ -1070,29 +1242,29 @@ export default function Login({ onLogin }: LoginProps) {
               <p className="eyebrow text-redhill-gold-soft mb-4 flex items-center gap-3">
                 <span className="w-8 h-px bg-redhill-gold-soft" />02 — The Investor Experience
               </p>
-              <h2 className="display text-3xl sm:text-5xl text-white max-w-2xl">
+              <h2 className="display text-[clamp(1.75rem,3.2vw,3rem)] text-white max-w-2xl">
                 Every square foot, milestone and rupee — accounted for in real time.
               </h2>
-              <p className="mt-5 text-white/65 leading-relaxed text-base sm:text-lg max-w-xl">
-                Built as a private wealth platform rather than a brochure site, the Redhill Investor Portal gives you direct visibility into construction stages, statutory approvals, capital ledgers and site feeds.
+              <p className="mt-4 sm:mt-5 text-white/70 leading-relaxed text-sm sm:text-base lg:text-lg max-w-xl">
+                Designed as a private residential ownership and investment portal, Redhill gives you direct visibility into your allocated area, construction stages, project documents, and capital ledger.
               </p>
             </Reveal>
 
-            <ol className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-x-10">
+            <ol className="mt-8 sm:mt-10 grid grid-cols-1 sm:grid-cols-2 gap-x-8 lg:gap-x-10">
               {[
-                { icon: Activity, title: 'Stage-by-Stage Milestones', desc: 'Documentation, statutory approvals and construction progress tracked with target dates.' },
-                { icon: BookOpen, title: 'Audited Capital Ledger', desc: 'Initial assignments, sub-investments and allotted square footage recorded with buy-in rates.' },
-                { icon: Camera, title: 'Live Site Telemetry', desc: 'Direct CCTV feeds alongside dated progress photography and video dispatches.' },
-                { icon: MessageCircle, title: 'Executive Concierge Desk', desc: 'Project-specific communication thread with the Redhill asset-management team.' },
+                { icon: Activity, title: 'Stage-by-Stage Milestones', desc: 'Documentation, statutory approvals and construction progress tracked with recorded dates.' },
+                { icon: BookOpen, title: 'Audited Capital Ledger', desc: 'Initial assignments, additional allocations and allotted square footage recorded with buy rates.' },
+                { icon: Camera, title: 'Site Progress & Media', desc: 'Direct site camera feeds alongside dated progress photography and engineering dispatches.' },
+                { icon: MessageCircle, title: 'Executive Relationship Desk', desc: 'Project-specific communication thread with the Redhill Bengaluru team.' },
               ].map((item, i) => (
-                <Reveal as="li" key={item.title} delay={i * 0.06} className="py-6 border-t border-white/15 flex gap-4">
+                <Reveal as="li" key={item.title} delay={i * 0.06} className="py-5 sm:py-6 border-t border-white/15 flex gap-4">
                   <span className="font-serif text-redhill-gold-soft text-lg tabular w-7 shrink-0">0{i + 1}</span>
                   <div>
                     <h3 className="text-white font-medium flex items-center gap-2 mb-1">
-                      <item.icon className="w-4 h-4 text-redhill-gold-soft" />
+                      <item.icon className="w-4 h-4 text-redhill-gold-soft shrink-0" />
                       {item.title}
                     </h3>
-                    <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
+                    <p className="text-sm text-white/65 leading-relaxed">{item.desc}</p>
                   </div>
                 </Reveal>
               ))}
@@ -1102,55 +1274,251 @@ export default function Login({ onLogin }: LoginProps) {
       </section>
 
       {/* ================================================================ */}
-      {/* 03 — DEDICATED INVESTOR ACCESS SECTION                            */}
+      {/* 03 — INVESTOR ACCESS (Refined Two-Column Private Portfolio View)  */}
       {/* ================================================================ */}
-      <section id="access" className="py-20 sm:py-28 bg-redhill-ivory">
-        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          <Reveal className="lg:col-span-6 space-y-6 lg:pt-4">
-            <p className="eyebrow text-redhill-gold flex items-center gap-3">
-              <span className="w-8 h-px bg-redhill-gold" />03 — Investor Access
-            </p>
-            <h2 className="display text-3xl sm:text-5xl text-redhill-charcoal">
-              Enter your private portfolio.
-            </h2>
-            <p className="text-redhill-muted text-base leading-relaxed max-w-lg">
-              Sign in with your registered email address, unique Login ID or phone number to review your property allocations, valuation snapshot, construction milestones and transaction ledger.
-            </p>
+      <section id="access" className="py-16 sm:py-24 lg:py-28 bg-redhill-ivory">
+        <div className="page-container">
+          <div className="lux-card overflow-hidden grid grid-cols-1 lg:grid-cols-12 shadow-[0_24px_60px_-28px_rgba(29,30,34,0.22)]">
+            {/* Left Column: Architectural Imagery + Welcome Editorial Presentation */}
+            <div className="lg:col-span-6 relative min-h-[360px] lg:min-h-[620px] flex flex-col justify-between p-6 sm:p-10 lg:p-12 text-white bg-redhill-ink overflow-hidden">
+              <img
+                src={ACCESS_EDITORIAL_IMAGE}
+                alt="Redhill Signature Towers — Contemporary boutique high-rise in Bengaluru"
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#141519]/95 via-[#141519]/55 to-[#141519]/40" />
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-              {[
-                { icon: Landmark, label: 'RERA Compliant', sub: 'Verified project filings' },
-                { icon: Activity, label: 'Live Valuation', sub: 'Prevailing market rates' },
-                { icon: BookOpen, label: 'Exportable Dossier', sub: 'CSV & PDF statements' },
-              ].map(card => (
-                <div key={card.label} className="lux-card p-4">
-                  <card.icon className="w-4 h-4 text-redhill-gold mb-2" />
-                  <p className="text-xs font-semibold text-redhill-charcoal">{card.label}</p>
-                  <p className="text-[11px] text-redhill-muted mt-0.5">{card.sub}</p>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-
-          <Reveal className="lg:col-span-6" delay={0.08}>
-            <div ref={inlineFormRef} className="lux-card p-6 sm:p-10 max-w-xl lg:ml-auto border-t-2 border-t-redhill-red">
-              <div className="mb-6">
-                <p className="eyebrow text-redhill-gold mb-1">Redhill Investor Portal</p>
-                <h3 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal">{panelHeading.title}</h3>
-                <p className="text-sm text-redhill-muted mt-1">{panelHeading.sub}</p>
+              <div className="relative z-10 flex items-center justify-between gap-4">
+                <Logo light />
+                <span className="eyebrow text-redhill-gold-soft border border-white/20 bg-black/35 backdrop-blur-xs px-3 py-1 rounded-sm">
+                  Bengaluru
+                </span>
               </div>
-              {renderAuthForm('inline')}
+
+              <div className="relative z-10 space-y-5 my-auto py-8">
+                <p className="eyebrow text-redhill-gold-soft flex items-center gap-3">
+                  <span className="w-8 h-px bg-redhill-gold-soft" />
+                  03 — Private Investor Portal
+                </p>
+                <h2 className="display text-[clamp(1.65rem,2.8vw,2.5rem)] text-white font-semibold leading-tight">
+                  Contemporary residential communities, transparently managed.
+                </h2>
+                <p className="text-sm sm:text-base text-white/80 leading-relaxed max-w-md">
+                  Review your property allocations, allotted square footage, project milestones, documents, and capital ledger statements in one dedicated place.
+                </p>
+              </div>
+
+              <div className="relative z-10 grid grid-cols-3 gap-4 pt-6 border-t border-white/20 text-xs">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-gold-soft">Developments</p>
+                  <p className="text-white font-medium mt-0.5">2 – 5 Acres</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-gold-soft">Architecture</p>
+                  <p className="text-white font-medium mt-0.5">12+ Storeys</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-gold-soft">Support</p>
+                  <p className="text-white font-medium mt-0.5">Relationship Desk</p>
+                </div>
+              </div>
             </div>
-          </Reveal>
+
+            {/* Right Column: Minimal Login / Registration / Recovery Form */}
+            <div ref={inlineFormRef} className="lg:col-span-6 p-6 sm:p-10 lg:p-14 flex flex-col justify-center bg-white">
+              <div className="max-w-md w-full mx-auto">
+                <div className="mb-7">
+                  <p className="eyebrow text-redhill-gold mb-2">Investor Access</p>
+                  <h3 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal font-semibold tracking-tight">
+                    {panelHeading.title}
+                  </h3>
+                  <p className="text-sm text-redhill-muted mt-1.5 leading-relaxed">
+                    {panelHeading.sub}
+                  </p>
+                </div>
+                {renderAuthForm('inline')}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
+
+      {/* ================================================================ */}
+      {/* PUBLIC PROJECT DETAIL MODAL (Overview, Specs, Gallery, Enquiry)   */}
+      {/* ================================================================ */}
+      <AnimatePresence>
+        {selectedPublicProject && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
+            role="dialog"
+            aria-modal="true"
+            aria-label={selectedPublicProject.name}
+          >
+            <motion.div
+              className="fixed inset-0 bg-redhill-ink/60 backdrop-blur-xs"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedPublicProject(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 18, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 18, scale: 0.98 }}
+              transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+              className="relative z-10 w-full max-w-4xl bg-white rounded-xl border border-redhill-line shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col"
+            >
+              {/* Modal Top Bar */}
+              <div className="px-6 py-4 border-b border-redhill-line flex items-center justify-between bg-redhill-ivory shrink-0">
+                <div>
+                  <span className="eyebrow text-redhill-gold">{selectedPublicProject.location}</span>
+                  <h3 className="font-serif text-xl font-semibold text-redhill-charcoal">
+                    {selectedPublicProject.name}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPublicProject(null)}
+                  aria-label="Close project details"
+                  className="w-9 h-9 rounded-md inline-flex items-center justify-center text-redhill-muted hover:text-redhill-charcoal hover:bg-redhill-sand transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 sm:p-8 overflow-y-auto space-y-6">
+                {/* Active Gallery Image */}
+                <div className="relative aspect-[16/9] rounded-lg overflow-hidden bg-redhill-sand border border-redhill-line">
+                  <img
+                    src={selectedPublicProject.gallery[activeGalleryIdx]?.url || selectedPublicProject.image}
+                    alt={selectedPublicProject.gallery[activeGalleryIdx]?.title || selectedPublicProject.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white">
+                    <div>
+                      <span className="text-[10px] uppercase tracking-[0.18em] text-redhill-gold-soft font-semibold">
+                        {selectedPublicProject.gallery[activeGalleryIdx]?.tag || 'Architecture'}
+                      </span>
+                      <p className="text-sm sm:text-base font-medium">
+                        {selectedPublicProject.gallery[activeGalleryIdx]?.title || selectedPublicProject.name}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setActiveGalleryIdx((prev) =>
+                            prev === 0 ? selectedPublicProject.gallery.length - 1 : prev - 1
+                          )
+                        }
+                        aria-label="Previous image"
+                        className="w-8 h-8 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setActiveGalleryIdx((prev) =>
+                            (prev + 1) % selectedPublicProject.gallery.length
+                          )
+                        }
+                        aria-label="Next image"
+                        className="w-8 h-8 rounded-full bg-black/55 hover:bg-black/80 text-white flex items-center justify-center cursor-pointer"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gallery Thumbnails */}
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-2.5">
+                  {selectedPublicProject.gallery.map((item, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setActiveGalleryIdx(i)}
+                      className={`relative aspect-[16/10] rounded overflow-hidden border-2 transition-all cursor-pointer ${
+                        activeGalleryIdx === i ? 'border-redhill-red' : 'border-transparent opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img src={item.url} alt={item.title} className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
+
+                {/* Project Overview & Specifications */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pt-2">
+                  <div className="md:col-span-7 space-y-3">
+                    <p className="eyebrow text-redhill-gold">Development Overview</p>
+                    <p className="text-sm text-redhill-charcoal leading-relaxed">
+                      {selectedPublicProject.description}
+                    </p>
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+                      {selectedPublicProject.highlights.map((h) => (
+                        <li key={h} className="flex items-center gap-2 text-xs text-redhill-muted">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-redhill-gold shrink-0" />
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="md:col-span-5 bg-redhill-ivory border border-redhill-line rounded-lg p-4 space-y-2.5 text-xs">
+                    <div className="flex justify-between py-1.5 border-b border-redhill-line">
+                      <span className="text-redhill-muted">Location</span>
+                      <span className="font-semibold text-redhill-charcoal">{selectedPublicProject.location}</span>
+                    </div>
+                    <div className="flex justify-between py-1.5 border-b border-redhill-line">
+                      <span className="text-redhill-muted">Land Area</span>
+                      <span className="font-semibold text-redhill-charcoal">{selectedPublicProject.landArea || 'Boutique Enclave'}</span>
+                    </div>
+                    <div className="flex justify-between py-1.5 border-b border-redhill-line">
+                      <span className="text-redhill-muted">Building Elevation</span>
+                      <span className="font-semibold text-redhill-charcoal">{selectedPublicProject.floors || '12+ Storeys'}</span>
+                    </div>
+                    <div className="flex justify-between py-1.5 border-b border-redhill-line">
+                      <span className="text-redhill-muted">Configuration</span>
+                      <span className="font-semibold text-redhill-charcoal">{selectedPublicProject.configuration}</span>
+                    </div>
+                    <div className="flex justify-between py-1.5">
+                      <span className="text-redhill-muted">Status</span>
+                      <span className="font-semibold text-emerald-800">{selectedPublicProject.statusText || selectedPublicProject.badge}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="px-6 py-4 border-t border-redhill-line bg-redhill-ivory flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <span className="text-xs text-redhill-muted">
+                  Allocated investors can sign in to view live milestones, approvals and ledger records.
+                </span>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => openAccessDrawer('login')}
+                    className="btn-primary py-2.5 px-5 text-xs uppercase tracking-[0.14em]"
+                  >
+                    Access Investor Dossier
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <footer className="bg-white border-t border-redhill-line py-10">
         <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <Logo />
           <p className="text-xs text-redhill-muted">
-            © {new Date().getFullYear()} Redhill Infrastructure Pvt Ltd. All rights reserved · Bengaluru, India.
+            © {new Date().getFullYear()} Redhill Infra Pvt Ltd. Contemporary Boutique High-Rise Living · Bengaluru, India.
           </p>
         </div>
       </footer>

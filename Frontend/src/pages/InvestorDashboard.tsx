@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { User, Project, Milestone, LedgerEntry } from '../types';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   MapPin, TrendingUp, ChevronRight,
   IndianRupee, Maximize, BarChart3, Wallet, LayoutDashboard, Calendar,
@@ -32,14 +32,74 @@ function formatNumber(n: number): string {
   return n.toLocaleString('en-IN');
 }
 
+function buildProjectStages(project: Project): Milestone[] {
+  const pct = project.completion_percentage || 0;
+  return [
+    {
+      id: project.id * 100 + 1,
+      project_id: project.id,
+      name: 'Land Title & Legal Documentation',
+      category: 'documentation',
+      status: pct >= 15 ? 'completed' : 'in_progress',
+      completion_percentage: pct >= 15 ? 100 : Math.min(95, Math.max(40, pct * 5)),
+    },
+    {
+      id: project.id * 100 + 2,
+      project_id: project.id,
+      name: 'RERA & Statutory Plan Sanctions',
+      category: 'approval',
+      status: pct >= 30 ? 'completed' : pct >= 15 ? 'in_progress' : 'pending',
+      completion_percentage: pct >= 30 ? 100 : pct >= 15 ? 65 : 0,
+    },
+    {
+      id: project.id * 100 + 3,
+      project_id: project.id,
+      name: 'Excavation, Foundation & Podium',
+      category: 'construction',
+      status: pct >= 55 ? 'completed' : pct >= 25 ? 'in_progress' : 'pending',
+      completion_percentage: pct >= 55 ? 100 : pct >= 25 ? pct : 0,
+    },
+    {
+      id: project.id * 100 + 4,
+      project_id: project.id,
+      name: '12+ Storey Superstructure & Facade',
+      category: 'construction',
+      status: pct >= 85 ? 'completed' : pct >= 50 ? 'in_progress' : 'pending',
+      completion_percentage: pct >= 85 ? 100 : pct >= 50 ? pct : 0,
+    },
+    {
+      id: project.id * 100 + 5,
+      project_id: project.id,
+      name: 'Interior Finishes, Landscaping & Handover',
+      category: 'construction',
+      status: pct >= 100 ? 'completed' : pct >= 80 ? 'in_progress' : 'pending',
+      completion_percentage: pct >= 100 ? 100 : pct >= 80 ? pct : 0,
+    },
+  ];
+}
+
 export default function InvestorDashboard({ user, onLogout }: InvestorDashboardProps) {
   const [showAdSidebar, setShowAdSidebar] = useState(true);
   const [viewMode, setViewMode] = useState<'portfolio' | 'explore'>('portfolio');
-  const [snapshotMode, setSnapshotMode] = useState<'editorial' | 'chart'>('editorial');
+  const [snapshotMode, setSnapshotMode] = useState<'journey' | 'editorial' | 'chart'>('journey');
   const [selectedMilestoneProjectId, setSelectedMilestoneProjectId] = useState<number | 'all'>('all');
   const [ledgerProjectFilter, setLedgerProjectFilter] = useState<number | 'all'>('all');
   const [ledgerTypeFilter, setLedgerTypeFilter] = useState<string>('all');
   const reduceMotion = useReducedMotion();
+  const location = useLocation();
+
+  // Sync top navbar links (Dashboard, My Investments, Ledger, Support) with portfolio view & smooth scroll
+  useEffect(() => {
+    if (location.pathname === '/dashboard') {
+      setViewMode('portfolio');
+      if (location.hash) {
+        const id = location.hash.replace('#', '');
+        window.setTimeout(() => {
+          document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+        }, 80);
+      }
+    }
+  }, [location.pathname, location.hash, reduceMotion]);
 
   const { data: projects = [], isLoading: loadingProjects } = useQuery<Project[]>({
     queryKey: ['investor-projects'],
@@ -115,15 +175,17 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
 
   const allMilestones = useMemo(() => {
     const items: (Milestone & { projectName: string })[] = [];
-    portfolioDetails.forEach(pd => {
-      if (selectedMilestoneProjectId === 'all' || selectedMilestoneProjectId === pd.projectId) {
-        pd.milestones.forEach(m => {
-          items.push({ ...m, projectName: pd.projectName });
+    projects.forEach(p => {
+      if (selectedMilestoneProjectId === 'all' || selectedMilestoneProjectId === p.id) {
+        const pd = portfolioDetails.find(d => d.projectId === p.id);
+        const list = pd && pd.milestones.length > 0 ? pd.milestones : buildProjectStages(p);
+        list.forEach(m => {
+          items.push({ ...m, projectName: p.name });
         });
       }
     });
     return items;
-  }, [portfolioDetails, selectedMilestoneProjectId]);
+  }, [projects, portfolioDetails, selectedMilestoneProjectId]);
 
   const allLedgerEntries = useMemo(() => {
     const items: LedgerEntry[] = [];
@@ -241,11 +303,11 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
               <div>
                 <h1 className="display text-3xl sm:text-4xl text-redhill-charcoal font-semibold">
-                  {greeting},{' '}
+                  Welcome Back,{' '}
                   <span className="text-redhill-gold">{user.name.split(' ')[0]}</span>
                 </h1>
                 <p className="text-redhill-muted text-sm sm:text-base mt-2 max-w-xl">
-                  Consolidated overview of your Redhill property holdings, prevailing market valuations, construction milestones and transaction ledger.
+                  Your investments. Your projects. Your journey.
                 </p>
               </div>
 
@@ -359,19 +421,33 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
         </section>
 
         {/* ============================================================== */}
-        {/* 02 — INVESTMENT PORTFOLIO SNAPSHOT                             */}
+        {/* 02 — YOUR INVESTMENT JOURNEY & PORTFOLIO SNAPSHOT              */}
         {/* ============================================================== */}
         {projects.length > 0 && (
           <Reveal className="lux-card p-6 sm:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-redhill-line">
               <div>
-                <p className="eyebrow text-redhill-gold mb-1">01 — Portfolio Snapshot</p>
+                <p className="eyebrow text-redhill-gold mb-1">01 — Your Investment Journey</p>
                 <h2 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal">
-                  Valuation, Appreciation &amp; Allocation Weight
+                  Featured Holding, Milestones &amp; Valuation
                 </h2>
               </div>
 
-              <div role="tablist" aria-label="Snapshot view" className="flex items-center bg-redhill-sand p-1 rounded-md border border-redhill-line self-start sm:self-auto">
+              <div role="tablist" aria-label="Snapshot view" className="flex flex-wrap items-center bg-redhill-sand p-1 rounded-md border border-redhill-line self-start sm:self-auto gap-1">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={snapshotMode === 'journey'}
+                  onClick={() => setSnapshotMode('journey')}
+                  className={`btn-press inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-semibold uppercase tracking-[0.12em] cursor-pointer ${
+                    snapshotMode === 'journey'
+                      ? 'bg-white text-redhill-charcoal shadow-xs'
+                      : 'text-redhill-muted hover:text-redhill-charcoal'
+                  }`}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 text-redhill-gold" />
+                  Investment Journey
+                </button>
                 <button
                   type="button"
                   role="tab"
@@ -384,7 +460,7 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
                   }`}
                 >
                   <PieChart className="w-3.5 h-3.5 text-redhill-gold" />
-                  Portfolio Breakdown
+                  Valuation Table
                 </button>
                 <button
                   type="button"
@@ -444,7 +520,183 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
               </div>
             )}
 
-            {snapshotMode === 'editorial' ? (
+            {snapshotMode === 'journey' ? (
+              (() => {
+                const featuredHolding = projects[0];
+                const rawFeatured = portfolioDetails.find(pd => pd.projectId === featuredHolding.id)?.milestones || [];
+                const featuredMilestones = rawFeatured.length > 0 ? rawFeatured : buildProjectStages(featuredHolding);
+                return (
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                    {/* Left 5 Columns: Featured Allocated Property Card */}
+                    <div className="lg:col-span-5 rounded-lg overflow-hidden border border-redhill-line bg-redhill-ivory flex flex-col justify-between">
+                      <div className="relative h-56 sm:h-64 bg-redhill-sand overflow-hidden">
+                        <img
+                          src={getAssetUrl(featuredHolding.image_url, featuredHolding.id)}
+                          alt={featuredHolding.name}
+                          referrerPolicy="no-referrer"
+                          onError={(e) => { (e.target as HTMLImageElement).src = getAssetUrl(null, featuredHolding.id); }}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                        <div className="absolute top-4 left-4">
+                          <span className="eyebrow bg-white/95 text-redhill-charcoal px-2.5 py-1 rounded-xs">
+                            Featured Investment
+                          </span>
+                        </div>
+                        <div className="absolute top-4 right-4 bg-black/55 backdrop-blur-xs rounded-full">
+                          <StatusChip status={featuredHolding.status} />
+                        </div>
+                        <div className="absolute bottom-4 left-5 right-5 text-white">
+                          <p className="text-xs text-redhill-gold-soft flex items-center gap-1.5 mb-0.5">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {featuredHolding.location}
+                          </p>
+                          <h3 className="font-serif text-2xl font-semibold text-white">
+                            {featuredHolding.name}
+                          </h3>
+                        </div>
+                      </div>
+
+                      <div className="p-5 space-y-4 flex-1 flex flex-col justify-between">
+                        <dl className="grid grid-cols-2 gap-3 text-xs">
+                          <div className="bg-white border border-redhill-line rounded-md p-3">
+                            <dt className="text-[10px] uppercase tracking-[0.14em] text-redhill-muted">Total Investment</dt>
+                            <dd className="font-serif text-base font-semibold text-redhill-charcoal tabular mt-1">
+                              {featuredHolding.investment_amount ? formatCurrency(featuredHolding.investment_amount) : (featuredHolding.contribution || 'N/A')}
+                            </dd>
+                          </div>
+                          <div className="bg-white border border-redhill-line rounded-md p-3">
+                            <dt className="text-[10px] uppercase tracking-[0.14em] text-redhill-muted">Allocated Area</dt>
+                            <dd className="font-serif text-base font-semibold text-redhill-charcoal tabular mt-1">
+                              {featuredHolding.allotted_sqft ? `${formatNumber(featuredHolding.allotted_sqft)} sqft` : 'N/A'}
+                            </dd>
+                          </div>
+                          <div className="bg-white border border-redhill-line rounded-md p-3">
+                            <dt className="text-[10px] uppercase tracking-[0.14em] text-redhill-muted">Buy Rate</dt>
+                            <dd className="font-serif text-sm font-medium text-redhill-charcoal tabular mt-1">
+                              {featuredHolding.price_at_investment ? `₹${formatNumber(featuredHolding.price_at_investment)}/sqft` : 'N/A'}
+                            </dd>
+                          </div>
+                          <div className="bg-white border border-redhill-line rounded-md p-3">
+                            <dt className="text-[10px] uppercase tracking-[0.14em] text-emerald-700">Current Rate</dt>
+                            <dd className="font-serif text-sm font-semibold text-emerald-800 tabular mt-1">
+                              {featuredHolding.market_price_per_sqft ? `₹${formatNumber(featuredHolding.market_price_per_sqft)}/sqft` : 'N/A'}
+                            </dd>
+                          </div>
+                        </dl>
+
+                        <div className="flex items-center justify-between pt-2 border-t border-redhill-line text-xs">
+                          <span className="text-redhill-muted">
+                            {featuredHolding.investment_date ? `Allocated: ${formatDate(featuredHolding.investment_date)}` : `Progress: ${featuredHolding.completion_percentage}%`}
+                          </span>
+                          <Link
+                            to={`/project/${featuredHolding.id}`}
+                            className="inline-flex items-center gap-1.5 font-semibold uppercase tracking-[0.14em] text-redhill-red hover:text-redhill-crimson"
+                          >
+                            Project Dossier
+                            <ArrowUpRight className="w-3.5 h-3.5" />
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right 7 Columns: Your Investment Journey Timeline */}
+                    <div className="lg:col-span-7 rounded-lg border border-redhill-line bg-white p-5 sm:p-6 flex flex-col justify-between space-y-5">
+                      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-redhill-line">
+                        <div>
+                          <span className="eyebrow text-redhill-gold">Milestone Progression</span>
+                          <h3 className="font-serif text-xl font-semibold text-redhill-charcoal mt-0.5">
+                            {featuredHolding.name} — Ownership &amp; Construction Journey
+                          </h3>
+                        </div>
+                        <span className="text-xs font-mono font-semibold px-2.5 py-1 rounded bg-redhill-ivory border border-redhill-line text-redhill-charcoal tabular">
+                          {featuredHolding.completion_percentage}% Recorded Progress
+                        </span>
+                      </div>
+
+                      <ol className="relative border-l border-redhill-stone ml-3 space-y-4 pl-5 flex-1">
+                        {/* Step 0: Initial Allocation */}
+                        <li className="relative">
+                          <span className="absolute -left-[25px] top-1 w-3 h-3 rounded-full border-2 border-white bg-emerald-600" />
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div>
+                              <span className="text-[10px] uppercase tracking-[0.14em] text-emerald-700 font-semibold">
+                                Portfolio Allocation · Verified
+                              </span>
+                              <p className="text-sm font-semibold text-redhill-charcoal">
+                                {featuredHolding.allotted_sqft ? `${formatNumber(featuredHolding.allotted_sqft)} sq.ft. Allotted` : 'Property Allocation Recorded'}{' '}
+                                {featuredHolding.investment_amount ? `(${formatCurrency(featuredHolding.investment_amount)})` : ''}
+                              </p>
+                            </div>
+                            {featuredHolding.investment_date && (
+                              <span className="text-xs text-redhill-muted font-mono">
+                                {formatDate(featuredHolding.investment_date)}
+                              </span>
+                            )}
+                          </div>
+                        </li>
+
+                        {featuredMilestones.slice(0, 4).map((m) => (
+                          <li key={m.id} className="relative">
+                            <span
+                              className={`absolute -left-[25px] top-1 w-3 h-3 rounded-full border-2 border-white ${
+                                m.status === 'completed'
+                                  ? 'bg-emerald-600'
+                                  : m.status === 'in_progress'
+                                  ? 'bg-redhill-red'
+                                  : 'bg-stone-400'
+                              }`}
+                            />
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <span className="text-[10px] uppercase tracking-[0.14em] text-redhill-gold font-semibold">
+                                  {m.category} · {m.status === 'completed' ? 'Completed' : m.status === 'in_progress' ? 'In Progress' : 'Scheduled'}
+                                </span>
+                                <p className="text-sm font-medium text-redhill-charcoal">{m.name}</p>
+                                {(m.expected_completion || m.actual_completion) && (
+                                  <p className="text-[11px] text-redhill-muted mt-0.5">
+                                    {m.actual_completion ? `Completed: ${m.actual_completion}` : `Target: ${m.expected_completion}`}
+                                  </p>
+                                )}
+                              </div>
+                              <span className="text-xs font-mono font-semibold text-redhill-charcoal tabular">
+                                {m.completion_percentage}%
+                              </span>
+                            </div>
+                          </li>
+                        ))}
+                      </ol>
+
+                      <div className="pt-4 border-t border-redhill-line flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-2 text-xs">
+                          <Link
+                            to={`/project/${featuredHolding.id}`}
+                            className="btn-secondary py-2 px-3.5 text-xs uppercase tracking-[0.12em]"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-redhill-gold" />
+                            Documents &amp; Approvals
+                          </Link>
+                          <Link
+                            to={`/project/${featuredHolding.id}`}
+                            className="btn-secondary py-2 px-3.5 text-xs uppercase tracking-[0.12em]"
+                          >
+                            <MessageCircle className="w-3.5 h-3.5 text-redhill-gold" />
+                            Project Updates &amp; Queries
+                          </Link>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setSnapshotMode('editorial')}
+                          className="text-xs font-semibold text-redhill-muted hover:text-redhill-charcoal cursor-pointer"
+                        >
+                          View Full Valuation Table →
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()
+            ) : snapshotMode === 'editorial' ? (
               <div className="overflow-x-auto">
                 <table className="table-lux">
                   <thead>
@@ -552,541 +804,272 @@ export default function InvestorDashboard({ user, onLogout }: InvestorDashboardP
         )}
 
         {/* ============================================================== */}
-        {/* 03 — MAIN WORKSPACE: HOLDINGS + MILESTONES vs NEW LAUNCHES     */}
+        {/* 02 — PROPERTY HOLDINGS (Full-Width Responsive Grid)            */}
         {/* ============================================================== */}
-        <div className={hasAds ? 'lg:flex lg:items-stretch lg:gap-8 space-y-12 lg:space-y-0' : 'space-y-12'}>
-          {/* Left Main Column: Property Holdings + Milestones */}
-          <div className={hasAds ? 'flex-1 min-w-0 flex flex-col justify-between gap-10' : 'w-full space-y-12'}>
-            {/* 02 — Property Holdings */}
-            <section id="investments">
-              <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-                <div>
-                  <p className="eyebrow text-redhill-gold mb-1">02 — Property Holdings</p>
-                  <h2 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal">Your Investment Portfolio</h2>
-                </div>
-                <span className="text-xs uppercase tracking-[0.16em] text-redhill-muted bg-white border border-redhill-line px-3.5 py-1.5 rounded-md">
-                  {projects.length} {projects.length === 1 ? 'Allocated Property' : 'Allocated Properties'}
-                </span>
-              </div>
-
-              {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[1, 2].map(i => (
-                    <div key={i} className="lux-card overflow-hidden h-[460px]">
-                      <Skeleton type="image" className="h-56" />
-                      <div className="p-6 space-y-4">
-                        <Skeleton type="text" className="w-1/2" />
-                        <Skeleton type="text" className="w-1/3" />
-                        <div className="grid grid-cols-2 gap-3 mt-4">
-                          <Skeleton type="row" />
-                          <Skeleton type="row" />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : projects.length === 0 ? (
-                <EmptyState
-                  icon={LayoutDashboard}
-                  title="No Developments Assigned"
-                  description="Your investor account does not have active allocations yet. Contact your relationship manager for onboarding."
-                />
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {projects.map((project, index) => {
-                    const marketValue = (project.allotted_sqft || 0) * (project.market_price_per_sqft || 0);
-                    const returnDelta = marketValue - (project.investment_amount || 0);
-                    const returnPct = project.investment_amount && project.investment_amount > 0
-                      ? ((returnDelta / project.investment_amount) * 100).toFixed(1)
-                      : null;
-
-                    return (
-                      <Reveal key={project.id} delay={index * 0.06} as="article">
-                        <Link
-                          to={`/project/${project.id}`}
-                          className="group block lux-card lux-card-hover overflow-hidden h-full"
-                        >
-                          {/* Architectural photograph */}
-                          <div className="relative h-56 overflow-hidden bg-redhill-sand">
-                            <img
-                              src={getAssetUrl(project.image_url, project.id)}
-                              alt={project.name}
-                              referrerPolicy="no-referrer"
-                              onError={(e) => { (e.target as HTMLImageElement).src = getAssetUrl(null, project.id); }}
-                              className="w-full h-full object-cover img-zoom"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                            <div className="absolute top-4 left-4">
-                              <span className="eyebrow bg-white/95 text-redhill-charcoal px-2.5 py-1 rounded-xs">
-                                Asset #{project.id}
-                              </span>
-                            </div>
-                            <div className="absolute top-4 right-4 bg-black/55 backdrop-blur-xs rounded-full">
-                              <StatusChip status={project.status} />
-                            </div>
-                            <div className="absolute bottom-4 left-6 right-6 text-white">
-                              <p className="text-xs text-redhill-gold-soft flex items-center gap-1.5 mb-1">
-                                <MapPin className="w-3.5 h-3.5" />
-                                {project.location}
-                              </p>
-                              <h3 className="font-serif text-2xl text-white group-hover:text-redhill-gold-soft transition-colors">
-                                {project.name}
-                              </h3>
-                            </div>
-                          </div>
-
-                          {/* Property investment dossier */}
-                          <div className="p-6 space-y-5">
-                            <div className="grid grid-cols-2 gap-3 text-sm">
-                              <div className="p-3.5 rounded-md bg-redhill-ivory border border-redhill-line">
-                                <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted mb-1 flex items-center gap-1">
-                                  <IndianRupee className="w-3 h-3 text-redhill-red" />
-                                  Invested Capital
-                                </p>
-                                <p className="font-serif text-lg text-redhill-charcoal font-medium tabular">
-                                  {project.investment_amount ? formatCurrency(project.investment_amount) : (project.contribution || 'N/A')}
-                                </p>
-                              </div>
-
-                              <div className="p-3.5 rounded-md bg-redhill-ivory border border-redhill-line">
-                                <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted mb-1 flex items-center gap-1">
-                                  <Maximize className="w-3 h-3 text-redhill-gold" />
-                                  Allotted Area
-                                </p>
-                                <p className="font-serif text-lg text-redhill-charcoal font-medium tabular">
-                                  {project.allotted_sqft ? `${formatNumber(project.allotted_sqft)} sqft` : 'N/A'}
-                                </p>
-                              </div>
-
-                              <div className="p-3.5 rounded-md bg-redhill-ivory border border-redhill-line">
-                                <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted mb-1">Entry Rate</p>
-                                <p className="font-serif text-sm text-redhill-charcoal font-medium tabular">
-                                  {project.price_at_investment ? `₹${formatNumber(project.price_at_investment)}/sqft` : 'N/A'}
-                                </p>
-                                {project.investment_date && (
-                                  <p className="text-[10px] text-redhill-muted mt-1 flex items-center gap-1">
-                                    <Calendar className="w-2.5 h-2.5" />
-                                    {formatDate(project.investment_date)}
-                                  </p>
-                                )}
-                              </div>
-
-                              <div className="p-3.5 rounded-md bg-redhill-ivory border border-redhill-line">
-                                <p className="text-[10px] uppercase tracking-[0.16em] text-emerald-700 mb-1">Market Rate</p>
-                                <p className="font-serif text-sm text-emerald-800 font-semibold tabular">
-                                  {project.market_price_per_sqft ? `₹${formatNumber(project.market_price_per_sqft)}/sqft` : 'N/A'}
-                                </p>
-                                <p className="text-[10px] text-redhill-muted mt-1 flex items-center gap-1">
-                                  <Calendar className="w-2.5 h-2.5" />
-                                  Prevailing
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Current plot valuation & return */}
-                            {marketValue > 0 && (
-                              <div className="p-4 bg-redhill-ink text-white rounded-md space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-[10px] uppercase tracking-[0.18em] text-white/65">Current Holding Value</span>
-                                  <span className="font-serif text-lg text-redhill-gold-soft font-medium tabular">
-                                    {formatCurrency(marketValue)}
-                                  </span>
-                                </div>
-                                {project.investment_amount && project.investment_amount > 0 && (
-                                  <div className="flex items-center justify-between text-xs pt-2 border-t border-white/15">
-                                    <span className="text-white/65">Unrealised Gain</span>
-                                    <span className={`tabular font-medium ${returnDelta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                                      {returnDelta >= 0 ? '+' : ''}{formatCurrency(returnDelta)}
-                                      {returnPct && <span className="ml-1 text-[11px] font-mono">({returnDelta >= 0 ? '+' : ''}{returnPct}%)</span>}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Construction progress */}
-                            <div>
-                              <div className="flex justify-between text-xs text-redhill-muted mb-2">
-                                <span className="uppercase tracking-[0.14em] text-[10px] font-semibold">Construction Progress</span>
-                                <span className="tabular font-semibold text-redhill-charcoal">{project.completion_percentage}%</span>
-                              </div>
-                              <div className="w-full bg-redhill-sand h-2 rounded-full overflow-hidden">
-                                <div
-                                  className="bg-redhill-gold h-full rounded-full transition-all duration-700"
-                                  style={{ width: `${project.completion_percentage}%` }}
-                                />
-                              </div>
-                            </div>
-
-                            <div className="flex justify-between items-center pt-2 border-t border-redhill-line text-xs uppercase tracking-[0.16em] font-semibold text-redhill-charcoal group-hover:text-redhill-red transition-colors">
-                              <span>Open Full Project Dossier</span>
-                              <ChevronRight className="w-4 h-4 text-redhill-gold group-hover:translate-x-1 transition-transform" />
-                            </div>
-                          </div>
-                        </Link>
-                      </Reveal>
-                    );
-                  })}
-                </div>
-              )}
-            </section>
-
-            {/* 03 — Project Milestones Timeline (directly beneath Property Holdings so there is zero empty space) */}
-            {allMilestones.length > 0 && (
-              <Reveal className="lux-card p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-redhill-line">
-                  <div>
-                    <p className="eyebrow text-redhill-gold mb-1">03 — Development Schedule</p>
-                    <h2 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal">
-                      Project Milestones Timeline
-                    </h2>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedMilestoneProjectId('all')}
-                      className={`px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-[0.12em] border cursor-pointer transition-colors ${
-                        selectedMilestoneProjectId === 'all'
-                          ? 'bg-redhill-charcoal text-white border-redhill-charcoal'
-                          : 'bg-white text-redhill-muted border-redhill-line hover:text-redhill-charcoal'
-                      }`}
-                    >
-                      All Holdings
-                    </button>
-                    {projects.map((p) => (
-                      <button
-                        key={p.id}
-                        type="button"
-                        onClick={() => setSelectedMilestoneProjectId(p.id)}
-                        className={`px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-[0.12em] border cursor-pointer transition-colors ${
-                          selectedMilestoneProjectId === p.id
-                            ? 'bg-redhill-charcoal text-white border-redhill-charcoal'
-                            : 'bg-white text-redhill-muted border-redhill-line hover:text-redhill-charcoal'
-                        }`}
-                      >
-                        {p.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 flex-1">
-                  {[
-                    { key: 'completed', title: 'Completed Stages', badge: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
-                    { key: 'in_progress', title: 'Active On-Site', badge: 'bg-amber-50 text-amber-800 border-amber-200' },
-                    { key: 'upcoming', title: 'Upcoming Schedule', badge: 'bg-redhill-ivory text-redhill-muted border-redhill-line' },
-                  ].map((col) => {
-                    const items = allMilestones.filter(m =>
-                      col.key === 'completed'
-                        ? m.status === 'completed'
-                        : col.key === 'in_progress'
-                        ? m.status === 'in_progress'
-                        : m.status !== 'completed' && m.status !== 'in_progress'
-                    );
-
-                    return (
-                      <div key={col.key} className="bg-redhill-ivory rounded-lg border border-redhill-line p-5 space-y-4">
-                        <div className="flex items-center justify-between pb-3 border-b border-redhill-line">
-                          <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-redhill-charcoal">
-                            {col.title}
-                          </h3>
-                          <span className={`text-[11px] font-mono font-semibold px-2 py-0.5 rounded border ${col.badge}`}>
-                            {items.length}
-                          </span>
-                        </div>
-
-                        {items.length === 0 ? (
-                          <p className="text-xs text-redhill-muted py-4 text-center">No stages in this category.</p>
-                        ) : (
-                          <ol className="relative border-l border-redhill-stone ml-2 space-y-4 pl-4">
-                            {items.slice(0, 6).map((m) => (
-                              <li key={m.id} className="relative">
-                                <span
-                                  className={`absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full border-2 border-white ${
-                                    m.status === 'completed'
-                                      ? 'bg-emerald-600'
-                                      : m.status === 'in_progress'
-                                      ? 'bg-redhill-red'
-                                      : 'bg-stone-400'
-                                  }`}
-                                />
-                                <div className="flex items-start justify-between gap-2">
-                                  <div>
-                                    <p className="text-[10px] uppercase tracking-[0.14em] text-redhill-gold font-semibold">
-                                      {m.projectName} · {m.category}
-                                    </p>
-                                    <p className="text-sm font-medium text-redhill-charcoal mt-0.5">{m.name}</p>
-                                  </div>
-                                  <span className="text-xs font-mono font-semibold text-redhill-charcoal tabular">
-                                    {m.completion_percentage}%
-                                  </span>
-                                </div>
-                                {(m.start_date || m.expected_completion) && (
-                                  <p className="text-[11px] text-redhill-muted mt-1 flex items-center gap-1">
-                                    <Clock className="w-3 h-3" />
-                                    {m.expected_completion ? `Target: ${formatDate(m.expected_completion)}` : `Started: ${formatDate(m.start_date!)}`}
-                                  </p>
-                                )}
-                              </li>
-                            ))}
-                          </ol>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </Reveal>
-            )}
+        <section id="investments">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow text-redhill-gold mb-1">02 — Property Holdings</p>
+              <h2 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal">Your Investment Portfolio</h2>
+            </div>
+            <span className="text-xs uppercase tracking-[0.16em] text-redhill-muted bg-white border border-redhill-line px-3.5 py-1.5 rounded-md">
+              {projects.length} {projects.length === 1 ? 'Allocated Property' : 'Allocated Properties'}
+            </span>
           </div>
 
-          {/* Right Sidebar: New Launches & Private Allocation Desk (stretched to match left column height) */}
-          {hasAds && (
-            <aside className="w-full lg:w-[320px] shrink-0 flex flex-col justify-between gap-5">
-              <div className="space-y-5">
-                <div className="flex items-center justify-between pb-3 border-b border-redhill-line">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-redhill-gold" />
-                    <h3 className="text-xs font-semibold text-redhill-charcoal uppercase tracking-[0.18em]">New Launches</h3>
-                    <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-redhill-sand text-redhill-charcoal border border-redhill-line">
-                      {newProjects.length}
-                    </span>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2].map(i => (
+                <div key={i} className="lux-card overflow-hidden h-[460px]">
+                  <Skeleton type="image" className="h-56" />
+                  <div className="p-6 space-y-4">
+                    <Skeleton type="text" className="w-1/2" />
+                    <Skeleton type="text" className="w-1/3" />
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                      <Skeleton type="row" />
+                      <Skeleton type="row" />
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowAdSidebar(false)}
-                    aria-label="Dismiss new launches sidebar"
-                    className="p-1 text-redhill-muted hover:text-redhill-charcoal transition-colors cursor-pointer"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
                 </div>
+              ))}
+            </div>
+          ) : projects.length === 0 ? (
+            <EmptyState
+              icon={LayoutDashboard}
+              title="No Developments Assigned"
+              description="Your investor account does not have active allocations yet. Contact your relationship manager for onboarding."
+            />
+          ) : (
+            <div className={`grid grid-cols-1 ${projects.length >= 3 ? 'md:grid-cols-2 xl:grid-cols-3' : 'md:grid-cols-2'} gap-6 items-stretch`}>
+              {projects.map((project, index) => {
+                const marketValue = (project.allotted_sqft || 0) * (project.market_price_per_sqft || 0);
+                const returnDelta = marketValue - (project.investment_amount || 0);
+                const returnPct = project.investment_amount && project.investment_amount > 0
+                  ? ((returnDelta / project.investment_amount) * 100).toFixed(1)
+                  : null;
 
-                {newProjects.slice(0, 3).map((project) => (
-                  <article key={project.id} className="lux-card overflow-hidden">
-                    <div className="relative h-36 bg-redhill-sand">
-                      <img
-                        src={getAssetUrl(project.image_url, project.id)}
-                        alt={project.name}
-                        referrerPolicy="no-referrer"
-                        onError={(e) => { (e.target as HTMLImageElement).src = getAssetUrl(null, project.id); }}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
-                      <span className="absolute top-3 left-3 text-[9px] uppercase tracking-[0.2em] text-redhill-charcoal bg-white/95 px-2 py-0.5 rounded-xs font-semibold">
-                        Pre-Launch
-                      </span>
-                      <div className="absolute bottom-2.5 left-3 right-3 text-white">
-                        <h4 className="font-serif text-base truncate">{project.name}</h4>
-                        <p className="text-[11px] text-white/75 flex items-center gap-1 mt-0.5">
-                          <MapPin className="w-3 h-3 text-redhill-gold-soft" />
-                          {project.location}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 space-y-3 text-xs">
-                      <div className="flex items-center justify-between text-redhill-muted">
-                        <span>Stage</span>
-                        <span className="text-redhill-charcoal font-medium">{project.status}</span>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => setViewMode('explore')}
-                        className="btn-secondary w-full py-2.5 text-[11px] uppercase tracking-[0.14em]"
-                      >
-                        <Phone className="w-3 h-3 text-redhill-gold" />
-                        Enquire with Concierge
-                      </button>
-                    </div>
-                  </article>
-                ))}
-
-                {newProjects.length > 3 && (
-                  <div className="lux-card p-4 space-y-3 bg-white">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="eyebrow text-redhill-gold">More Pre-Launches</span>
-                      <span className="text-[11px] text-redhill-muted">+{newProjects.length - 3} corridors</span>
-                    </div>
-                    <div className="divide-y divide-redhill-line">
-                      {newProjects.slice(3).map((project) => (
-                        <button
-                          key={project.id}
-                          type="button"
-                          onClick={() => setViewMode('explore')}
-                          className="w-full py-2.5 text-left flex items-center justify-between gap-2 group cursor-pointer"
-                        >
-                          <div className="min-w-0">
-                            <p className="text-xs font-semibold text-redhill-charcoal group-hover:text-redhill-red transition-colors truncate">
-                              {project.name}
-                            </p>
-                            <p className="text-[11px] text-redhill-muted truncate flex items-center gap-1 mt-0.5">
-                              <MapPin className="w-2.5 h-2.5 text-redhill-gold shrink-0" />
-                              {project.location}
-                            </p>
-                          </div>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-redhill-muted group-hover:text-redhill-red shrink-0" />
-                        </button>
-                      ))}
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setViewMode('explore')}
-                      className="btn-dark w-full py-2.5 text-[11px] uppercase tracking-[0.14em]"
+                return (
+                  <Reveal key={project.id} delay={index * 0.06} as="article" className="h-full">
+                    <Link
+                      to={`/project/${project.id}`}
+                      className="group flex flex-col lux-card lux-card-hover overflow-hidden h-full"
                     >
-                      <Sparkles className="w-3 h-3 text-redhill-gold-soft" />
-                      View All {newProjects.length} Launches
-                    </button>
-                  </div>
-                )}
-              </div>
+                      {/* Architectural photograph */}
+                      <div className="relative h-56 shrink-0 overflow-hidden bg-redhill-sand">
+                        <img
+                          src={getAssetUrl(project.image_url, project.id)}
+                          alt={project.name}
+                          referrerPolicy="no-referrer"
+                          onError={(e) => { (e.target as HTMLImageElement).src = getAssetUrl(null, project.id); }}
+                          className="w-full h-full object-cover img-zoom"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
+                        <div className="absolute top-4 left-4">
+                          <span className="eyebrow bg-white/95 text-redhill-charcoal px-2.5 py-1 rounded-xs">
+                            Asset #{project.id}
+                          </span>
+                        </div>
+                        <div className="absolute top-4 right-4 bg-black/55 backdrop-blur-xs rounded-full">
+                          <StatusChip status={project.status} />
+                        </div>
+                        <div className="absolute bottom-4 left-6 right-6 text-white">
+                          <p className="text-xs text-redhill-gold-soft flex items-center gap-1.5 mb-1">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {project.location}
+                          </p>
+                          <h3 className="font-serif text-2xl text-white group-hover:text-redhill-gold-soft transition-colors">
+                            {project.name}
+                          </h3>
+                        </div>
+                      </div>
 
-              <div className="lux-card p-5 text-center space-y-2 bg-white">
-                <Building2 className="w-5 h-5 text-redhill-gold mx-auto" />
-                <h4 className="text-xs uppercase tracking-[0.16em] font-semibold text-redhill-charcoal">Private Allocation Desk</h4>
-                <p className="text-xs text-redhill-muted leading-relaxed">
-                  Direct inquiries regarding secondary market allotments and commercial equity.
-                </p>
-                <p className="text-xs font-mono text-redhill-gold font-medium pt-1">invest@redhillinfra.com</p>
-              </div>
-            </aside>
+                      {/* Property investment dossier */}
+                      <div className="p-6 flex-1 flex flex-col justify-between space-y-5">
+                        <div className="space-y-5">
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div className="p-3.5 rounded-md bg-redhill-ivory border border-redhill-line">
+                              <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted mb-1 flex items-center gap-1">
+                                <IndianRupee className="w-3 h-3 text-redhill-red" />
+                                Invested Capital
+                              </p>
+                              <p className="font-serif text-lg text-redhill-charcoal font-medium tabular">
+                                {project.investment_amount ? formatCurrency(project.investment_amount) : (project.contribution || 'N/A')}
+                              </p>
+                            </div>
+
+                            <div className="p-3.5 rounded-md bg-redhill-ivory border border-redhill-line">
+                              <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted mb-1 flex items-center gap-1">
+                                <Maximize className="w-3 h-3 text-redhill-gold" />
+                                Allotted Area
+                              </p>
+                              <p className="font-serif text-lg text-redhill-charcoal font-medium tabular">
+                                {project.allotted_sqft ? `${formatNumber(project.allotted_sqft)} sqft` : 'N/A'}
+                              </p>
+                            </div>
+
+                            <div className="p-3.5 rounded-md bg-redhill-ivory border border-redhill-line">
+                              <p className="text-[10px] uppercase tracking-[0.16em] text-redhill-muted mb-1">Entry Rate</p>
+                              <p className="font-serif text-sm text-redhill-charcoal font-medium tabular">
+                                {project.price_at_investment ? `₹${formatNumber(project.price_at_investment)}/sqft` : 'N/A'}
+                              </p>
+                              {project.investment_date && (
+                                <p className="text-[10px] text-redhill-muted mt-1 flex items-center gap-1">
+                                  <Calendar className="w-2.5 h-2.5" />
+                                  {formatDate(project.investment_date)}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="p-3.5 rounded-md bg-redhill-ivory border border-redhill-line">
+                              <p className="text-[10px] uppercase tracking-[0.16em] text-emerald-700 mb-1">Market Rate</p>
+                              <p className="font-serif text-sm text-emerald-800 font-semibold tabular">
+                                {project.market_price_per_sqft ? `₹${formatNumber(project.market_price_per_sqft)}/sqft` : 'N/A'}
+                              </p>
+                              <p className="text-[10px] text-redhill-muted mt-1 flex items-center gap-1">
+                                <Calendar className="w-2.5 h-2.5" />
+                                Prevailing
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Current plot valuation & return */}
+                          {marketValue > 0 && (
+                            <div className="p-4 bg-redhill-ink text-white rounded-md space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] uppercase tracking-[0.18em] text-white/65">Current Holding Value</span>
+                                <span className="font-serif text-lg text-redhill-gold-soft font-medium tabular">
+                                  {formatCurrency(marketValue)}
+                                </span>
+                              </div>
+                              {project.investment_amount && project.investment_amount > 0 && (
+                                <div className="flex items-center justify-between text-xs pt-2 border-t border-white/15">
+                                  <span className="text-white/65">Unrealised Gain</span>
+                                  <span className={`tabular font-medium ${returnDelta >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                                    {returnDelta >= 0 ? '+' : ''}{formatCurrency(returnDelta)}
+                                    {returnPct && <span className="ml-1 text-[11px] font-mono">({returnDelta >= 0 ? '+' : ''}{returnPct}%)</span>}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="space-y-4 pt-2">
+                          {/* Construction progress */}
+                          <div>
+                            <div className="flex justify-between text-xs text-redhill-muted mb-2">
+                              <span className="uppercase tracking-[0.14em] text-[10px] font-semibold">Construction Progress</span>
+                              <span className="tabular font-semibold text-redhill-charcoal">{project.completion_percentage}%</span>
+                            </div>
+                            <div className="w-full bg-redhill-sand h-2 rounded-full overflow-hidden">
+                              <div
+                                className="bg-redhill-gold h-full rounded-full transition-all duration-700"
+                                style={{ width: `${project.completion_percentage}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-center pt-3 border-t border-redhill-line text-xs uppercase tracking-[0.16em] font-semibold text-redhill-charcoal group-hover:text-redhill-red transition-colors">
+                            <span>Open Full Project Dossier</span>
+                            <ChevronRight className="w-4 h-4 text-redhill-gold group-hover:translate-x-1 transition-transform" />
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </Reveal>
+                );
+              })}
+            </div>
           )}
-        </div>
+        </section>
 
         {/* ============================================================== */}
-        {/* 05 — CONSOLIDATED CAPITAL LEDGER (Full-Width Section)          */}
+        {/* 03 — NEW LAUNCHES & PRE-LAUNCH COMMUNITIES (Full-Width Grid)   */}
         {/* ============================================================== */}
-        <section id="ledger">
-          <Reveal className="lux-card p-6 sm:p-8 space-y-6">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-redhill-line">
+        {hasAds && (
+          <section aria-label="New Launches">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
               <div>
-                <p className="eyebrow text-redhill-gold mb-1">04 — Audited Capital Ledger</p>
-                <h2 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal">
-                  Allocations &amp; Transaction Statement
-                </h2>
+                <p className="eyebrow text-redhill-gold mb-1">03 — Curated Opportunities</p>
+                <h2 className="font-serif text-2xl sm:text-3xl text-redhill-charcoal">New Launches &amp; Pre-Launch Communities</h2>
               </div>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex items-center gap-2 bg-redhill-ivory border border-redhill-line rounded-md px-3 py-1.5">
-                  <Filter className="w-3.5 h-3.5 text-redhill-gold" />
-                  <select
-                    aria-label="Filter ledger by project"
-                    value={ledgerProjectFilter}
-                    onChange={(e) => setLedgerProjectFilter(e.target.value === 'all' ? 'all' : Number(e.target.value))}
-                    className="bg-transparent text-xs font-medium text-redhill-charcoal outline-none cursor-pointer"
-                  >
-                    <option value="all">All Developments</option>
-                    {projects.map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="inline-flex items-center gap-2 bg-redhill-ivory border border-redhill-line rounded-md px-3 py-1.5">
-                  <BookOpen className="w-3.5 h-3.5 text-redhill-gold" />
-                  <select
-                    aria-label="Filter ledger by transaction type"
-                    value={ledgerTypeFilter}
-                    onChange={(e) => setLedgerTypeFilter(e.target.value)}
-                    className="bg-transparent text-xs font-medium text-redhill-charcoal outline-none cursor-pointer"
-                  >
-                    <option value="all">All Transaction Types</option>
-                    <option value="initial_assignment">Initial Assignment</option>
-                    <option value="sub_investment">Additional Allocation</option>
-                    <option value="adjustment">Adjustment</option>
-                  </select>
-                </div>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setViewMode('explore')}
+                  className="btn-secondary py-2 px-4 text-xs uppercase tracking-[0.14em]"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-redhill-gold" />
+                  View All ({newProjects.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAdSidebar(false)}
+                  aria-label="Dismiss new launches section"
+                  className="p-2 rounded-md text-redhill-muted hover:text-redhill-charcoal hover:bg-redhill-sand transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
-            {allLedgerEntries.length === 0 ? (
-              <div className="py-10 text-center text-sm text-redhill-muted">
-                No ledger transactions match the selected filter criteria.
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="table-lux">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Development</th>
-                      <th>Transaction Type</th>
-                      <th>Allotted Area</th>
-                      <th>Buy Rate</th>
-                      <th>Amount</th>
-                      <th>Notes &amp; Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {allLedgerEntries.map((entry) => {
-                      const typeLabel =
-                        entry.transaction_type === 'initial_assignment'
-                          ? 'Initial Assignment'
-                          : entry.transaction_type === 'sub_investment'
-                          ? 'Additional Allocation'
-                          : entry.transaction_type;
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+              {newProjects.slice(0, 3).map((project) => (
+                <article key={project.id} className="lux-card overflow-hidden flex flex-col justify-between">
+                  <div className="relative h-44 bg-redhill-sand">
+                    <img
+                      src={getAssetUrl(project.image_url, project.id)}
+                      alt={project.name}
+                      referrerPolicy="no-referrer"
+                      onError={(e) => { (e.target as HTMLImageElement).src = getAssetUrl(null, project.id); }}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+                    <span className="absolute top-3 left-3 text-[9px] uppercase tracking-[0.2em] text-redhill-charcoal bg-white/95 px-2.5 py-1 rounded-xs font-semibold">
+                      Pre-Launch
+                    </span>
+                    <div className="absolute bottom-3 left-4 right-4 text-white">
+                      <h4 className="font-serif text-lg font-medium truncate">{project.name}</h4>
+                      <p className="text-xs text-white/80 flex items-center gap-1 mt-0.5">
+                        <MapPin className="w-3 h-3 text-redhill-gold-soft" />
+                        {project.location}
+                      </p>
+                    </div>
+                  </div>
 
-                      return (
-                        <tr key={`${entry.project_id}-${entry.id}`}>
-                          <td className="tabular text-xs text-redhill-muted whitespace-nowrap">
-                            {entry.transaction_date ? formatDate(entry.transaction_date) : (entry.created_at ? formatDate(entry.created_at) : '—')}
-                          </td>
-                          <td>
-                            <Link
-                              to={`/project/${entry.project_id}`}
-                              className="font-serif font-medium text-redhill-charcoal hover:text-redhill-red transition-colors"
-                            >
-                              {entry.project_name || `Project #${entry.project_id}`}
-                            </Link>
-                          </td>
-                          <td>
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xs text-[11px] font-semibold uppercase tracking-wider bg-redhill-sand text-redhill-charcoal border border-redhill-line">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-700" />
-                              {typeLabel}
-                            </span>
-                          </td>
-                          <td className="tabular text-redhill-charcoal">
-                            {entry.allotted_sqft ? `${formatNumber(entry.allotted_sqft)} sqft` : '—'}
-                          </td>
-                          <td className="tabular text-redhill-muted">
-                            {entry.price_at_investment ? `₹${formatNumber(entry.price_at_investment)}/sqft` : '—'}
-                          </td>
-                          <td className="tabular font-semibold text-redhill-charcoal">
-                            {formatCurrency(entry.investment_amount || 0)}
-                          </td>
-                          <td className="text-xs text-redhill-muted max-w-xs">
-                            {entry.note || 'Verified & posted to investor folio'}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </Reveal>
-        </section>
+                  <div className="p-5 space-y-4 text-xs flex-1 flex flex-col justify-between">
+                    <div className="flex items-center justify-between text-redhill-muted">
+                      <span>Development Stage</span>
+                      <span className="text-redhill-charcoal font-semibold">{project.status}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setViewMode('explore')}
+                      className="btn-secondary w-full py-2.5 text-[11px] uppercase tracking-[0.14em]"
+                    >
+                      <Phone className="w-3 h-3 text-redhill-gold" />
+                      Enquire with Concierge
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ============================================================== */}
-        {/* 06 — STRATEGIC ASSET MAP                                       */}
-        {/* ============================================================== */}
-        <section>
-          <InteractiveMap />
-        </section>
-
-        {/* ============================================================== */}
-        {/* 07 — INVESTOR CONCIERGE & SUPPORT                              */}
+        {/* 04 — INVESTOR CONCIERGE & SUPPORT                              */}
         {/* ============================================================== */}
         <section id="support">
           <Reveal className="band-dark rounded-lg p-6 sm:p-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div className="space-y-2 max-w-2xl">
-              <p className="eyebrow text-redhill-gold-soft">05 — Private Client Desk</p>
+              <p className="eyebrow text-redhill-gold-soft">04 — Private Client Desk</p>
               <h2 className="font-serif text-2xl sm:text-3xl text-white">
                 Direct communication with your Redhill relationship team.
               </h2>
               <p className="text-sm text-white/70 leading-relaxed">
-                Open any project dossier to raise a project-specific query with the executive concierge desk, inspect statutory approvals, or watch live site camera feeds.
+                Open any project dossier to raise a project-specific query with the executive concierge desk, inspect statutory approvals, or view monthly construction progress photos.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3 shrink-0">

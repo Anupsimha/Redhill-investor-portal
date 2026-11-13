@@ -256,12 +256,12 @@ export default function ShowcaseExplore({
   };
 
   return (
-    <div className="min-h-screen bg-[#13161F] text-redhill-charcoal selection:bg-redhill-red selection:text-white flex flex-col">
+    <div className="min-h-screen bg-redhill-ivory text-redhill-charcoal selection:bg-redhill-red selection:text-white flex flex-col">
       
       {/* ======================================================== */}
       {/* 1. DESKTOP STICKY TOP NAVIGATION BAR                     */}
       {/* ======================================================== */}
-      <header className="sticky top-0 z-40 bg-redhill-sand-deep backdrop-blur-xl border-b border-redhill-line shadow-lg">
+      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-redhill-line">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
           {/* Brand Logo */}
@@ -500,7 +500,7 @@ export default function ShowcaseExplore({
       {/* ======================================================== */}
       {/* 3. FEATURED REDHILL PROJECTS SHOWCASE (Desktop Grid)     */}
       {/* ======================================================== */}
-      <section id="projects-grid" className="py-16 bg-[#171B24] border-t border-redhill-line flex-1">
+      <section id="projects-grid" className="py-16 bg-white border-t border-redhill-line flex-1">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           {/* Section Header with Category Filters */}
@@ -508,23 +508,23 @@ export default function ShowcaseExplore({
             <div>
               <div className="flex items-center gap-2 text-redhill-red font-bold uppercase tracking-[0.2em] text-xs mb-2">
                 <span className="w-6 h-[2px] bg-redhill-red" />
-                Curated Real Estate Portfolio
+                Contemporary Boutique High-Rise Portfolio
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-redhill-charcoal tracking-tight font-sans">
-                Featured Residential & Commercial Launches
+                12+ Floor Residential Communities Across Bengaluru
               </h2>
               <p className="text-redhill-muted text-sm mt-1 max-w-xl">
-                Explore signature properties designed for high capital growth and exceptional lifestyle experiences.
+                Explore thoughtfully designed residential communities across 2-acre, 4-acre, and 5-acre developments.
               </p>
             </div>
 
             {/* Desktop Category Filter Pills with Dynamic Counts */}
             <div className="flex flex-wrap items-center gap-2">
               {[
-                { id: 'all', label: 'All Launches', count: SHOWCASE_CONFIG.featuredProjects.length },
-                { id: 'highrise', label: 'Sky Condos', count: SHOWCASE_CONFIG.featuredProjects.filter(p => p.category === 'highrise').length },
-                { id: 'villas', label: 'Luxury Villas', count: SHOWCASE_CONFIG.featuredProjects.filter(p => p.category === 'villas').length },
-                { id: 'township', label: 'Townships', count: SHOWCASE_CONFIG.featuredProjects.filter(p => p.category === 'township').length },
+                { id: 'all', label: 'All Developments', count: SHOWCASE_CONFIG.featuredProjects.length },
+                { id: 'highrise', label: 'Boutique High-Rise', count: SHOWCASE_CONFIG.featuredProjects.filter(p => p.category === 'highrise').length },
+                { id: 'villas', label: 'Sky Residences', count: SHOWCASE_CONFIG.featuredProjects.filter(p => p.category === 'villas').length },
+                { id: 'township', label: 'Courtyard Communities', count: SHOWCASE_CONFIG.featuredProjects.filter(p => p.category === 'township').length },
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -662,18 +662,18 @@ export default function ShowcaseExplore({
       {/* ======================================================== */}
       {/* 3.5 STRATEGIC INFRASTRUCTURE & LOCATION MATRIX MAP       */}
       {/* ======================================================== */}
-      <section id="infrastructure-map-section" className="py-16 bg-[#13161F] border-t border-redhill-line">
+      <section id="infrastructure-map-section" className="py-16 bg-redhill-ivory border-t border-redhill-line">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 text-amber-700 text-xs font-bold border border-amber-500/20">
               <Compass className="w-3.5 h-3.5 text-amber-700" />
-              <span>Bangalore Strategic Growth Corridors</span>
+              <span>Bengaluru Strategic Growth Corridors</span>
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-redhill-charcoal font-serif tracking-tight">
               Interactive Asset & Connectivity Map
             </h2>
             <p className="text-redhill-muted text-sm sm:text-base leading-relaxed">
-              Explore the prime geographical positioning of Redhill developments across Bangalore's highest appreciating real estate sectors — with live transit times to Kempegowda Airport, Metro corridors, and IT SEZs.
+              Explore the prime geographical positioning of Redhill developments across Bengaluru's prime residential sectors — with live transit times to Kempegowda Airport, Metro corridors, and IT SEZs.
             </p>
           </div>
 
@@ -692,18 +692,18 @@ export default function ShowcaseExplore({
       {/* ======================================================== */}
       {/* 4. REDHILL LUXURY REFERRAL SPOTLIGHT (Desktop Banner)    */}
       {/* ======================================================== */}
-      <section id="referral-section" className="py-16 bg-[#13161F] border-t border-redhill-line">
+      <section id="referral-section" className="py-16 bg-white border-t border-redhill-line">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative rounded-3xl overflow-hidden bg-white border border-redhill-red/30 p-8 sm:p-12 shadow-2xl">
+          <div className="relative rounded-3xl overflow-hidden bg-redhill-ivory border border-redhill-line p-8 sm:p-12 shadow-lg">
             
             {/* Ambient Lighting */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-redhill-red/10 rounded-full blur-[100px] pointer-events-none" />
-            <div className="absolute bottom-0 left-10 w-80 h-80 bg-amber-500/10 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-redhill-red/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-10 w-80 h-80 bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
 
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               {/* Left Column */}
               <div className="lg:col-span-7 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-redhill-red/20 text-redhill-red text-xs font-bold border border-redhill-red/30">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-redhill-red/10 text-redhill-red text-xs font-bold border border-redhill-red/20">
                   <Gift className="w-3.5 h-3.5 text-amber-700" />
                   Referral Rewards
                 </div>
@@ -719,7 +719,7 @@ export default function ShowcaseExplore({
                 {/* Steps Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
                   {SHOWCASE_CONFIG.referral.steps.map((st, i) => (
-                    <div key={i} className="bg-black/30 backdrop-blur-md rounded-xl p-3.5 border border-redhill-line">
+                    <div key={i} className="bg-white rounded-xl p-3.5 border border-redhill-line">
                       <span className="text-amber-700 font-black text-xs font-mono">{st.step}</span>
                       <h4 className="text-xs font-bold text-redhill-charcoal mt-1">{st.title}</h4>
                       <p className="text-[11px] text-redhill-muted mt-0.5 leading-snug">{st.desc}</p>
@@ -729,25 +729,25 @@ export default function ShowcaseExplore({
               </div>
 
               {/* Right Column: Direct "Refer Here" Action Panel */}
-              <div className="lg:col-span-5 bg-black/40 backdrop-blur-xl rounded-2xl p-6 border border-redhill-line space-y-4 shadow-xl">
+              <div className="lg:col-span-5 bg-white rounded-2xl p-6 border border-redhill-line space-y-4 shadow-md">
                 <div className="pb-2 border-b border-redhill-line">
                   <span className="text-[10px] font-bold text-redhill-muted uppercase tracking-wider block">Direct Reward Tier</span>
                   <span className="text-base font-black text-amber-700">₹50,000 – ₹3,00,000 INR</span>
                 </div>
 
                 <p className="text-xs text-stone-700 leading-relaxed">
-                  Start introducing friends and associates in 3 simple steps. Our private wealth advisory handles everything from luxury site walkthroughs to booking registration.
+                  Start introducing friends and associates in 3 simple steps. Our private wealth advisory handles everything from guided site walkthroughs to booking registration.
                 </p>
 
                 {/* Primary CTA Button */}
                 <div className="space-y-2.5 pt-1">
                   <button
                     onClick={handleStartReferral}
-                    className="w-full bg-redhill-red hover:bg-redhill-crimson hover:brightness-115 text-white font-extrabold py-4 px-6 rounded-2xl text-sm flex items-center justify-center gap-2.5 transition-all shadow-xl  cursor-pointer hover:scale-[1.02] group"
+                    className="w-full bg-redhill-red hover:bg-redhill-crimson text-white font-extrabold py-4 px-6 rounded-2xl text-sm flex items-center justify-center gap-2.5 transition-all shadow-lg cursor-pointer hover:scale-[1.01] group"
                   >
-                    <Gift className="w-5 h-5 text-amber-700 group-hover:rotate-12 transition-transform" />
+                    <Gift className="w-5 h-5 text-white group-hover:rotate-12 transition-transform" />
                     <span>Refer Here (Start Referral)</span>
-                    <ChevronRight className="w-4 h-4 text-stone-600 group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-4 h-4 text-white/80 group-hover:translate-x-1 transition-transform" />
                   </button>
 
                   <button
@@ -768,7 +768,7 @@ export default function ShowcaseExplore({
       {/* ======================================================== */}
       {/* 5. UPCOMING EVENTS & CONCLAVES                           */}
       {/* ======================================================== */}
-      <section id="events-section" className="py-16 bg-[#171B24] border-t border-redhill-line">
+      <section id="events-section" className="py-16 bg-redhill-ivory border-t border-redhill-line">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -813,7 +813,7 @@ export default function ShowcaseExplore({
                 <div className="pt-4 border-t border-redhill-line">
                   <button
                     onClick={() => alert(`RSVP registered for "${evt.title}". Our concierge will send your digital invite badge to ${user.email}.`)}
-                    className="w-full bg-redhill-sand/70 hover:bg-redhill-red text-redhill-charcoal py-3 rounded-xl text-xs font-bold transition-all border border-redhill-line hover:border-redhill-red flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full bg-redhill-sand/70 hover:bg-redhill-red hover:text-white text-redhill-charcoal py-3 rounded-xl text-xs font-bold transition-all border border-redhill-line hover:border-redhill-red flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Calendar className="w-4 h-4" />
                     Reserve Complimentary Seat
@@ -829,7 +829,7 @@ export default function ShowcaseExplore({
       {/* ======================================================== */}
       {/* 6. FOOTER                                                */}
       {/* ======================================================== */}
-      <footer className="bg-[#0E1017] border-t border-redhill-line py-12 text-stone-500 text-xs">
+      <footer className="bg-white border-t border-redhill-line py-12 text-redhill-muted text-xs">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <Logo className="scale-95" />
           <p>© 2026 Redhill Infrastructure Pvt Ltd. All rights reserved. RERA Registered.</p>

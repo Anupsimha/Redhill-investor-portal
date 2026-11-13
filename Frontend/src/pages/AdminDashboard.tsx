@@ -415,43 +415,13 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
 
     if (res.ok) {
       setShowAssignModal(false);
-      await refetchAssignments();
+      refetchAssignments();
       refetchLedger();
-      refetchAnalytics();
-      setAssignmentPage(1);
-      setAssignmentSearch('');
-      setAssignmentProjectFilter('');
       showToast('Investor assigned to project successfully!', 'success');
     } else {
       const err = await res.json();
       showToast(`Error: ${err.error}`, 'error');
     }
-  };
-
-  const handleDeleteAssignment = (userId: number, projectId: number, investorName: string, projectName: string) => {
-    setConfirmDialog({
-      isOpen: true,
-      title: 'Remove Portfolio Allocation?',
-      message: `Are you sure you want to remove the portfolio allocation for "${investorName}" in "${projectName}"?`,
-      onConfirm: async () => {
-        setConfirmDialog(prev => ({ ...prev, isOpen: false }));
-        try {
-          const res = await apiFetch(`/api/admin/investor-project/${userId}/${projectId}`, {
-            method: 'DELETE'
-          });
-          if (res.ok) {
-            refetchAssignments();
-            refetchLedger();
-            refetchAnalytics();
-            showToast('Portfolio allocation removed successfully', 'success');
-          } else {
-            showToast('Failed to remove allocation', 'error');
-          }
-        } catch {
-          showToast('An error occurred while removing allocation', 'error');
-        }
-      }
-    });
   };
 
   const handleRecordPayment = async (data: {
@@ -611,16 +581,16 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
             key={item.id}
             onClick={() => { setActiveView(item.id as any); closeMenu(); }}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold text-xs sm:text-sm cursor-pointer",
+              "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium text-xs sm:text-sm cursor-pointer",
               isActive
-                ? "bg-redhill-red hover:bg-redhill-crimson text-white shadow-md border border-redhill-red/40 font-bold"
+                ? "bg-redhill-charcoal text-white shadow-xs border border-redhill-charcoal font-semibold"
                 : "text-stone-700 hover:text-redhill-charcoal hover:bg-redhill-sand/70 border border-transparent"
             )}
           >
-            <item.icon className={cn("w-4 h-4", isActive ? "text-white" : "text-redhill-muted")} />
+            <item.icon className={cn("w-4 h-4", isActive ? "text-redhill-gold-soft" : "text-redhill-muted")} />
             <span className="flex-1 text-left">{item.label}</span>
             {item.id === 'queries' && unansweredCount > 0 && (
-              <span className="min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-sm">
+              <span className="min-w-[20px] h-5 px-1.5 bg-red-500 text-white text-[10px] font-black rounded-full flex items-center justify-center animate-pulse shadow-sm">
                 {unansweredCount}
               </span>
             )}
@@ -787,10 +757,7 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                     type="text"
                     placeholder="Search name, email, or ID..."
                     value={investorSearch}
-                    onChange={(e) => {
-                      setInvestorSearch(e.target.value);
-                      setInvestorPage(1);
-                    }}
+                    onChange={(e) => setInvestorSearch(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 bg-redhill-sand/70 border border-redhill-line rounded-xl outline-none text-xs sm:text-sm text-redhill-charcoal focus:bg-redhill-sand focus:border-redhill-red/40"
                   />
                 </div>
@@ -838,78 +805,15 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                   </tbody>
                 </table>
               </div>
-              {investorTotalPages > 1 && (
-                <div className="p-4 border-t border-redhill-line bg-redhill-ivory flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-redhill-muted">
-                  <span>
-                    Showing {(investorPage - 1) * 10 + 1}–{Math.min(investorPage * 10, filteredInvestors.length)} of {filteredInvestors.length} investors
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => setInvestorPage(p => Math.max(1, p - 1))}
-                      disabled={investorPage === 1}
-                      className="px-3 py-1.5 rounded-lg bg-white hover:bg-redhill-sand/70 disabled:opacity-40 disabled:pointer-events-none text-redhill-charcoal font-medium border border-redhill-line transition-all cursor-pointer"
-                    >
-                      Previous
-                    </button>
-                    <span className="px-3 py-1.5 font-bold text-redhill-charcoal">
-                      {investorPage} / {investorTotalPages}
-                    </span>
-                    <button
-                      onClick={() => setInvestorPage(p => Math.min(investorTotalPages, p + 1))}
-                      disabled={investorPage >= investorTotalPages}
-                      className="px-3 py-1.5 rounded-lg bg-white hover:bg-redhill-sand/70 disabled:opacity-40 disabled:pointer-events-none text-redhill-charcoal font-medium border border-redhill-line transition-all cursor-pointer"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Assignments Table */}
             {assignments.length > 0 && (
               <div className="bg-white rounded-3xl border border-redhill-line shadow-2xl overflow-hidden">
-                <div className="p-6 border-b border-redhill-line bg-redhill-ivory flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="p-6 border-b border-redhill-line bg-redhill-ivory flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
-                    <div className="flex items-center gap-3">
-                      <h2 className="font-bold text-redhill-charcoal text-lg font-serif">Active Portfolio Allocations</h2>
-                      <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
-                        {filteredAssignments.length} {filteredAssignments.length === 1 ? 'Record' : 'Records'}
-                      </span>
-                    </div>
+                    <h2 className="font-bold text-redhill-charcoal text-lg font-serif">Active Portfolio Allocations</h2>
                     <p className="text-xs text-redhill-muted mt-0.5">Assigned developments and allotted area per investor.</p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
-                    <div className="relative w-full sm:w-60">
-                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-500" />
-                      <input
-                        type="text"
-                        placeholder="Search investor or email..."
-                        value={assignmentSearch}
-                        onChange={(e) => {
-                          setAssignmentSearch(e.target.value);
-                          setAssignmentPage(1);
-                        }}
-                        className="w-full pl-9 pr-3 py-2 bg-white border border-redhill-line rounded-xl outline-none text-xs text-redhill-charcoal focus:bg-redhill-sand/40 focus:border-redhill-red/40 transition-all"
-                      />
-                    </div>
-
-                    <select
-                      value={assignmentProjectFilter}
-                      onChange={(e) => {
-                        setAssignmentProjectFilter(e.target.value);
-                        setAssignmentPage(1);
-                      }}
-                      className="px-3 py-2 bg-white border border-redhill-line rounded-xl outline-none text-xs text-redhill-charcoal focus:border-redhill-red/40 transition-all cursor-pointer"
-                    >
-                      <option value="">All Projects</option>
-                      {projects.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name}
-                        </option>
-                      ))}
-                    </select>
                   </div>
                 </div>
                 <div className="overflow-x-auto">
@@ -949,53 +853,13 @@ export default function AdminDashboard({ user, onLogout }: AdminDashboardProps) 
                                 <TrendingUp className="w-3.5 h-3.5" />
                                 <span>Upgrade</span>
                               </button>
-                              <button
-                                onClick={() => handleDeleteAssignment(a.user_id, a.project_id, a.investor_name, a.project_name)}
-                                className="p-2 text-stone-500 hover:text-redhill-red hover:bg-redhill-sand/70 rounded-lg transition-colors cursor-pointer"
-                                title="Remove Allocation"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
                             </div>
                           </td>
                         </tr>
                       ))}
-                      {paginatedAssignments.length === 0 && (
-                        <tr>
-                          <td colSpan={6} className="px-6 py-12 text-center text-redhill-muted text-xs">
-                            No portfolio allocations match your search or filter criteria.
-                          </td>
-                        </tr>
-                      )}
                     </tbody>
                   </table>
                 </div>
-                {assignmentTotalPages > 1 && (
-                  <div className="p-4 border-t border-redhill-line bg-redhill-ivory flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-redhill-muted">
-                    <span>
-                      Showing {(assignmentPage - 1) * 10 + 1}–{Math.min(assignmentPage * 10, filteredAssignments.length)} of {filteredAssignments.length} allocations
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => setAssignmentPage(p => Math.max(1, p - 1))}
-                        disabled={assignmentPage === 1}
-                        className="px-3 py-1.5 rounded-lg bg-white hover:bg-redhill-sand/70 disabled:opacity-40 disabled:pointer-events-none text-redhill-charcoal font-medium border border-redhill-line transition-all cursor-pointer"
-                      >
-                        Previous
-                      </button>
-                      <span className="px-3 py-1.5 font-bold text-redhill-charcoal">
-                        {assignmentPage} / {assignmentTotalPages}
-                      </span>
-                      <button
-                        onClick={() => setAssignmentPage(p => Math.min(assignmentTotalPages, p + 1))}
-                        disabled={assignmentPage >= assignmentTotalPages}
-                        className="px-3 py-1.5 rounded-lg bg-white hover:bg-redhill-sand/70 disabled:opacity-40 disabled:pointer-events-none text-redhill-charcoal font-medium border border-redhill-line transition-all cursor-pointer"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>

@@ -90,16 +90,19 @@
 }
 
 /* ---------------------------------------------------------------------
-   Typography
+   Typography & Responsive Layout Containers
    --------------------------------------------------------------------- */
+.page-container {
+  @apply w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12;
+}
 .eyebrow {
-  @apply text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.26em];
+  @apply text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] sm:tracking-[0.26em];
 }
 .display {
   font-family: var(--font-sans);
   font-weight: 600;
   letter-spacing: -0.025em;
-  line-height: 1.1;
+  line-height: 1.08;
 }
 .tabular { font-variant-numeric: tabular-nums; }
 
@@ -191,6 +194,8 @@
   border: 1px solid var(--color-redhill-stone);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+.field-icon-left { padding-left: 2.65rem; }
+.field-icon-right { padding-right: 2.65rem; }
 .field::placeholder { color: #A39D92; }
 .field:focus {
   border-color: var(--color-redhill-charcoal);

@@ -151,15 +151,15 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
       {/* ================================================================= */}
       <main className="flex-1 flex flex-col min-h-screen relative min-w-0">
         {!sidebarContent && (
-          <header className="bg-white/90 backdrop-blur-md border-b border-redhill-line sticky top-0 z-40">
-            <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 h-16 md:h-[76px] flex items-center justify-between gap-6">
-              <Link to={isInvestor ? '/dashboard' : '/admin'} aria-label="Redhill Infra — portal home" className="shrink-0">
+          <header className="bg-white/95 backdrop-blur-md border-b border-redhill-line sticky top-0 z-40">
+            <div className="page-container h-16 md:h-[76px] grid grid-cols-2 lg:grid-cols-[1fr_auto_1fr] items-center gap-4">
+              <Link to={isInvestor ? '/dashboard' : '/admin'} aria-label="Redhill Infra — portal home" className="justify-self-start shrink-0">
                 <Logo />
               </Link>
 
               {/* Desktop navigation */}
               {isInvestor ? (
-                <nav aria-label="Investor" className="hidden lg:flex items-center gap-9">
+                <nav aria-label="Investor" className="hidden lg:flex items-center justify-center gap-7 xl:gap-9 justify-self-center">
                   {INVESTOR_NAV.map(item => {
                     const active = isActive(item);
                     return (
@@ -167,7 +167,7 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
                         key={item.label}
                         to={`${item.to}${item.hash}`}
                         aria-current={active ? 'page' : undefined}
-                        className={`nav-link text-[13px] tracking-[0.06em] transition-colors duration-300 ${
+                        className={`nav-link text-[13px] tracking-[0.06em] whitespace-nowrap transition-colors duration-300 ${
                           active ? 'text-redhill-charcoal font-semibold' : 'text-redhill-muted hover:text-redhill-charcoal'
                         }`}
                       >
@@ -179,14 +179,14 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
               ) : (
                 <Link
                   to="/admin"
-                  className="hidden md:inline-flex items-center gap-2 text-[13px] text-redhill-muted hover:text-redhill-charcoal transition-colors"
+                  className="hidden lg:inline-flex items-center justify-center gap-2 text-[13px] text-redhill-muted hover:text-redhill-charcoal transition-colors justify-self-center"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Back to Operations Console
                 </Link>
               )}
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-end gap-2 justify-self-end">
                 {/* Profile menu */}
                 <div ref={profileRef} className="relative hidden md:block">
                   <button
@@ -233,7 +233,7 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
                         </div>
                         <div className="px-4 py-3 flex items-center gap-2 text-[11px] text-redhill-muted bg-redhill-ivory">
                           <ShieldCheck className="w-3.5 h-3.5 text-redhill-gold" />
-                          Private, encrypted session
+                          Authenticated investor session
                         </div>
                         <button
                           type="button"
@@ -272,8 +272,8 @@ export default function Layout({ user, onLogout, sidebarContent, children }: Lay
 
         {!sidebarContent && (
           <footer className="border-t border-redhill-line bg-white">
-            <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-redhill-muted">
-              <span>© {new Date().getFullYear()} Redhill Infrastructure Pvt Ltd · RERA Registered</span>
+            <div className="page-container py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-redhill-muted">
+              <span>© {new Date().getFullYear()} Redhill Infrastructure Pvt Ltd · Bengaluru</span>
               <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5 text-redhill-gold" />Private investor portal</span>
             </div>
           </footer>

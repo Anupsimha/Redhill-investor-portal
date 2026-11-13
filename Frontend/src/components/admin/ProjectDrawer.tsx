@@ -312,12 +312,12 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Drawer Panel */}
-      <div className="relative w-full max-w-3xl bg-[#12141C] border-l border-redhill-line shadow-2xl flex flex-col overflow-hidden">
+      <div className="relative w-full max-w-3xl bg-white border-l border-redhill-line shadow-2xl flex flex-col overflow-hidden">
         {/* Header */}
         <div className="p-5 sm:p-6 border-b border-redhill-line bg-redhill-sand/70 flex items-center justify-between gap-4 shrink-0">
           <div className="flex items-center gap-4 min-w-0">
-            <div className="w-12 h-12 bg-redhill-red rounded-2xl flex items-center justify-center shadow-lg  shrink-0">
-              <Hammer className="w-6 h-6 text-redhill-charcoal" />
+            <div className="w-12 h-12 bg-redhill-red rounded-2xl flex items-center justify-center shadow-lg shrink-0">
+              <Hammer className="w-6 h-6 text-white" />
             </div>
             <div className="min-w-0">
               <h2 className="text-lg font-bold text-redhill-charcoal font-serif truncate">{project.name}</h2>
@@ -333,7 +333,7 @@ export default function ProjectDrawer({ project, onClose, onRefreshProjects }: P
         </div>
 
         {/* Tab Bar */}
-        <div className="px-5 sm:px-6 pt-4 flex gap-1 shrink-0 bg-[#12141C]">
+        <div className="px-5 sm:px-6 pt-4 flex gap-1 shrink-0 bg-redhill-ivory border-b border-redhill-line">
           {[
             { id: 'milestones' as const, label: 'Milestones', count: milestones.length },
             { id: 'updates' as const, label: 'Media Updates', count: updates.length },

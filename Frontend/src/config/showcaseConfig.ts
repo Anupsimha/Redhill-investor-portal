@@ -31,6 +31,9 @@ export interface ShowcaseProject {
   configuration: string;
   possessionDate: string;
   carpetArea: string;
+  landArea?: string;
+  floors?: string;
+  statusText?: string;
   description: string;
   highlights: string[];
   gallery: ShowcaseProjectGalleryItem[];
@@ -40,17 +43,17 @@ export const SHOWCASE_CONFIG = {
   // Brand Info
   brand: {
     name: 'Redhill Infra',
-    taglineBadge: 'REDHILL PREMIER 2026 COLLECTION',
+    taglineBadge: 'CONTEMPORARY BOUTIQUE HIGH-RISE LIVING · BENGALURU',
   },
 
   // Hero Section
   hero: {
-    headlinePrefix: 'Boutique Living,',
-    headlineMain: 'Crafted for Bengaluru.',
-    subheadline: 'Thoughtfully proportioned low-rise and mid-rise boutique apartment residences with private sit-out decks, terracotta & timber detailing, and lush courtyard greens across Bengaluru’s prime neighbourhoods.',
-    ctaExploreText: 'Explore Boutique Residences',
+    headlinePrefix: 'Thoughtfully Designed.',
+    headlineMain: 'Built for Better Living.',
+    subheadline: 'Contemporary residential communities crafted for modern urban living.',
+    ctaExploreText: 'Explore Developments',
     ctaSiteVisitText: 'Book Visit',
-    backgroundImage: 'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=85&w=2070',
+    backgroundImage: '/assets/projects/hero-highrise.jpg',
   },
 
   // Social Media Handles - Update your links here
@@ -92,51 +95,54 @@ export const SHOWCASE_CONFIG = {
     },
   ] as SocialLink[],
 
-  // Redhill Infrastructure Featured Projects (Bengaluru Boutique Apartments)
+  // Redhill Infrastructure Featured Projects (Bengaluru 12+ Floor Boutique High-Rise Communities)
   featuredProjects: [
     {
       id: 'redhill-signature',
       name: 'Redhill Signature Towers',
       category: 'highrise',
-      location: 'Whitefield, Bangalore',
-      badge: 'New Launch',
+      location: 'Whitefield, Bengaluru',
+      badge: 'Under Construction',
       rating: '4.9/5',
-      image: 'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=85&w=1600',
+      image: '/assets/projects/signature-towers.jpg',
       priceStarting: '₹2.85 Cr onwards',
       configuration: '3 & 4 BHK Boutique Residences',
       possessionDate: 'Dec 2026',
       carpetArea: '2,150 – 3,450 sq.ft.',
-      description: 'An intimate boutique apartment development in Whitefield featuring only two residences per floor, deep cantilevered sit-out balconies, and landscaped courtyard decks.',
+      landArea: '5 Acres',
+      floors: 'G + 15 Floors',
+      statusText: 'Under Construction',
+      description: 'A 5-acre contemporary high-rise residential community in Whitefield featuring 15-storey boutique towers, deep cantilevered sit-out balconies, vertical architectural louvers, and landscaped courtyard greens.',
       highlights: [
-        'Low-Density: Only 2 Apartments Per Floor',
-        'Terracotta Jali & Timber Arrival Court',
-        'IGBC Platinum Green Certification',
-        'Private Lift Lobby & Smart Home Automation'
+        '5-Acre Landscaped Community · G+15 Storeys',
+        'Warm Sandstone & Vertical Louver Facade',
+        'Deep Sit-Out Balconies with Planter Decks',
+        'Private Lift Foyers & Resident Clubhouse'
       ],
       gallery: [
         {
-          url: 'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?auto=format&fit=crop&q=85&w=1600',
-          title: 'Cantilevered Boutique Apartment Elevation',
+          url: '/assets/projects/signature-towers.jpg',
+          title: '15-Storey Boutique High-Rise Elevation',
           tag: 'Exterior'
         },
         {
+          url: '/assets/projects/hero-highrise.jpg',
+          title: 'Landscaped Arrival Court & Evening Facade',
+          tag: 'Arrival Court'
+        },
+        {
           url: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=85&w=1600',
-          title: 'Sunlit Boutique Apartment Living Suite',
+          title: 'Sunlit Living & Dining Suite',
           tag: 'Living Suite'
         },
         {
-          url: 'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=1600',
-          title: 'Landscaped Courtyard & Resident Lap Pool',
-          tag: 'Courtyard Amenities'
-        },
-        {
           url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=85&w=1600',
-          title: 'Open-Plan Dining & Lounge',
+          title: 'Contemporary Open-Plan Lounge',
           tag: 'Interiors'
         },
         {
           url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?auto=format&fit=crop&q=85&w=1600',
-          title: 'Timber-Screened Double-Height Entrance Foyer',
+          title: 'Timber-Screened Double-Height Entrance Lobby',
           tag: 'Lobby & Concierge'
         },
         {
@@ -150,35 +156,38 @@ export const SHOWCASE_CONFIG = {
       id: 'redhill-emerald',
       name: 'Redhill Emerald Gardens',
       category: 'township',
-      location: 'Sarjapur Road, Bangalore',
+      location: 'Sarjapur Road, Bengaluru',
       badge: 'New Launch',
       rating: '4.8/5',
-      image: 'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=1600',
+      image: '/assets/projects/emerald-gardens.jpg',
       priceStarting: '₹1.95 Cr onwards',
       configuration: '2, 3 & 3.5 BHK Courtyard Apartments',
       possessionDate: 'June 2027',
       carpetArea: '1,450 – 2,600 sq.ft.',
-      description: 'Low-rise G+4 boutique garden apartments nestled amidst mature Bengaluru rain trees, featuring shaded pergola terraces, cross-ventilated floor plates, and a central lap pool.',
+      landArea: '4 Acres',
+      floors: 'G + 12 Floors',
+      statusText: 'Active Development',
+      description: 'Spread across 4 acres on Sarjapur Road, Redhill Emerald Gardens pairs twin 12-storey modern residential towers with a central vehicle-free botanical courtyard, shaded pergola walkways, and cross-ventilated floor plates.',
       highlights: [
-        'Low-Rise G+4 Boutique Courtyard Blocks',
-        'Central Lap Pool & Shaded Pergola Decks',
-        'Solar-Powered Common Infrastructure',
-        'Multi-Tier 24/7 Perimeter Security'
+        '4-Acre Botanical Courtyard · G+12 Storeys',
+        'Cross-Ventilated Corner Residences',
+        'Central Lap Pool & Shaded Pergola Walkways',
+        'Solar-Integrated Common Infrastructure'
       ],
       gallery: [
         {
-          url: 'https://images.unsplash.com/photo-1580041065738-e72023775cdc?auto=format&fit=crop&q=85&w=1600',
-          title: 'Low-Rise Boutique Apartment Blocks & Canopy',
+          url: '/assets/projects/emerald-gardens.jpg',
+          title: '12-Storey Courtyard Towers & Central Greens',
           tag: 'Exterior & Courtyard'
         },
         {
           url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=85&w=1600',
-          title: 'Stone-Walled Courtyard Swimming Pavilion',
+          title: 'Courtyard Swimming Pavilion & Deck',
           tag: 'Clubhouse'
         },
         {
           url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=85&w=1600',
-          title: 'Sunlit Living Room Opening to Verandah Deck',
+          title: 'Sunlit Living Room Opening to Balcony Deck',
           tag: 'Interiors'
         },
         {
@@ -187,13 +196,13 @@ export const SHOWCASE_CONFIG = {
           tag: 'Living Space'
         },
         {
-          url: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=85&w=1600',
-          title: 'Terracotta Brick Facade & Deep Sit-Out Balconies',
+          url: '/assets/projects/signature-towers.jpg',
+          title: 'Warm Neutral Facade & Recessed Balconies',
           tag: 'Balcony'
         },
         {
           url: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&q=85&w=1600',
-          title: 'Natural Oak Herringbone Apartment Suite',
+          title: 'Natural Oak Herringbone Master Suite',
           tag: 'Master Suite'
         }
       ]
@@ -202,30 +211,33 @@ export const SHOWCASE_CONFIG = {
       id: 'redhill-pinnacle',
       name: 'Redhill Pinnacle Heights',
       category: 'highrise',
-      location: 'Hebbal / Airport Corridor, Bangalore',
+      location: 'Hebbal, North Bengaluru',
       badge: 'Pre-Launch',
       rating: '4.7/5',
-      image: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=85&w=1600',
+      image: '/assets/projects/pinnacle-heights.jpg',
       priceStarting: '₹3.40 Cr onwards',
-      configuration: '3 & 4 BHK Terrace Apartments',
+      configuration: '3 & 4 BHK Sky Terrace Residences',
       possessionDate: 'March 2027',
       carpetArea: '2,800 – 4,200 sq.ft.',
-      description: 'Warm brick-and-concrete boutique residences along the Hebbal–Airport corridor, crafted with private elevator foyers, wrap-around planter balconies, and curated concierge living.',
+      landArea: '2 Acres',
+      floors: 'G + 16 Floors',
+      statusText: 'Pre-Launch',
+      description: 'A refined 2-acre, 16-storey boutique residential enclave along the Hebbal–Airport corridor, designed with warm architectural concrete facades, wrap-around planter balconies, and private elevator foyers.',
       highlights: [
+        '2-Acre Boutique Enclave · G+16 Storeys',
         'Wrap-Around Landscaped Planter Balconies',
-        'Exposed Brick & Architectural Concrete Facade',
-        'Dedicated EV Rapid Charging Bays',
+        'Dedicated EV Charging Bays & Resident Lounge',
         '6 Mins from Manyata Tech Park & Hebbal Flyover'
       ],
       gallery: [
         {
-          url: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?auto=format&fit=crop&q=85&w=1600',
-          title: 'Warm Brick Boutique Apartment Elevation',
+          url: '/assets/projects/pinnacle-heights.jpg',
+          title: '16-Storey Boutique High-Rise at Dusk',
           tag: 'Exterior'
         },
         {
           url: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=85&w=1600',
-          title: 'Rooftop Pergola & Penthouse Crown',
+          title: 'Sky Terrace & Architectural Crown',
           tag: 'Terrace Deck'
         },
         {
@@ -235,7 +247,7 @@ export const SHOWCASE_CONFIG = {
         },
         {
           url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=85&w=1600',
-          title: 'Corner Apartment Lounge with Dual Aspect Views',
+          title: 'Corner Residence Lounge with Dual-Aspect Views',
           tag: 'Living Room'
         }
       ]
@@ -244,25 +256,28 @@ export const SHOWCASE_CONFIG = {
       id: 'redhill-sovereign',
       name: 'Redhill Sovereign Estates',
       category: 'villas',
-      location: 'Indiranagar / Domlur Corridor, Bangalore',
+      location: 'Indiranagar Corridor, Bengaluru',
       badge: 'Exclusive Edition',
       rating: '4.9/5',
-      image: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=85&w=1600',
+      image: '/assets/projects/sovereign-estates.jpg',
       priceStarting: '₹4.20 Cr onwards',
-      configuration: '4 BHK Single-Floor Boutique Residences',
+      configuration: '4 BHK Full-Floor Sky Residences',
       possessionDate: 'Nov 2026',
       carpetArea: '3,600 – 4,800 sq.ft.',
-      description: 'An ultra-exclusive G+5 boutique apartment address featuring one full-floor residence per level, private key-card elevator access, and a rooftop sky garden.',
+      landArea: '2 Acres',
+      floors: 'G + 12 Floors',
+      statusText: 'Exclusive Edition',
+      description: 'An intimate 2-acre, 12-storey boutique residential address off Indiranagar featuring expansive sky residences, private lift lobbies, wrap-around planted decks, and a curated rooftop resident pavilion.',
       highlights: [
-        'One Full-Floor Residence Per Level (5 Units Total)',
-        'Rooftop Sky Deck & Private Resident Lounge',
-        'Subterranean 3-Car Basement Parking',
+        '2-Acre Boutique Address · G+12 Storeys',
+        'Expansive planted Sky-Decks on Every Floor',
+        'Subterranean 3-Car Resident Parking',
         'Acoustic Double-Glazed Fenestration'
       ],
       gallery: [
         {
-          url: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&q=85&w=1600',
-          title: 'G+5 Full-Floor Boutique Residence Facade',
+          url: '/assets/projects/sovereign-estates.jpg',
+          title: '12-Storey Boutique Sky-Deck Tower',
           tag: 'Exterior'
         },
         {

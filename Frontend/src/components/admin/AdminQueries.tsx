@@ -258,7 +258,7 @@ export default function AdminQueries() {
             <span>Sync</span>
           </button>
           <div className="px-3.5 py-1.5 bg-redhill-red/15 border border-redhill-red/30 rounded-xl flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-redhill-red" />
+            <span className="w-2 h-2 rounded-full bg-redhill-red animate-pulse" />
             <span className="text-xs font-bold text-red-700">
               {unreadCount} {unreadCount === 1 ? 'Pending Inquiry' : 'Pending Inquiries'}
             </span>
@@ -267,7 +267,7 @@ export default function AdminQueries() {
       </div>
 
       {/* Main Container */}
-      <div className="flex-1 bg-white rounded-3xl border border-redhill-line shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-0">
+      <div className="flex-1 bg-white rounded-3xl border border-redhill-line shadow-sm overflow-hidden flex flex-col lg:flex-row min-h-0">
         {/* Left Side: Threads List */}
         <div className={cn(
           "w-full lg:w-[380px] xl:w-[420px] border-r border-redhill-line flex flex-col bg-white shrink-0",
@@ -368,7 +368,7 @@ export default function AdminQueries() {
                       <span className={cn(
                         "inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
                         isUnread
-                          ? "bg-red-500/20 text-red-700 border-red-500/30"
+                          ? "bg-red-500/20 text-red-700 border-red-500/30 animate-pulse"
                           : "bg-emerald-500/10 text-emerald-700 border-emerald-500/20"
                       )}>
                         {isUnread ? 'Needs Reply' : 'Resolved'}
@@ -397,7 +397,7 @@ export default function AdminQueries() {
 
         {/* Right Side: Chat Window */}
         <div className={cn(
-          "flex-1 flex flex-col bg-redhill-ivory min-w-0",
+          "flex-1 flex flex-col bg-white min-w-0",
           !selectedThread ? "hidden lg:flex items-center justify-center" : "flex"
         )}>
           {!selectedThread ? (
@@ -435,8 +435,8 @@ export default function AdminQueries() {
                       <h2 className="font-bold text-redhill-charcoal text-base truncate font-serif">
                         {selectedThread.investor_name || selectedThread.userName}
                       </h2>
-                      <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         Verified Investor
                       </span>
                     </div>

@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import {
   Building2, MapPin, Calendar, CheckCircle2, Clock, AlertCircle,
   FileText, Image as ImageIcon, Video, Bell, ChevronLeft,
-  Download, ExternalLink, LogOut, MessageCircle, Send, ChevronUp, ChevronRight, IndianRupee, Sparkles
+  Download, ExternalLink, LogOut, MessageCircle, Send, ChevronUp, ChevronRight, IndianRupee, Sparkles, Maximize2, X
 } from 'lucide-react';
 import { User, Project, Milestone, ProgressUpdate, Announcement, Query, LedgerEntry } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
@@ -26,15 +26,28 @@ interface ProjectDetailProps {
   onLogout: () => void;
 }
 
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+const SHORT_MONTH_NAMES = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
 export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
   const { id } = useParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState<'progress' | 'docs' | 'media' | 'queries' | 'ledger'>('progress');
+  const [selectedPhotoMonth, setSelectedPhotoMonth] = useState<number | 'all'>('all');
+  const [selectedPhotoYear, setSelectedPhotoYear] = useState<number | 'all'>('all');
   const [newMessage, setNewMessage] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState<Milestone | null>(null);
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [lightboxMedia, setLightboxMedia] = useState<{ url: string; caption: string; date?: string } | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading: loading } = useQuery<{
@@ -216,9 +229,18 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
                 </div>
               </div>
 
-              {/* Boutique Apartment Architectural Preview + Telemetry Strip */}
+              {/* Boutique High-Rise Architectural Preview + Telemetry Strip */}
               <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-stretch pt-1">
-                <div className="sm:col-span-6 relative rounded-lg overflow-hidden border border-redhill-line bg-redhill-sand min-h-[156px]">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLightboxMedia({
+                      url: getAssetUrl(project.image_url, project.id),
+                      caption: `${project.name} — ${project.location}`,
+                    })
+                  }
+                  className="sm:col-span-6 relative rounded-lg overflow-hidden border border-redhill-line bg-redhill-sand min-h-[156px] text-left group cursor-pointer"
+                >
                   <img
                     src={getAssetUrl(project.image_url, project.id)}
                     alt={project.name}
@@ -226,20 +248,23 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = getAssetUrl(null, project.id);
                     }}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
                   <div className="absolute bottom-3 left-3.5 right-3.5 text-white flex items-end justify-between gap-2">
                     <div>
                       <span className="block text-[9px] uppercase tracking-[0.18em] text-redhill-gold-soft font-semibold">
-                        Asset #{project.id}
+                        Asset #{project.id} · 12+ Storeys
                       </span>
                       <span className="text-xs font-medium text-white/95 line-clamp-1">
-                        {project.location} · Boutique Residences
+                        {project.location} · Boutique High-Rise
                       </span>
                     </div>
+                    <span className="w-7 h-7 rounded-md bg-white/90 text-redhill-charcoal flex items-center justify-center shrink-0">
+                      <Maximize2 className="w-3.5 h-3.5" />
+                    </span>
                   </div>
-                </div>
+                </button>
 
                 <div className="sm:col-span-6 grid grid-cols-2 gap-2.5">
                   <div className="bg-[#FBF9F5] border border-redhill-line rounded-md p-3 flex flex-col justify-between">
@@ -350,35 +375,35 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="bg-redhill-sand-deep backdrop-blur-md border-b border-redhill-line sticky top-0 md:top-20 z-20">
-        <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12">
-          <div className="flex gap-2 sm:gap-6 overflow-x-auto scrollbar-hide">
+      {/* Navigation Tabs (Milestones | Receipts | Progress Photos | Documents | Help) */}
+      <div className="bg-white/95 backdrop-blur-md border-b border-redhill-line sticky top-0 md:top-[76px] z-20">
+        <div className="page-container">
+          <div className="flex gap-4 sm:gap-8 overflow-x-auto scrollbar-hide">
             {[
-              { id: 'progress', label: 'Progress', labelFull: 'Project Progress', icon: Clock, count: milestones.length },
-              { id: 'docs', label: 'Documents', labelFull: 'Documents & Approvals', icon: FileText, count: docMilestones.length + approvalMilestones.length },
-              { id: 'ledger', label: 'Ledger', labelFull: 'Investment Ledger', icon: IndianRupee, count: ledgerEntries.length },
-              { id: 'media', label: 'Media', labelFull: 'Media & CCTV', icon: ImageIcon, count: updates.length },
-              { id: 'queries', label: 'Queries', labelFull: 'Executive Desk', icon: MessageCircle, count: queries.length },
+              { id: 'progress', label: 'Milestones', labelFull: 'Milestones', icon: Clock, count: milestones.length },
+              { id: 'ledger', label: 'Receipts', labelFull: 'Receipts & Ledger', icon: IndianRupee, count: ledgerEntries.length },
+              { id: 'media', label: 'Progress Photos', labelFull: 'Progress Photos', icon: ImageIcon, count: updates.length },
+              { id: 'docs', label: 'Documents', labelFull: 'Documents', icon: FileText, count: docMilestones.length + approvalMilestones.length },
+              { id: 'queries', label: 'Help', labelFull: 'Help & Queries', icon: MessageCircle, count: queries.length },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={cn(
-                  "flex items-center gap-2 py-4 border-b-2 transition-all font-medium text-xs uppercase tracking-[0.14em] cursor-pointer whitespace-nowrap shrink-0",
+                  "flex items-center gap-2 py-4 border-b-2 transition-all font-medium text-xs sm:text-[13px] tracking-[0.04em] cursor-pointer whitespace-nowrap shrink-0",
                   activeTab === tab.id
-                    ? "border-redhill-gold text-redhill-charcoal font-semibold"
+                    ? "border-redhill-red text-redhill-red font-semibold"
                     : "border-transparent text-redhill-muted hover:text-redhill-charcoal"
                 )}
               >
-                <tab.icon className={cn("w-3.5 h-3.5", activeTab === tab.id ? "text-redhill-gold" : "text-redhill-muted")} />
+                <tab.icon className={cn("w-3.5 h-3.5", activeTab === tab.id ? "text-redhill-red" : "text-redhill-muted")} />
                 <span className="hidden sm:inline">{tab.labelFull}</span>
                 <span className="sm:hidden">{tab.label}</span>
                 {tab.count > 0 && (
                   <span className={cn(
                     "ml-1 px-1.5 py-0.5 rounded text-[10px] tabular font-medium",
                     activeTab === tab.id
-                      ? "bg-redhill-sand text-redhill-charcoal"
+                      ? "bg-red-50 text-redhill-red border border-redhill-red/20"
                       : "bg-redhill-sand/70 text-redhill-muted"
                   )}>
                     {tab.count}
@@ -572,126 +597,254 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
             </motion.div>
           )}
 
-          {activeTab === 'media' && (
-            <motion.div
-              key="media"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="space-y-12"
-            >
-              {/* Live Camera Section */}
-              <section className="bg-white rounded-2xl overflow-hidden shadow-2xl border border-redhill-line">
-                <div className="p-6 border-b border-redhill-line flex items-center justify-between bg-redhill-ivory">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <Video className="text-redhill-red w-6 h-6" />
-                      <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 shadow-sm shadow-red-500/50"></span>
-                      </span>
-                    </div>
-                    <h2 className="text-xl font-bold text-redhill-charcoal tracking-tight font-serif">Live Site Camera</h2>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-redhill-sand/70 rounded-full border border-redhill-line">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                      <span className="text-[10px] font-bold text-redhill-muted uppercase tracking-widest">System Online</span>
-                    </div>
-                    <div className="text-xs font-mono text-stone-500 italic">CAM-01 / NW-SECTOR</div>
-                  </div>
-                </div>
+          {activeTab === 'media' && (() => {
+            const currentYear = new Date().getFullYear();
+            const yearSet = new Set<number>([currentYear, currentYear - 1]);
+            updates.forEach((u) => {
+              const d = new Date(u.date);
+              if (!isNaN(d.getTime())) yearSet.add(d.getFullYear());
+            });
+            const availableYears = Array.from(yearSet).sort((a, b) => b - a);
 
-                <div className="relative aspect-video bg-black group">
-                  {project.cctv_url ? (
-                    <video
-                      src={project.cctv_url}
-                      autoPlay
-                      muted
-                      loop
-                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                    />
+            const filteredUpdates = updates
+              .filter((u) => {
+                const d = new Date(u.date);
+                if (isNaN(d.getTime())) return true;
+                if (selectedPhotoMonth !== 'all' && d.getMonth() !== selectedPhotoMonth) return false;
+                if (selectedPhotoYear !== 'all' && d.getFullYear() !== selectedPhotoYear) return false;
+                return true;
+              })
+              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+            // Group filtered updates chronologically by Month & Year (e.g., "Oct 2026")
+            const monthGroups: {
+              key: string;
+              label: string;
+              fullLabel: string;
+              items: ProgressUpdate[];
+            }[] = [];
+
+            filteredUpdates.forEach((u) => {
+              const d = new Date(u.date);
+              const valid = !isNaN(d.getTime());
+              const mIdx = valid ? d.getMonth() : new Date().getMonth();
+              const yr = valid ? d.getFullYear() : currentYear;
+              const key = `${yr}-${String(mIdx + 1).padStart(2, '0')}`;
+              const label = `${SHORT_MONTH_NAMES[mIdx]} ${yr}`;
+              const fullLabel = `${MONTH_NAMES[mIdx]} ${yr}`;
+
+              let grp = monthGroups.find((g) => g.key === key);
+              if (!grp) {
+                grp = { key, label, fullLabel, items: [] };
+                monthGroups.push(grp);
+              }
+              grp.items.push(u);
+            });
+
+            return (
+              <motion.div
+                key="media"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-12"
+              >
+                {/* Progress Photos by Month & Year Section */}
+                <section className="bg-white rounded-2xl p-5 sm:p-8 border border-redhill-line shadow-sm space-y-7">
+                  {/* Top Filter Bar: Month Dropdown, Year Dropdown & Reset Button */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-redhill-line">
+                    <div className="flex items-center gap-5 sm:gap-7">
+                      <div className="relative">
+                        <label htmlFor="photo-month-filter" className="sr-only">Select Month</label>
+                        <select
+                          id="photo-month-filter"
+                          value={selectedPhotoMonth}
+                          onChange={(e) =>
+                            setSelectedPhotoMonth(e.target.value === 'all' ? 'all' : Number(e.target.value))
+                          }
+                          className="bg-transparent border-b-2 border-redhill-stone focus:border-redhill-red pb-1.5 pr-6 text-sm sm:text-base font-semibold text-redhill-charcoal outline-none cursor-pointer transition-colors"
+                        >
+                          <option value="all">All Months</option>
+                          {MONTH_NAMES.map((mName, idx) => (
+                            <option key={mName} value={idx}>
+                              {mName}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="relative">
+                        <label htmlFor="photo-year-filter" className="sr-only">Select Year</label>
+                        <select
+                          id="photo-year-filter"
+                          value={selectedPhotoYear}
+                          onChange={(e) =>
+                            setSelectedPhotoYear(e.target.value === 'all' ? 'all' : Number(e.target.value))
+                          }
+                          className="bg-transparent border-b-2 border-redhill-stone focus:border-redhill-red pb-1.5 pr-6 text-sm sm:text-base font-semibold text-redhill-charcoal outline-none cursor-pointer transition-colors"
+                        >
+                          <option value="all">All Years</option>
+                          {availableYears.map((yr) => (
+                            <option key={yr} value={yr}>
+                              {yr}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedPhotoMonth('all');
+                        setSelectedPhotoYear('all');
+                      }}
+                      className="px-4 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-redhill-red border border-redhill-red/40 text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+                    >
+                      Reset
+                    </button>
+                  </div>
+
+                  {/* Chronological Month Groups */}
+                  {monthGroups.length === 0 ? (
+                    <div className="py-14 text-center space-y-2">
+                      <div className="w-12 h-12 rounded-2xl bg-redhill-ivory border border-redhill-line flex items-center justify-center mx-auto text-redhill-muted">
+                        <ImageIcon className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-serif text-base font-semibold text-redhill-charcoal">
+                        No progress photos found for this period
+                      </h3>
+                      <p className="text-xs text-redhill-muted max-w-sm mx-auto">
+                        {updates.length === 0
+                          ? 'Site progress photographs uploaded by the project team will automatically appear here grouped by month.'
+                          : 'Try selecting a different month or click Reset to view all uploaded progress photos.'}
+                      </p>
+                    </div>
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center text-stone-500 gap-4">
-                      <Video className="w-16 h-16 opacity-20" />
-                      <p className="text-sm font-medium">Camera Feed Temporarily Unavailable</p>
+                    <div className="space-y-10">
+                      {monthGroups.map((group) => (
+                        <div key={group.key} className="space-y-4">
+                          <div>
+                            <h3 className="text-lg sm:text-xl font-bold text-redhill-charcoal tracking-tight">
+                              {group.label}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-redhill-muted mt-0.5">
+                              {group.label} &bull; {group.items.length} {group.items.length === 1 ? 'Photo' : 'Photos'}
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                            {group.items.map((update) => (
+                              <div
+                                key={update.id}
+                                className="group relative aspect-square rounded-xl overflow-hidden bg-redhill-sand border border-redhill-line shadow-xs"
+                              >
+                                {update.type === 'video' ? (
+                                  update.url ? (
+                                    <video
+                                      src={update.url}
+                                      controls
+                                      preload="metadata"
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center">
+                                      <Video className="w-10 h-10 text-stone-400" />
+                                    </div>
+                                  )
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setLightboxMedia({
+                                        url: getAssetUrl(update.url, update.id),
+                                        caption: update.caption || `${project.name} — ${group.fullLabel}`,
+                                        date: new Date(update.date).toLocaleDateString('en-IN', {
+                                          day: 'numeric',
+                                          month: 'short',
+                                          year: 'numeric',
+                                        }),
+                                      })
+                                    }
+                                    aria-label={`View photo: ${update.caption || group.label}`}
+                                    className="w-full h-full block text-left cursor-pointer relative"
+                                  >
+                                    <img
+                                      src={getAssetUrl(update.url, update.id)}
+                                      alt={update.caption || group.label}
+                                      loading="lazy"
+                                      referrerPolicy="no-referrer"
+                                      onError={(e) => {
+                                        (e.target as HTMLImageElement).src = getAssetUrl(null, update.id);
+                                      }}
+                                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                                      {update.caption && (
+                                        <p className="text-xs text-white font-medium line-clamp-2">
+                                          {update.caption}
+                                        </p>
+                                      )}
+                                      <span className="text-[10px] text-white/80 font-mono mt-0.5">
+                                        {new Date(update.date).toLocaleDateString('en-IN', {
+                                          day: 'numeric',
+                                          month: 'short',
+                                          year: 'numeric',
+                                        })}
+                                      </span>
+                                    </div>
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
+                </section>
 
-                  {/* Overlay Controls */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-redhill-red font-bold uppercase tracking-[0.2em] text-[10px] mb-1">Live Feed</p>
-                        <h3 className="text-white font-bold text-lg font-serif">Main Construction Yard</h3>
+                {/* Live Camera Section */}
+                <section className="bg-white rounded-2xl overflow-hidden shadow-sm border border-redhill-line">
+                  <div className="p-5 sm:p-6 border-b border-redhill-line flex items-center justify-between bg-redhill-ivory">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <Video className="text-redhill-red w-5 h-5" />
+                        <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                        </span>
                       </div>
-                      <div className="flex gap-2">
-                        <button className="px-4 py-2 bg-redhill-sand hover:bg-redhill-sand-deep backdrop-blur-md border border-redhill-line rounded-lg text-xs font-bold text-redhill-charcoal transition-all cursor-pointer">HD</button>
-                        <button className="px-4 py-2 bg-redhill-red hover:bg-redhill-red/90 rounded-lg text-xs font-bold text-white transition-all shadow-lg shadow-red-600/20 cursor-pointer">Expand View</button>
+                      <h2 className="text-lg font-bold text-redhill-charcoal tracking-tight font-serif">Live Site Camera</h2>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-redhill-sand/70 rounded-full border border-redhill-line">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-bold text-redhill-muted uppercase tracking-widest">Site Feed</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Scanline Effect */}
-                  <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.1)_50%),linear-gradient(90deg,rgba(255,0,0,0.02),rgba(0,255,0,0.01),rgba(0,0,118,0.02))] bg-[length:100%_2px,3px_100%] z-10 opacity-20" />
-                </div>
-              </section>
-
-              {/* Gallery Section */}
-              <section>
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-2xl font-bold text-redhill-charcoal flex items-center gap-3 font-serif">
-                    <ImageIcon className="text-redhill-red" />
-                    Project Media
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {updates.map((update, idx) => (
-                    <motion.div
-                      key={update.id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      className="group bg-white rounded-2xl overflow-hidden border border-redhill-line shadow-lg hover:border-redhill-line transition-all"
-                    >
-                      <div className="relative aspect-video overflow-hidden bg-redhill-ivory">
-                        {update.type === 'video' ? (
-                          update.url ? (
-                            <video
-                              src={update.url}
-                              controls
-                              preload="metadata"
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Video className="w-12 h-12 text-stone-400" />
-                            </div>
-                          )
-                        ) : (
-                          <img
-                            src={getAssetUrl(update.url, update.id)}
-                            alt={update.caption}
-                            referrerPolicy="no-referrer"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = getAssetUrl(null, update.id);
-                            }}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                          />
-                        )}
-                        <div className="absolute top-4 left-4 bg-black/60 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold text-white uppercase tracking-widest border border-white/10">
-                          {new Date(update.date).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
-                        </div>
+                  <div className="relative aspect-video bg-black group">
+                    {project.cctv_url ? (
+                      <video
+                        src={project.cctv_url}
+                        autoPlay
+                        muted
+                        loop
+                        className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-stone-400 gap-3">
+                        <Video className="w-12 h-12 opacity-30" />
+                        <p className="text-sm font-medium">Camera Feed Temporarily Unavailable</p>
                       </div>
-                      <div className="p-5">
-                        <p className="text-sm text-stone-700 font-medium leading-relaxed">{update.caption}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-            </motion.div>
-          )}
+                    )}
+                  </div>
+                </section>
+              </motion.div>
+            );
+          })()}
 
           {activeTab === 'queries' && (
             <motion.div
@@ -711,8 +864,8 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
                         Dedicated Relationship Desk
                       </h3>
                     </div>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                       Active
                     </span>
                   </div>
@@ -796,8 +949,8 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
                     <div>
                       <div className="flex items-center gap-2">
                         <h2 className="font-bold text-redhill-charcoal text-base font-serif">Redhill Executive Support Desk</h2>
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
-                          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 border border-emerald-500/30">
+                          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
                           Online &amp; Active
                         </span>
                       </div>
@@ -1017,6 +1170,56 @@ export default function ProjectDetail({ user, onLogout }: ProjectDetailProps) {
           )}
         </AnimatePresence>
       </main>
+
+      {/* Accessible Image Lightbox Viewer */}
+      <AnimatePresence>
+        {lightboxMedia && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8"
+            role="dialog"
+            aria-modal="true"
+            aria-label={lightboxMedia.caption}
+          >
+            <motion.div
+              className="fixed inset-0 bg-redhill-ink/85 backdrop-blur-xs"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setLightboxMedia(null)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              className="relative z-10 max-w-5xl w-full bg-white rounded-xl overflow-hidden border border-redhill-line shadow-2xl"
+            >
+              <div className="px-5 py-3.5 border-b border-redhill-line bg-redhill-ivory flex items-center justify-between gap-4">
+                <div>
+                  {lightboxMedia.date && (
+                    <span className="eyebrow text-redhill-gold block">{lightboxMedia.date}</span>
+                  )}
+                  <p className="text-sm font-semibold text-redhill-charcoal">{lightboxMedia.caption}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setLightboxMedia(null)}
+                  aria-label="Close image viewer"
+                  className="w-9 h-9 rounded-md inline-flex items-center justify-center text-redhill-muted hover:text-redhill-charcoal hover:bg-redhill-sand transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="bg-redhill-ink max-h-[78vh] flex items-center justify-center overflow-hidden">
+                <img
+                  src={lightboxMedia.url}
+                  alt={lightboxMedia.caption}
+                  className="max-h-[78vh] w-auto object-contain"
+                />
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Back to Top Button */}
       <AnimatePresence>

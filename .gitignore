@@ -14,4 +14,6 @@ coverage/
 Backend/uploads/*
 !Backend/uploads/.gitkeep
 .agents/
+*.zip
+
 

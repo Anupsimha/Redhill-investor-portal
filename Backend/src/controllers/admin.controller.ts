@@ -179,18 +179,7 @@ export const updateCctv = (req: AuthRequest, res: Response) => {
 export const assignInvestor = (req: AuthRequest, res: Response) => {
   const { user_id, project_id, contribution, investment_amount, allotted_sqft, market_price_per_sqft, price_at_investment, investment_date } = req.body;
   try {
-    db.prepare(`
-      INSERT INTO investor_projects (
-        user_id, project_id, contribution, investment_amount, allotted_sqft, market_price_per_sqft, price_at_investment, investment_date
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      ON CONFLICT(user_id, project_id) DO UPDATE SET
-        contribution = excluded.contribution,
-        investment_amount = excluded.investment_amount,
-        allotted_sqft = excluded.allotted_sqft,
-        market_price_per_sqft = excluded.market_price_per_sqft,
-        price_at_investment = excluded.price_at_investment,
-        investment_date = excluded.investment_date
-    `).run(
+    db.prepare('INSERT INTO investor_projects (user_id, project_id, contribution, investment_amount, allotted_sqft, market_price_per_sqft, price_at_investment, investment_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
       user_id, project_id, contribution, investment_amount || 0, allotted_sqft || 0, market_price_per_sqft || 0, price_at_investment || 0, investment_date || null
     );
 
@@ -221,23 +210,13 @@ export const updateAssignment = (req: AuthRequest, res: Response) => {
   }
 };
 
-export const deleteAssignment = (req: AuthRequest, res: Response) => {
-  const { userId, projectId } = req.params;
-  try {
-    db.prepare('DELETE FROM investor_projects WHERE user_id = ? AND project_id = ?').run(userId, projectId);
-    res.json({ success: true, message: 'Assignment removed successfully' });
-  } catch (e: any) {
-    res.status(400).json({ error: e.message });
-  }
-};
-
 export const getAssignments = (_req: AuthRequest, res: Response) => {
   const assignments = db.prepare(`
     SELECT ip.*, u.name as investor_name, u.email as investor_email, p.name as project_name
     FROM investor_projects ip
     JOIN users u ON ip.user_id = u.id
     JOIN projects p ON ip.project_id = p.id
-    ORDER BY ip.rowid DESC
+    ORDER BY u.name, p.name
   `).all();
   res.json(assignments);
 };

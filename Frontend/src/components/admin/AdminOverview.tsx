@@ -102,11 +102,11 @@ export default function AdminOverview({
           </div>
 
           {/* Quick Action Shortcuts */}
-          <div className="flex flex-wrap items-center gap-2.5 pt-2 lg:pt-0">
+          <div className="flex flex-wrap items-center gap-3 pt-2 lg:pt-0">
             {!isSiteManager && !isSupportAgent && onNewProject && (
               <button
                 onClick={onNewProject}
-                className="bg-redhill-red hover:bg-redhill-crimson text-white font-semibold px-4 py-2.5 rounded-xl shadow-md border border-redhill-red/40 transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
+                className="bg-redhill-red hover:bg-red-700 text-white font-bold px-5 py-3 rounded-xl shadow-lg  transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm hover:scale-[1.02]"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>New Project</span>
@@ -116,7 +116,7 @@ export default function AdminOverview({
             {(isSuperAdmin || isFinancialOfficer) && onNewInvestor && (
               <button
                 onClick={onNewInvestor}
-                className="bg-redhill-sand/70 hover:bg-redhill-sand text-redhill-charcoal font-semibold px-4 py-2.5 rounded-xl border border-redhill-line transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
+                className="bg-redhill-sand hover:bg-redhill-sand text-redhill-charcoal font-bold px-5 py-3 rounded-xl border border-redhill-line transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
               >
                 <UserPlus className="w-4 h-4 text-emerald-700" />
                 <span>Add Investor</span>
@@ -125,12 +125,12 @@ export default function AdminOverview({
 
             <button
               onClick={() => setActiveView('queries')}
-              className="bg-redhill-ivory hover:bg-redhill-sand text-redhill-charcoal font-semibold px-4 py-2.5 rounded-xl border border-redhill-line transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
+              className="bg-redhill-ivory hover:bg-black/60 text-redhill-charcoal hover:text-redhill-charcoal font-bold px-4 py-3 rounded-xl border border-redhill-line transition-all flex items-center gap-2 cursor-pointer text-xs sm:text-sm"
             >
               <MessageSquare className="w-4 h-4 text-amber-700" />
               <span>Inquiries</span>
               {unansweredCount > 0 && (
-                <span className="bg-redhill-red text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                <span className="bg-redhill-red text-white text-[10px] font-black px-2 py-0.5 rounded-full animate-pulse">
                   {unansweredCount}
                 </span>
               )}
@@ -241,16 +241,16 @@ export default function AdminOverview({
               <span className="text-3xl sm:text-4xl font-black text-redhill-charcoal font-sans tracking-tight">
                 {unansweredCount}
               </span>
-              <span className={`text-xs font-bold px-2.5 py-0.5 rounded-md border ${
+              <span className={`text-xs font-extrabold px-2 py-0.5 rounded border ${
                 unansweredCount > 0 
-                  ? 'text-redhill-red bg-redhill-red/10 border-redhill-red/30'
+                  ? 'text-redhill-red bg-redhill-red/10 border-redhill-red/30 animate-pulse'
                   : 'text-emerald-700 bg-emerald-500/10 border-emerald-500/20'
               }`}>
                 {unansweredCount > 0 ? 'Pending Action' : 'All Answered'}
               </span>
             </div>
             <p className="text-[11px] text-redhill-muted mt-2 flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-redhill-muted shrink-0" />
+              <Clock className="w-3.5 h-3.5 text-amber-700 shrink-0" />
               <span>Real-time Chat & Direct Messaging</span>
             </p>
           </div>
@@ -268,7 +268,7 @@ export default function AdminOverview({
               <div className="w-12 h-12 rounded-xl bg-amber-500/15 text-amber-700 border border-amber-500/30 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
                 <Shield className="w-6 h-6" />
               </div>
-              <div className="w-8 h-8 rounded-full bg-redhill-sand/70 group-hover:bg-amber-500 flex items-center justify-center text-redhill-muted group-hover:text-white transition-all">
+              <div className="w-8 h-8 rounded-full bg-redhill-sand/70 group-hover:bg-amber-500 flex items-center justify-center text-redhill-muted group-hover:text-gray-950 transition-all">
                 <ArrowUpRight className="w-4 h-4" />
               </div>
             </div>
@@ -301,19 +301,17 @@ export default function AdminOverview({
         {/* Left Column: Active Projects */}
         {!isSupportAgent && (
           <div className="bg-white rounded-3xl border border-redhill-line shadow-2xl overflow-hidden flex flex-col">
-            <div className="p-5 sm:p-6 border-b border-redhill-line bg-redhill-ivory flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-700 shadow-xs shrink-0">
-                  <Building2 className="w-4 h-4" />
-                </div>
+            <div className="p-6 border-b border-redhill-line bg-redhill-ivory flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="w-3 h-3 rounded-full bg-blue-400 animate-ping" />
                 <div>
-                  <h2 className="font-bold text-redhill-charcoal text-base sm:text-lg font-serif">Projects</h2>
+                  <h2 className="font-bold text-redhill-charcoal text-lg font-serif">Projects</h2>
                   <p className="text-xs text-redhill-muted">Live construction progress & milestones</p>
                 </div>
               </div>
               <button
                 onClick={() => setActiveView('projects')}
-                className="text-xs font-semibold text-redhill-charcoal hover:text-redhill-red flex items-center gap-1 transition-colors cursor-pointer bg-white hover:bg-redhill-sand/70 px-3 py-1.5 rounded-lg border border-redhill-line"
+                className="text-xs font-bold text-redhill-red hover:text-red-700 flex items-center gap-1 transition-colors cursor-pointer bg-redhill-red/10 px-3 py-1.5 rounded-lg border border-redhill-red/20"
               >
                 <span>View All ({projects.length})</span>
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -377,19 +375,17 @@ export default function AdminOverview({
         {/* Right Column: Recent Verified Investors */}
         {(isSuperAdmin || isFinancialOfficer) && (
           <div className="bg-white rounded-3xl border border-redhill-line shadow-2xl overflow-hidden flex flex-col">
-            <div className="p-5 sm:p-6 border-b border-redhill-line bg-redhill-ivory flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-700 shadow-xs shrink-0">
-                  <Users className="w-4 h-4" />
-                </div>
+            <div className="p-6 border-b border-redhill-line bg-redhill-ivory flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping" />
                 <div>
-                  <h2 className="font-bold text-redhill-charcoal text-base sm:text-lg font-serif">Recent Investor Accounts</h2>
+                  <h2 className="font-bold text-redhill-charcoal text-lg font-serif">Recent Investor Accounts</h2>
                   <p className="text-xs text-redhill-muted">Verified investor directory & access credentials</p>
                 </div>
               </div>
               <button
                 onClick={() => setActiveView('investors')}
-                className="text-xs font-semibold text-redhill-charcoal hover:text-redhill-red flex items-center gap-1 transition-colors cursor-pointer bg-white hover:bg-redhill-sand/70 px-3 py-1.5 rounded-lg border border-redhill-line"
+                className="text-xs font-bold text-redhill-red hover:text-red-700 flex items-center gap-1 transition-colors cursor-pointer bg-redhill-red/10 px-3 py-1.5 rounded-lg border border-redhill-red/20"
               >
                 <span>Directory ({investors.length})</span>
                 <ChevronRight className="w-3.5 h-3.5" />
